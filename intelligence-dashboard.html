@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track & Back — Intelligence Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #fafaf8;
+    color: #2d2d2d;
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e8e6e1;
+  }
+  .header h1 { font-size: 1.6rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
+  .header .sub { font-size: 0.9rem; color: #888; }
+  .header .terug { font-size: 0.85rem; color: #7c3aed; text-decoration: none; display: inline-block; margin-top: 0.5rem; }
+  .header .terug:hover { text-decoration: underline; }
+
+  .uitleg {
+    background: #f5f0ff;
+    border-left: 4px solid #7c3aed;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 0 8px 8px 0;
+  }
+  .uitleg h2 { font-size: 1rem; font-weight: 600; color: #5b21b6; margin-bottom: 0.3rem; }
+  .uitleg p { font-size: 0.9rem; color: #4a4a4a; }
+
+  .section { margin-bottom: 2rem; }
+  .section h2 {
+    font-size: 1.1rem; font-weight: 600; color: #1a1a1a;
+    margin-bottom: 0.8rem; padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e8e6e1;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 600px) { .metric-grid { grid-template-columns: 1fr; } }
+
+  .metric-card {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-radius: 10px;
+    padding: 1.2rem;
+    text-align: center;
+  }
+  .metric-card .waarde {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.2;
+  }
+  .metric-card .label {
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.3rem;
+  }
+  .metric-card.wacht .waarde { color: #ccc; }
+
+  .inzicht-card {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  .inzicht-card h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
+  .inzicht-card p { font-size: 0.85rem; color: #777; }
+  .inzicht-card .platform-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin-right: 0.3rem;
+  }
+  .tag-ig { background: #fce7f3; color: #be185d; }
+  .tag-fb { background: #dbeafe; color: #1d4ed8; }
+  .tag-li { background: #f3f4f6; color: #4b5563; }
+  .tag-betrouwbaar { background: #d1fae5; color: #065f46; }
+  .tag-onvoldoende { background: #fef3c7; color: #92400e; }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #bbb;
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state p { font-size: 0.95rem; max-width: 400px; margin: 0 auto; }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .flow-step {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .flow-step.actief { border-color: #7c3aed; color: #7c3aed; }
+  .flow-arrow { color: #ccc; font-size: 1.2rem; }
+
+  .footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e8e6e1;
+    font-size: 0.8rem;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Intelligence Dashboard</h1>
+  <div class="sub">Wat werkt, wat niet, en wat we daarvan leren</div>
+  <a class="terug" href="index.html">&larr; Terug naar overzicht</a>
+</div>
+
+<div class="uitleg">
+  <h2>Wat is dit?</h2>
+  <p>Het Intelligence team (Team 4) verzamelt de resultaten van alle campagnes en posts. Het meet wat werkt, bouwt benchmarks op, en geeft advies voor de volgende ronde. Dit dashboard toont die inzichten in simpele taal.</p>
+</div>
+
+<!-- HOE HET WERKT -->
+<div class="section">
+  <h2>Hoe het Intelligence team werkt</h2>
+  <div class="flow">
+    <div class="flow-step">Post geplaatst</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">Resultaten meten</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">Benchmarks opbouwen</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step">Betrouwbaarheid checken</div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="flow-step actief">Advies voor volgende ronde</div>
+  </div>
+  <p style="font-size: 0.85rem; color: #777; margin-top: 0.5rem;">Het team kijkt naar elk platform apart: wat werkt op Instagram hoeft niet te werken op LinkedIn. Pas als er genoeg data is om betrouwbare conclusies te trekken, wordt een inzicht als "bewezen" gemarkeerd.</p>
+</div>
+
+<!-- KERNGETALLEN -->
+<div class="section">
+  <h2>Kerngetallen</h2>
+  <div class="metric-grid">
+    <div class="metric-card wacht">
+      <div class="waarde" id="totaal-posts">-</div>
+      <div class="label">Posts geplaatst</div>
+    </div>
+    <div class="metric-card wacht">
+      <div class="waarde" id="totaal-campagnes">-</div>
+      <div class="label">Campagnes gedraaid</div>
+    </div>
+    <div class="metric-card wacht">
+      <div class="waarde" id="totaal-inzichten">-</div>
+      <div class="label">Betrouwbare inzichten</div>
+    </div>
+  </div>
+</div>
+
+<!-- PER PLATFORM -->
+<div class="section">
+  <h2>Per platform</h2>
+  <div class="metric-grid">
+    <div class="metric-card wacht">
+      <div class="waarde">-</div>
+      <div class="label">Instagram</div>
+    </div>
+    <div class="metric-card wacht">
+      <div class="waarde">-</div>
+      <div class="label">Facebook</div>
+    </div>
+    <div class="metric-card wacht">
+      <div class="waarde">-</div>
+      <div class="label">LinkedIn</div>
+    </div>
+  </div>
+</div>
+
+<!-- INZICHTEN -->
+<div class="section">
+  <h2>Inzichten</h2>
+  <div class="empty-state" id="inzichten-leeg">
+    <div class="icon">&#128300;</div>
+    <p>Nog geen campagnedata. Zodra de eerste posts zijn geplaatst en resultaten binnenkomen, verschijnen hier de inzichten: wat werkt, wat niet, en waarom.</p>
+  </div>
+  <div id="inzichten-lijst" style="display: none;">
+    <!-- Wordt gevuld door intelligence pipeline output -->
+  </div>
+</div>
+
+<!-- WAT HET TEAM MEET -->
+<div class="section">
+  <h2>Wat wordt er gemeten?</h2>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+    <div class="inzicht-card">
+      <h3>Bereik</h3>
+      <p>Hoeveel mensen zien de post? Verschilt per platform en tijdstip.</p>
+    </div>
+    <div class="inzicht-card">
+      <h3>Betrokkenheid</h3>
+      <p>Hoeveel mensen klikken, liken of reageren? Dit zegt meer dan bereik alleen.</p>
+    </div>
+    <div class="inzicht-card">
+      <h3>Conversie</h3>
+      <p>Hoeveel mensen worden daadwerkelijk pionier na het zien van content?</p>
+    </div>
+    <div class="inzicht-card">
+      <h3>Beste invalshoek</h3>
+      <p>Welk type boodschap werkt het best? Herkenning, tips, persoonlijke verhalen?</p>
+    </div>
+  </div>
+</div>
+
+<!-- DREMPELS -->
+<div class="section">
+  <h2>Wanneer is iets betrouwbaar?</h2>
+  <p style="font-size: 0.9rem; color: #555; margin-bottom: 1rem;">Het Intelligence team trekt pas conclusies als er genoeg data is. Geen gokwerk.</p>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+    <div class="inzicht-card">
+      <h3>Betrouwbaarheidsscore &ge; 70/100</h3>
+      <p>Een benchmark telt pas als betrouwbaar als er genoeg campagnes achter zitten om statistisch iets te kunnen zeggen.</p>
+    </div>
+    <div class="inzicht-card">
+      <h3>Promotie-gate &ge; 75/100</h3>
+      <p>Voordat er meer budget naar een campagne gaat, moet de data laten zien dat het de moeite waard is.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Dit dashboard wordt bijgewerkt na elke Intelligence Pipeline run.<br>
+  <a href="index.html" style="color: #7c3aed; text-decoration: none;">Terug naar overzicht</a>
+</div>
+
+</body>
+</html>
