@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrackAndBack — Levend Visiedocument</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F7F5;
+      --surface: #FFFFFF;
+      --border: #E8E8E4;
+      --text: #1A1A18;
+      --muted: #6B6B65;
+      --accent: #1D4ED8;
+      --sidebar-w: 224px;
+      --header-h: 52px;
+      --c: #4B5563; --n: #1D4ED8; --p: #047857;
+      --bg-c: #F3F4F6; --bg-n: #EFF6FF; --bg-p: #ECFDF5;
+      --border-c: #D1D5DB; --border-n: #BFDBFE; --border-p: #A7F3D0;
+    }
+
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+    /* ── Header ── */
+    .header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 10px; z-index: 100; }
+    .header-brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+    .header-sep { color: var(--border); font-size: 20px; }
+    .header-doc { font-size: 13px; color: var(--muted); }
+    .header-slogan { margin-left: auto; font-size: 12px; color: var(--muted); font-style: italic; letter-spacing: -0.01em; }
+    .header-saved { font-size: 11px; color: var(--muted); margin-left: 16px; }
+    .betaler-teller { display: flex; align-items: center; gap: 8px; margin-left: 20px; }
+    .betaler-cirkel { width: 36px; height: 36px; border-radius: 50%; background: #DC2626; color: white; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; letter-spacing: -0.03em; flex-shrink: 0; transition: background 0.4s; }
+    .betaler-cirkel.heeft-betalers { background: #16A34A; }
+    .betaler-label { font-size: 10px; color: var(--muted); line-height: 1.3; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+    /* ── Sidebar ── */
+    .sidebar { position: fixed; top: var(--header-h); bottom: 0; left: 0; width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; display: flex; flex-direction: column; overflow-y: auto; }
+    .nav-section { padding: 0 12px; margin-bottom: 4px; }
+    .nav-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; padding: 0 8px; margin-bottom: 4px; display: block; }
+    .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 7px; cursor: pointer; font-size: 13px; color: var(--text); transition: background 0.1s; user-select: none; }
+    .nav-item:hover { background: var(--bg); }
+    .nav-item.active { background: var(--bg-n); color: var(--n); font-weight: 500; }
+    .nav-item.fundament-nav.active { background: #FFF7ED; color: #92400E; font-weight: 600; }
+    .nav-badge { margin-left: auto; font-size: 11px; background: var(--bg); color: var(--muted); padding: 1px 6px; border-radius: 10px; }
+    .nav-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+
+    .toetsvragen-box { padding: 12px 16px; margin: 0 12px; background: #FFF7ED; border: 1px solid #FDE68A; border-radius: 8px; }
+    .toetsvragen-title { font-size: 10px; font-weight: 700; color: #92400E; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
+    .toetsvraag { font-size: 11px; color: #78350F; line-height: 1.4; padding: 4px 0; border-bottom: 1px solid #FDE68A; display: flex; gap: 6px; }
+    .toetsvraag:last-child { border-bottom: none; padding-bottom: 0; }
+    .tv-num { font-weight: 700; flex-shrink: 0; }
+
+    .sidebar-legend { padding: 0 20px; margin-top: 4px; }
+    .legend-title { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); padding: 2px 0; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-c { background: var(--c); } .dot-n { background: var(--n); } .dot-p { background: var(--p); }
+
+    .sidebar-stats { padding: 12px 20px 0; margin-top: auto; border-top: 1px solid var(--border); }
+    .stat-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); padding: 3px 0; }
+    .stat-val { font-weight: 600; }
+    .stat-c { color: var(--c); } .stat-n { color: var(--n); } .stat-p { color: var(--p); }
+
+    /* ── Main ── */
+    .main { margin-left: var(--sidebar-w); margin-top: var(--header-h); padding: 32px 36px; min-height: calc(100vh - var(--header-h)); }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── Page header ── */
+    .page-header { display: flex; align-items: flex-end; margin-bottom: 24px; gap: 12px; }
+    .page-title { font-size: 20px; font-weight: 700; letter-spacing: -0.03em; flex: 1; }
+    .page-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    /* ── FUNDAMENT VIEW ── */
+    .f-hero { background: var(--text); color: white; border-radius: 16px; padding: 36px 40px; margin-bottom: 28px; position: relative; overflow: hidden; }
+    .f-hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+    .f-hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 12px; }
+    .f-hero-slogan { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.15; margin-bottom: 10px; }
+    .f-hero-tagline { font-size: 14px; color: rgba(255,255,255,0.6); font-style: italic; }
+
+    .f-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+
+    .f-pijlers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .f-pijler { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .f-pijler-head { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
+    .f-pijler-num { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 6px; }
+    .f-pijler-title { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px; }
+    .f-pijler-sub { font-size: 12px; color: var(--muted); }
+
+    .f-pijler-tabs { display: flex; border-bottom: 1px solid var(--border); }
+    .f-tab { flex: 1; padding: 8px 0; text-align: center; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--muted); background: var(--bg); border: none; font-family: inherit; letter-spacing: 0.03em; text-transform: uppercase; transition: all 0.15s; }
+    .f-tab:first-child { border-right: 1px solid var(--border); }
+    .f-tab.active { background: var(--surface); color: var(--text); }
+    .f-tab.active.commercieel { color: var(--n); }
+    .f-tab.active.filosofie { color: #92400E; }
+
+    .f-pijler-body { padding: 16px 20px; font-size: 13px; line-height: 1.65; min-height: 180px; }
+    .f-pijler-body.hidden { display: none; }
+
+    .f-highlight { background: var(--bg-n); border-left: 3px solid var(--n); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; margin-top: 12px; line-height: 1.5; }
+    .f-highlight.amber { background: #FFFBEB; border-left-color: #D97706; }
+    .f-highlight-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+
+    .f-principes { margin-top: 12px; }
+    .f-principe { display: flex; gap: 8px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+    .f-principe:last-child { border-bottom: none; }
+    .f-principe-naam { font-weight: 600; flex-shrink: 0; min-width: 140px; }
+    .f-principe-wat { color: var(--muted); }
+
+    .f-toetsvragen { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 22px 24px; margin-bottom: 28px; }
+    .f-tv-title { font-size: 13px; font-weight: 700; margin-bottom: 16px; color: #78350F; }
+    .f-tv-sub { font-size: 12px; color: #92400E; margin-bottom: 14px; font-style: italic; }
+    .f-tv-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .f-tv-item { background: white; border: 1px solid #FDE68A; border-radius: 8px; padding: 14px 16px; }
+    .f-tv-num { font-size: 20px; font-weight: 800; color: #D97706; letter-spacing: -0.04em; margin-bottom: 6px; }
+    .f-tv-text { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+
+    .f-bronnen { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; }
+    .f-bronnen-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .f-bron { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .f-bron:last-child { border-bottom: none; padding-bottom: 0; }
+    .f-bron-dot { width: 8px; height: 8px; background: var(--muted); border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .f-bron-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .f-bron-note { font-size: 12px; color: var(--muted); }
+    .f-bron-rel { font-size: 11px; color: var(--n); margin-top: 4px; font-style: italic; }
+
+    /* ── Horizon ── */
+    .h-intro { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+    .h-intro em { color: var(--text); font-style: normal; font-weight: 600; }
+    .h-filter-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+    .h-filter-btn { padding: 5px 13px; border-radius: 20px; border: 1.5px solid var(--border); font-size: 12px; cursor: pointer; background: var(--bg); color: var(--muted); font-family: inherit; transition: all 0.12s; font-weight: 500; }
+    .h-filter-btn:hover { border-color: var(--muted); color: var(--text); }
+    .h-filter-btn.h-active { background: var(--text); border-color: var(--text); color: white; }
+    .h-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .h-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: box-shadow 0.15s; }
+    .h-card:hover { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
+    .h-card-head { padding: 16px 20px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; }
+    .h-card-num { font-size: 10px; font-weight: 700; color: var(--muted); background: var(--bg); padding: 2px 7px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+    .h-card-meta { flex: 1; }
+    .h-card-title { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .h-card-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; }
+    .tag-now { background: #FEF3C7; color: #92400E; }
+    .tag-near { background: #DBEAFE; color: #1E40AF; }
+    .tag-far { background: #F3F4F6; color: #6B7280; }
+    .h-card-body { padding: 14px 20px 16px; font-size: 13px; line-height: 1.65; }
+    .h-card-desc { color: var(--muted); margin-bottom: 12px; }
+    .h-card-impact { background: var(--bg-n); border-left: 3px solid var(--n); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; line-height: 1.5; }
+    .h-card-impact-label { font-size: 10px; font-weight: 700; color: var(--n); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .h-card-impact.fundament { background: #FFF7ED; border-left-color: #D97706; }
+    .h-card-impact.fundament .h-card-impact-label { color: #92400E; }
+    .h-card-horizon { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+    .h-horizon-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .h-card-preds { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .h-pred-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .h-pred-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: #FFF7ED; color: #92400E; border: 1px solid #FDE68A; cursor: pointer; transition: all 0.12s; }
+    .h-pred-tag:hover { background: #FDE68A; }
+    .h-briefing-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .h-briefing-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .h-briefing-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .h-briefing-date { font-size: 10px; color: var(--muted); margin-left: auto; }
+    .pred-cluster-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .pred-cluster-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .pred-cluster-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: #EDE9FE; color: #5B21B6; border: 1px solid #DDD6FE; cursor: pointer; transition: all 0.12s; }
+    .pred-cluster-tag:hover { background: #DDD6FE; }
+
+    /* ── Predictions ── */
+    .filter-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 20px; }
+    .filter-label { font-size: 12px; color: var(--muted); margin-right: 2px; }
+    .filter-btn { padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; cursor: pointer; background: var(--bg); color: var(--muted); font-family: inherit; transition: all 0.12s; }
+    .filter-btn:hover { border-color: var(--muted); color: var(--text); }
+    .filter-btn.on-c { background: var(--bg-c); border-color: var(--c); color: var(--c); font-weight: 500; }
+    .filter-btn.on-n { background: var(--bg-n); border-color: var(--n); color: var(--n); font-weight: 500; }
+    .filter-btn.on-p { background: var(--bg-p); border-color: var(--p); color: var(--p); font-weight: 500; }
+    .filter-count { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: box-shadow 0.15s; }
+    .card:hover { box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+    .card.collapsed .card-body { display: none; }
+    .card-head { display: flex; align-items: center; padding: 14px 18px; gap: 10px; cursor: pointer; }
+    .card-num { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; background: var(--bg); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+    .card-title { font-size: 14px; font-weight: 600; flex: 1; letter-spacing: -0.01em; }
+    .card-badge { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 20px; flex-shrink: 0; }
+    .badge-c { background: var(--bg-c); color: var(--c); } .badge-n { background: var(--bg-n); color: var(--n); } .badge-p { background: var(--bg-p); color: var(--p); }
+    .card-chevron { color: var(--muted); font-size: 12px; flex-shrink: 0; transition: transform 0.2s; }
+    .card:not(.collapsed) .card-chevron { transform: rotate(90deg); }
+    .card-body { padding: 0 18px 18px; }
+    .variant-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .v-tab { flex: 1; padding: 7px 0; text-align: center; border-radius: 7px; border: 1.5px solid var(--border); font-size: 12px; font-weight: 500; cursor: pointer; background: var(--bg); color: var(--muted); font-family: inherit; transition: all 0.12s; }
+    .v-tab:hover { border-color: var(--muted); color: var(--text); }
+    .v-tab.sel-c { background: var(--bg-c); border-color: var(--c); color: var(--c); }
+    .v-tab.sel-n { background: var(--bg-n); border-color: var(--n); color: var(--n); }
+    .v-tab.sel-p { background: var(--bg-p); border-color: var(--p); color: var(--p); }
+    .v-content { padding: 14px 16px; border-radius: 8px; font-size: 13px; line-height: 1.65; }
+    .v-content.c { background: #F9FAFB; border: 1px solid var(--border-c); }
+    .v-content.n { background: #F0F7FF; border: 1px solid var(--border-n); }
+    .v-content.p { background: #F0FDF8; border: 1px solid var(--border-p); }
+    .v-scenario { margin-bottom: 10px; }
+    .v-impl { font-size: 12px; color: var(--muted); padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.07); }
+    .v-impl strong { color: var(--text); }
+
+    /* ── Verified ── */
+    .verified-banner { color: white; padding: 16px 24px; margin: -32px -36px 28px; }
+    .verified-banner-inner { display: flex; align-items: center; gap: 20px; justify-content: space-between; flex-wrap: wrap; }
+    .verified-banner-left { display: flex; align-items: center; gap: 14px; }
+    .verified-banner-icon { font-size: 20px; background: rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .verified-banner-title { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+    .verified-banner-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+    .verified-banner-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .verified-banner-insight { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px 14px; }
+    .verified-insight-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.6); display: block; margin-bottom: 3px; }
+    .verified-insight-text { font-size: 12px; font-weight: 600; font-style: italic; }
+    .verified-banner-links { display: flex; gap: 10px; }
+    .verified-link { font-size: 12px; font-weight: 600; cursor: pointer; color: rgba(255,255,255,0.85); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+    .verified-link:hover { color: white; }
+    /* Richting-badges (predictions + banner) */
+    .vbadge { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
+    .vbadge-bevestigd  { background: #059669; color: white; }
+    .vbadge-weersproken{ background: #D97706; color: white; }
+    .vbadge-bijgesteld { background: #2563EB; color: white; }
+    /* Kaartrand per richting */
+    .card-v-bevestigd  { border-color: #10B981 !important; }
+    .card-v-weersproken{ border-color: #F59E0B !important; }
+    .card-v-bijgesteld { border-color: #3B82F6 !important; }
+    /* Horizon cluster — nieuw inzicht */
+    .h-card.h-card-verified { border: 2px solid #10B981; background: #F0FDF4; }
+    .h-verified-badge { background: #059669; color: white; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
+
+    /* ── Decisions ── */
+    .add-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; background: var(--n); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; margin-bottom: 24px; transition: opacity 0.15s; }
+    .add-btn:hover { opacity: 0.88; }
+    .dec-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; }
+    .dec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .dec-title { font-size: 14px; font-weight: 600; flex: 1; }
+    .dec-status { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 20px; }
+    .s-open { background: #FEF3C7; color: #92400E; } .s-lopend { background: #DBEAFE; color: #1E40AF; } .s-besloten { background: #D1FAE5; color: #065F46; }
+    .dec-linked { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .pred-tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .tag-c { background: var(--bg-c); color: var(--c); } .tag-n { background: var(--bg-n); color: var(--n); } .tag-p { background: var(--bg-p); color: var(--p); }
+    .dec-notes { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .dec-date { font-size: 11px; color: var(--muted); margin-top: 8px; }
+    .dec-actions { display: flex; gap: 6px; margin-top: 10px; }
+    .btn-sm { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 12px; cursor: pointer; background: var(--bg); color: var(--muted); font-family: inherit; transition: all 0.1s; }
+    .btn-sm:hover { color: var(--text); border-color: var(--muted); }
+    .btn-sm.del:hover { color: #DC2626; border-color: #DC2626; }
+    .empty { text-align: center; padding: 56px 24px; color: var(--muted); }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+    .empty-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .empty-sub { font-size: 13px; }
+
+    /* ── Summary ── */
+    .sum-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+    .sum-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .sum-stat-num { font-size: 30px; font-weight: 700; letter-spacing: -0.04em; }
+    .sum-stat-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .sum-section { margin-bottom: 28px; }
+    .sum-title { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .sum-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .sum-row:last-child { border-bottom: none; }
+    .sum-num { font-size: 11px; font-weight: 600; color: var(--muted); width: 26px; flex-shrink: 0; }
+    .sum-pred-title { flex: 1; }
+    .sum-var { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+    .sv-c { background: var(--bg-c); color: var(--c); } .sv-n { background: var(--bg-n); color: var(--n); } .sv-p { background: var(--bg-p); color: var(--p); }
+    .sum-direction { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; font-size: 13px; line-height: 1.7; }
+
+    /* ── Modal ── */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 580px; padding: 28px; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 22px; letter-spacing: -0.02em; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--n); background: var(--surface); }
+    .form-textarea { min-height: 80px; resize: vertical; }
+    .pred-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .pred-check { display: flex; align-items: center; gap: 7px; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 7px; cursor: pointer; font-size: 12px; transition: all 0.12s; user-select: none; }
+    .pred-check:hover { border-color: var(--n); }
+    .pred-check.on { border-color: var(--n); background: var(--bg-n); }
+    .pred-check input { display: none; }
+    .pred-check-num { font-size: 10px; font-weight: 700; color: var(--muted); }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px; }
+    .btn { padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; border: 1.5px solid var(--border); transition: all 0.12s; }
+    .btn-primary { background: var(--n); color: white; border-color: var(--n); }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-ghost { background: var(--bg); color: var(--muted); }
+
+    /* ── Briefing Modal ── */
+    .bm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; display: none; align-items: flex-start; justify-content: center; padding: 32px 20px; overflow-y: auto; }
+    .bm-overlay.open { display: flex; }
+    .bm-modal { background: var(--surface); border-radius: 16px; width: 100%; max-width: 660px; padding: 0; overflow: hidden; }
+    .bm-header { padding: 24px 28px 20px; border-bottom: 1px solid var(--border); }
+    .bm-header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .bm-status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .bm-cluster-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .bm-date { font-size: 11px; color: var(--muted); margin-left: auto; }
+    .bm-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); line-height: 1.3; }
+    .bm-expert-oordeel { background: #F8F7F4; border-left: 3px solid var(--n); padding: 14px 18px; margin: 20px 28px 0; border-radius: 0 8px 8px 0; font-size: 13px; font-style: italic; color: var(--text); line-height: 1.5; }
+    .bm-body { padding: 20px 28px 28px; display: flex; flex-direction: column; gap: 20px; }
+    .bm-section-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+    .bm-section-text { font-size: 13px; color: var(--text); line-height: 1.65; }
+    .bm-beslissing { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .bm-beslissing-vraag { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; line-height: 1.4; }
+    .bm-opties { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .bm-optie { display: flex; gap: 10px; font-size: 12px; line-height: 1.5; }
+    .bm-optie-letter { font-weight: 700; color: var(--muted); flex-shrink: 0; width: 16px; }
+    .bm-optie-body { color: var(--text); }
+    .bm-optie-gevolg { color: var(--muted); }
+    .bm-aanbeveling { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #166534; line-height: 1.5; }
+    .bm-aanbeveling strong { font-weight: 700; }
+    .bm-acties { display: flex; flex-direction: column; gap: 8px; }
+    .bm-actie { display: flex; align-items: baseline; gap: 10px; font-size: 13px; line-height: 1.5; }
+    .bm-actie-naam { font-size: 10px; font-weight: 700; color: white; background: var(--muted); border-radius: 4px; padding: 2px 7px; white-space: nowrap; letter-spacing: 0.04em; flex-shrink: 0; }
+    .bm-actie-naam.naam-rene { background: #1D4ED8; }
+    .bm-actie-naam.naam-ceo { background: #7C3AED; }
+    .bm-actie-naam.naam-timo { background: #0891B2; }
+    .bm-actie-tekst { color: var(--text); }
+    .bm-actie-checkbox { width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; accent-color: var(--n); }
+    .bm-gh-link { font-size: 11px; font-weight: 600; color: var(--n); text-decoration: none; background: #FFF7ED; border: 1px solid #FDE68A; border-radius: 4px; padding: 1px 6px; white-space: nowrap; margin-left: auto; flex-shrink: 0; }
+    .bm-gh-link:hover { background: #FDE68A; }
+    .bm-close { display: flex; justify-content: flex-end; padding: 16px 28px; border-top: 1px solid var(--border); }
+    .bm-badge-clickable { cursor: pointer; transition: opacity 0.15s; }
+    .bm-badge-clickable:hover { opacity: 0.75; }
+    .btn-ghost:hover { color: var(--text); }
+
+    @media print { .sidebar, .header, .overlay, .filter-bar, .add-btn, .dec-actions { display: none !important; } .main { margin-left: 0; } }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <span class="header-brand">TrackAndBack</span>
+  <span class="header-sep">|</span>
+  <span class="header-doc">Levend Visiedocument</span>
+  <span class="header-slogan">De enige die altijd voor jou kiest.</span>
+  <span class="header-saved" id="savedAt"></span>
+  <div class="betaler-teller">
+    <div class="betaler-cirkel" id="betalerCirkel">0</div>
+    <span class="betaler-label">betalende<br>klanten</span>
+  </div>
+</header>
+
+<nav class="sidebar">
+  <div class="nav-section">
+    <span class="nav-label">Lagen</span>
+    <div class="nav-item fundament-nav active" onclick="showView('fundament', this)">
+      <span>Laag 1 — Fundament</span>
+    </div>
+    <div class="nav-item" onclick="showView('voorspellingen', this)">
+      <span>Laag 2 — Markt</span>
+      <span class="nav-badge" id="l2-badge">14</span>
+    </div>
+    <div class="nav-item" onclick="showView('horizon', this)">
+      <span>Laag 3 — Horizon</span>
+      <span class="nav-badge" id="l3-badge">13</span>
+    </div>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-section">
+    <span class="nav-label">Werken</span>
+    <div class="nav-item" onclick="showView('beslissingen', this)">
+      <span>Beslissingen</span>
+      <span class="nav-badge" id="dec-badge">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('samenvatting', this)">
+      <span>Samenvatting</span>
+    </div>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="toetsvragen-box">
+    <div class="toetsvragen-title">Toetsvragen</div>
+    <div class="toetsvraag"><span class="tv-num">1</span><span>Helpt dit de gebruiker loslaten?</span></div>
+    <div class="toetsvraag"><span class="tv-num">2</span><span>Verdient TB hier zonder partijdig te worden?</span></div>
+    <div class="toetsvraag"><span class="tv-num">3</span><span>Vermindert dit mentale belasting?</span></div>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="sidebar-legend">
+    <div class="legend-title">Scenario</div>
+    <div class="legend-item"><span class="legend-dot dot-c"></span>Conservatief</div>
+    <div class="legend-item"><span class="legend-dot dot-n"></span>Neutraal</div>
+    <div class="legend-item"><span class="legend-dot dot-p"></span>Progressief</div>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="sidebar-stats" id="sidebar-stats"></div>
+</nav>
+
+<main class="main">
+
+  <!-- ── VERIFIED BANNER (dynamisch gegenereerd) ── -->
+  <div id="verified-banner-container"></div>
+
+  <!-- ── LAAG 1: FUNDAMENT ── -->
+  <div class="view active" id="view-fundament">
+
+    <div class="f-hero">
+      <div class="f-hero-label">Laag 1 — Fundament</div>
+      <div class="f-hero-slogan">De enige die altijd voor jou kiest.</div>
+      <div class="f-hero-tagline">Niet als marketingclaim. Als businessmodel. Als architectuurkeuze. Als kompas voor elke beslissing.</div>
+    </div>
+
+    <div class="f-section-title">Drie pijlers</div>
+    <div class="f-pijlers" id="f-pijlers-container"></div>
+
+    <div class="f-toetsvragen">
+      <div class="f-tv-title">De drie toetsvragen</div>
+      <div class="f-tv-sub">Elke beslissing in Laag 2, 3 en 4 wordt hieraan getoetst. Als één antwoord "nee" is, gaat de beslissing terug.</div>
+      <div class="f-tv-grid">
+        <div class="f-tv-item"><div class="f-tv-num">01</div><div class="f-tv-text">Helpt dit de gebruiker loslaten?</div></div>
+        <div class="f-tv-item"><div class="f-tv-num">02</div><div class="f-tv-text">Verdient TB hier zonder partijdig te worden?</div></div>
+        <div class="f-tv-item"><div class="f-tv-num">03</div><div class="f-tv-text">Vermindert dit mentale belasting, of voegt het betrokkenheid toe?</div></div>
+      </div>
+    </div>
+
+    <div class="f-bronnen">
+      <div class="f-bronnen-title">Relatie met brondocumenten</div>
+      <div class="f-bron">
+        <div class="f-bron-dot"></div>
+        <div>
+          <div class="f-bron-title">SB7 BrandScript</div>
+          <div class="f-bron-note">De verhaalstructuur: de held (gebruiker die wil loslaten), de schurk (digitale restlast), de gids (TB), de identiteitstransformatie.</div>
+          <div class="f-bron-rel">→ Laag 1 is de operationele vertaling van de gidsrol. Laag 4 vraagt om een BrandScript versie 2 die de partnervisie draagt.</div>
+        </div>
+      </div>
+      <div class="f-bron">
+        <div class="f-bron-dot"></div>
+        <div>
+          <div class="f-bron-title">Merkfilosofie</div>
+          <div class="f-bron-note">De vijf kernprincipes en productrichtlijn. Dit document IS Pijler 1 in zijn volledigheid.</div>
+          <div class="f-bron-rel">→ Laag 1 Pijler 1 = directe uitwerking. Bij aanpassing van de Merkfilosofie, update Pijler 1.</div>
+        </div>
+      </div>
+      <div class="f-bron">
+        <div class="f-bron-dot"></div>
+        <div>
+          <div class="f-bron-title">Positioneringsdocument</div>
+          <div class="f-bron-note">"Wat je kunt loslaten, geeft ruimte." — de one-liner en zijn betekenislagen. Bewust open, schaalt van pakketjes naar levensdomeinen.</div>
+          <div class="f-bron-rel">→ De one-liner schaalt perfect naar Laag 4. De positionering hoeft niet te veranderen — de ambitie erachter wel.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LAAG 2: MARKT ── -->
+  <div class="view" id="view-voorspellingen">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Laag 2 — Markt & Oplossing</div>
+        <div class="page-sub">Selecteer per voorspelling het scenario dat jouw beslissingen draagt.</div>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Toon:</span>
+      <button class="filter-btn" id="fb-all" onclick="filterCards('all')">Alle</button>
+      <button class="filter-btn" id="fb-c" onclick="filterCards('conservatief')">Conservatief</button>
+      <button class="filter-btn" id="fb-n" onclick="filterCards('neutraal')">Neutraal</button>
+      <button class="filter-btn" id="fb-p" onclick="filterCards('progressief')">Progressief</button>
+      <span class="filter-count" id="filter-count"></span>
+    </div>
+    <div id="cards-container"></div>
+  </div>
+
+  <!-- ── LAAG 3: HORIZON ── -->
+  <div class="view" id="view-horizon">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Laag 3 — Horizon & Productvisie</div>
+        <div class="page-sub">Bredere technologische en gedragsmatige verschuivingen die TB's productrichting bepalen.</div>
+      </div>
+    </div>
+    <div class="h-intro">
+      <p>Laag 3 gaat niet over de markt van nu maar over de wereld van straks. Deze clusters bepalen niet de roadmap van morgen — ze bepalen de <em>architectuurkeuzes</em> van vandaag. Een product dat nu wordt gebouwd zonder Laag 3 kan over 5 jaar structureel verkeerd zijn.</p>
+    </div>
+    <div class="h-filter-bar" id="h-filter-bar"></div>
+    <div class="h-grid" id="h-clusters-container"></div>
+  </div>
+
+  <!-- ── BESLISSINGEN ── -->
+  <div class="view" id="view-beslissingen">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Beslissingen</div>
+        <div class="page-sub">Houd elke beslissing tegen de actieve scenario's en de drie toetsvragen aan.</div>
+      </div>
+    </div>
+    <button class="add-btn" onclick="openModal()">+ Beslissing toevoegen</button>
+    <div id="decisions-container"></div>
+  </div>
+
+  <!-- ── SAMENVATTING ── -->
+  <div class="view" id="view-samenvatting">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Samenvatting</div>
+        <div class="page-sub">Overzicht van gekozen scenario's en richting.</div>
+      </div>
+    </div>
+    <div id="summary-container"></div>
+  </div>
+
+</main>
+
+<!-- Briefing Modal -->
+<div class="bm-overlay" id="bm-overlay" onclick="closeBriefingModalOnOverlay(event)">
+  <div class="bm-modal" id="bm-modal">
+    <div class="bm-header">
+      <div class="bm-header-top">
+        <span class="bm-status-dot" id="bm-status-dot"></span>
+        <span class="bm-cluster-label" id="bm-cluster-label"></span>
+        <span class="bm-date" id="bm-date"></span>
+      </div>
+      <div class="bm-title" id="bm-cluster-title"></div>
+    </div>
+    <div class="bm-expert-oordeel" id="bm-expert-oordeel"></div>
+    <div class="bm-body">
+      <div>
+        <div class="bm-section-label">Wat er speelt</div>
+        <div class="bm-section-text" id="bm-wat-er-speelt"></div>
+      </div>
+      <div>
+        <div class="bm-section-label">TB Impact nu</div>
+        <div class="bm-section-text" id="bm-tb-impact"></div>
+      </div>
+      <div class="bm-beslissing">
+        <div class="bm-section-label">Beslissing die voorligt</div>
+        <div class="bm-beslissing-vraag" id="bm-vraag"></div>
+        <div class="bm-opties" id="bm-opties"></div>
+        <div class="bm-aanbeveling" id="bm-aanbeveling"></div>
+      </div>
+      <div>
+        <div class="bm-section-label">Acties</div>
+        <div class="bm-acties" id="bm-acties"></div>
+      </div>
+    </div>
+    <div class="bm-close">
+      <button class="btn btn-ghost" onclick="closeBriefingModal()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Beslissing toevoegen</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-group">
+      <label class="form-label">Titel van de beslissing</label>
+      <input class="form-input" id="f-title" placeholder="Bijv. B2C of B2B eerst?" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-select" id="f-status">
+        <option value="open">Open</option>
+        <option value="lopend">In behandeling</option>
+        <option value="besloten">Besloten</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Toelichting / context</label>
+      <textarea class="form-textarea" id="f-notes" placeholder="Wat maakt deze beslissing relevant?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gekoppeld aan voorspellingen</label>
+      <div class="pred-grid" id="pred-checkboxes"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveDecision()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ FUNDAMENT DATA ══
+const PIJLERS = [
+  {
+    id: 1,
+    title: "Merkidentiteit",
+    sub: "Wie TB is",
+    commercieel: `<p>TB's principes zijn operationele filters, geen waarden op papier. Ze voorkomen scope creep, verminderen development-waste en creëren een product dat zich organisch verspreidt omdat het doet wat het belooft.</p>
+    <p>Gebruikers die TB aanbevelen doen dat omdat het werkt — niet omdat we hen daartoe stimuleren. Dat is de meest duurzame groeistrategie.</p>
+    <div class="f-highlight">
+      <div class="f-highlight-label">Marktpositie</div>
+      Elke concurrent optimaliseert voor engagement. TB optimaliseert voor het tegenovergestelde. In een markt van overloaded apps is een app die minder vraagt een structurele differentiator.
+    </div>
+    <div class="f-highlight amber">
+      <div class="f-highlight-label">Concurrentievoordeel</div>
+      De principes zijn moeilijk vol te houden onder commerciële druk. TB's fundament maakt dat gesprek expliciet en beschermt daarmee de propositie bij groei en investering.
+    </div>`,
+    filosofie: `<p>TB gelooft dat digitale systemen efficiëntie beloven maar afronding vergeten. Onze rol is niet de gebruiker meer controle geven — maar loslaten mogelijk maken.</p>
+    <div class="f-principes">
+      <div class="f-principe"><span class="f-principe-naam">Loslaten boven controle</span><span class="f-principe-wat">Ontwerp voor overdracht, niet voor zichtbaarheid</span></div>
+      <div class="f-principe"><span class="f-principe-naam">Afronding boven informatie</span><span class="f-principe-wat">Sluit processen af, toon geen data</span></div>
+      <div class="f-principe"><span class="f-principe-naam">Rust boven engagement</span><span class="f-principe-wat">Geen kunstmatige urgentie, geen optimalisatie voor gebruik</span></div>
+      <div class="f-principe"><span class="f-principe-naam">Helderheid boven complexiteit</span><span class="f-principe-wat">Als iets uitleg nodig heeft, is het te veel</span></div>
+      <div class="f-principe"><span class="f-principe-naam">Vertrouwen boven afhankelijkheid</span><span class="f-principe-wat">Gebruikers bezitten hun data — privacy is voorwaarde</span></div>
+    </div>
+    <div class="f-highlight amber"><div class="f-highlight-label">Bron</div>Merkfilosofie — dit document is de directe grondslag voor Pijler 1.</div>`
+  },
+  {
+    id: 2,
+    title: "Businessmodel",
+    sub: "Hoe TB verdient zonder partijdig te worden",
+    commercieel: `<p>TB verdient een <strong>vaste fee per onderhandeling</strong> — betaald door de aanbieder, ongeacht welke aanbieder wint. Transparant zichtbaar voor de gebruiker.</p>
+    <p>Dit maakt partijdigheid structureel onmogelijk: aanbieder A en B betalen hetzelfde. TB's enige financiële belang is gebruikerstevredenheid. Meer vertrouwen = meer gebruikers = meer fee-volume.</p>
+    <div class="f-highlight">
+      <div class="f-highlight-label">Marktpositie vs. vergelijkingssites</div>
+      Independer, Pricewise en vergelijkbare platformen verdienen op commissie. Hogere commissie = prominenter product. De gebruiker denkt onpartijdig advies te krijgen — maar krijgt gestuurd aanbod. TB's model maakt dat structureel onmogelijk.
+    </div>
+    <div class="f-highlight amber">
+      <div class="f-highlight-label">Concurrentievoordeel</div>
+      Een concurrent kan de features kopiëren. Hij kan het model niet kopiëren zonder zijn eigen commissie-inkomsten op te geven. Dat is een structurele barrière die groeit naarmate TB schaal krijgt.
+    </div>`,
+    filosofie: `<p>Het businessmodel is de materialisatie van de belofte. "De enige die altijd voor jou kiest" is geen claim als er een provisiebelang achter zit. De vaste fee is de architectuurkeuze die de belofte waar maakt.</p>
+    <p>Dit verbindt direct aan het merkprincipe <em>Vertrouwen boven afhankelijkheid</em>: TB verdient niet aan het sturen van keuzes maar aan het faciliteren van de beste uitkomst voor de gebruiker.</p>
+    <div class="f-highlight amber">
+      <div class="f-highlight-label">Relatie met SB7</div>
+      In het BrandScript is TB de gids, niet de held. De vaste fee borgt dat de gids nooit de eigen agenda boven die van de held stelt. Het model IS de gidsrol in zakelijke vorm.
+    </div>`
+  },
+  {
+    id: 3,
+    title: "Productrichtlijn",
+    sub: "Wat TB bouwt — en wat niet",
+    commercieel: `<p>De productrichtlijn is een operationele superpower: een team dat weet wat het <em>niet</em> bouwt, bouwt het goede sneller. Minder features betekent minder kosten, snellere onboarding en een lagere support-burden.</p>
+    <p>Hogere retentie volgt automatisch: gebruikers die rust ervaren blijven. Ze promoten TB organisch omdat het doet wat het belooft — niet meer, niet minder.</p>
+    <div class="f-highlight">
+      <div class="f-highlight-label">Marktpositie</div>
+      Productteams voegen features toe. TB verwijdert er. Dat is een andere discipline en levert een ander product op. Elke feature die TB bewust niet bouwt is een statement over wie TB is.
+    </div>
+    <div class="f-highlight amber">
+      <div class="f-highlight-label">Concurrentievoordeel</div>
+      Focus is snelheid. Focus is helderheid voor investeerders. Focus is retentie. De productrichtlijn beschermt al deze waarden tegelijk.
+    </div>`,
+    filosofie: `<p>Elke functie moet mentale belasting verminderen. Als een functie monitoring, controle, herinneren of mentale betrokkenheid vergroot — hoort zij niet in het product.</p>
+    <p>TB is geen inbox-tool. Geen productiviteits-tool. Geen overzichtsdashboard. Het is een systeem dat onzichtbare mentale belasting wegneemt. Elke beslissing moet dat weerspiegelen.</p>
+    <div class="f-highlight amber">
+      <div class="f-highlight-label">Relatie met Positioneringsdocument</div>
+      "Wat je kunt loslaten, geeft ruimte." — de one-liner is geen marketing, het is een ontwerpprincipe. Elke feature die je moet loslaten geeft ruimte. Elke feature die je moet vasthouden neemt ruimte weg.
+    </div>`
+  }
+];
+
+// ══ HORIZON CLUSTERS DATA ══
+const CLUSTERS = [
+  {
+    id: 1,
+    title: "Voice & Ambient Interfaces",
+    tag: "near",
+    tagLabel: "2–4 jaar",
+    desc: "Spraakgestuurde interactie wordt de primaire interface voor alledaagse informatievragen. De smartphone raakt naar de achtergrond. 'Zijn er updates over mijn bestelling?' wordt een gesproken vraag aan een persoonlijke assistent.",
+    impact: "TB kan een spraakkanaal worden — naast e-mail, als native interface. De architectuur moet kanaalagnostisch zijn: het medium verandert, de logica niet.",
+    principle: "Loslaten boven controle — informatie consumeren zonder scherm te pakken is de ultieme loslaten-ervaring.",
+    briefingStatus: "stable",
+    lastBriefing: "2026-03-05"
+  },
+  {
+    id: 2,
+    title: "AI Agents & Autonome Workflows",
+    tag: "near",
+    tagLabel: "2–4 jaar",
+    desc: "AI-agenten handelen namens de gebruiker zonder handmatige interactie. Kopen, vergelijken, annuleren, retourneren — autonoom uitgevoerd. De gebruiker stelt het doel in; de agent voert uit.",
+    impact: "TB als agent die post-purchase volledig afhandelt. Niet rapporteren wat er is — het oplossen. TB wordt de laag die aankoop-intelligentie beheert, ongeacht welke agent de koop plaatst.",
+    principle: "Afronding boven informatie — een agent die afrondt geeft meer rust dan een dashboard dat rapporteert."
+  },
+  {
+    id: 3,
+    title: "Persoonlijk Profiel als Kapitaal",
+    tag: "far",
+    tagLabel: "5–10 jaar",
+    desc: "De gebruiker heeft één verifieerbaar digitaal identiteitsprofiel. Alle diensten gebruiken dit profiel. Persoonlijke data is eigendom van de gebruiker — niet van het platform.",
+    impact: "TB als neutrale bewaker van het profiel. Niet als verzamelpunt van data, maar als vertrouwde laag tussen gebruiker en aanbieders. TB's privacy-architectuur is hier al op voorbereid.",
+    principle: "Vertrouwen boven afhankelijkheid — gebruikers bezitten hun data is nu al een principe; in deze wereld is het een recht."
+  },
+  {
+    id: 4,
+    title: "Background Internet",
+    tag: "now",
+    tagLabel: "Nu al begonnen",
+    desc: "Software draait in de achtergrond, onzichtbaar voor de gebruiker. Het internet werkt voor je, niet meer voor je aandacht. De interface is het resultaat — niet het proces.",
+    impact: "TB's kernvisie IS dit. Het koopt, verzendt, regelt, rondt af — onzichtbaar. TB is by design een background-internet product. Dit is de categorie waartoe TB behoort.",
+    principle: "Rust boven engagement — geen kunstmatige urgentie, geen optimalisatie voor gebruik. TB hoort niet gezien te worden.",
+    briefingStatus: "stable",
+    lastBriefing: "2026-03-04"
+  },
+  {
+    id: 5,
+    title: "Het Einde van de Inbox",
+    tag: "far",
+    tagLabel: "6–12 jaar",
+    desc: "E-mail als primaire communicatievorm verdwijnt geleidelijk. Push-notificaties en structured feeds nemen marketing-communicatie over, maar transactionele e-mail is taaier dan verwacht. Bijgesteld (2026): transitie verschuift — progressief 2030-Q1, neutraal 2032-Q4, conservatief 2037-Q1.",
+    impact: "Meer architectuurruimte dan verwacht: email blijft 6–8 jaar dominant voor transactionele communicatie. TB moet nú de adapter-laag bouwen — niet omdat het kanaal al verdwijnt, maar omdat Shopify-webhooks al beschikbaar zijn (zie lead #268). De e-mailparser is adapter één; structured intake wordt adapter twee. Wie nu bouwt, is klaar wanneer de transitie wél doorzet.",
+    principle: "Helderheid boven complexiteit — het kanaal is geen doel, het eindresultaat (afronding) is het doel.",
+    briefingStatus: "active",
+    lastBriefing: "2026-03-23"
+  },
+  {
+    id: 6,
+    title: "Conversational Commerce",
+    tag: "near",
+    tagLabel: "2–4 jaar",
+    desc: "Kopen via conversatie: WhatsApp, voice, in-app assistenten. Geen webshops maar dialogen. Social commerce en chat-first transacties nemen structureel toe.",
+    impact: "Post-purchase volgt het aankoopkanaal. Als TB kan opereren in WhatsApp of voice, volgt het de gebruiker naar zijn native kanaal. De vraag is of TB wil integreren of onafhankelijk wil blijven.",
+    principle: "Loslaten boven controle — de gebruiker hoeft niet naar TB te gaan; TB werkt waar de gebruiker al is."
+  },
+  {
+    id: 7,
+    title: "Vertrouwen & Digitale Identiteit",
+    tag: "now",
+    tagLabel: "Nu al urgent",
+    desc: "In een wereld van deepfakes en AI-gegenereerde communicatie wordt vertrouwen de schaarste. Wie is de afzender? Is dit een echte tracking-mail? Is dit advies of reclame?",
+    impact: "TB als geverifieerde, neutrale intermediair. In een omgeving van toenemende ruis is een bekende, betrouwbare partij die post-purchase afhandelt structureel waardevoller dan vandaag.",
+    principle: "Vertrouwen boven afhankelijkheid — en in 2026 ook: vertrouwen boven verwarring."
+  },
+  {
+    id: 8,
+    title: "Post-eigendomseconomie",
+    tag: "now",
+    tagLabel: "Groeit nu",
+    desc: "Gebruikers kopen minder, huren meer. Abonnementen, leasing, pay-per-use worden dominant voor steeds meer categorieën. Eigendom als concept erosieert.",
+    impact: "Post-purchase lifecycle wordt complexer en permanenter. Terugkerende transacties en langlopende relaties met aanbieders zijn de norm. TB's waarde groeit exponentieel in een wereld van voortdurende relaties.",
+    principle: "Afronding boven informatie — maar in een abonnementswereld eindigt het nooit écht; TB beheert de lopende relatie.",
+    briefingStatus: "active",
+    lastBriefing: "2026-03-23"
+  },
+  {
+    id: 9,
+    title: "Cognitieve Belasting als Valuta",
+    tag: "near",
+    tagLabel: "2–4 jaar mainstream",
+    desc: "Aandacht en mentale energie worden erkend als schaarse middelen. Digital wellness groeit. Diensten die cognitieve last reduceren worden premium en maatschappelijk gewaardeerd.",
+    impact: "TB's kern-propositie IS dit cluster. TB is vroeg in een categorie die de komende jaren mainstream wordt. Dit is de sterkste externe validatie van TB's filosofische fundament.",
+    principle: "Alle drie de toetsvragen zijn antwoorden op precies dit cluster."
+  },
+  {
+    id: 10,
+    title: "Bezorging als Platform",
+    tag: "now",
+    tagLabel: "Consolidatie bezig",
+    desc: "Bezorging consolideert naar enkele mega-platforms (Amazon, Bol, PostNL, DHL). Post-purchase communicatie standaardiseert. Kleine webshops verliezen controle over de klantrelatie.",
+    impact: "Standaardisatie kan TB's waardepropositie verzwakken als één platform alles overneemt — of versterken als TB de enige is die cross-platform werkt voor de gebruiker, niet voor de aanbieder.",
+    principle: "Loslaten boven controle — juist als platforms meer grip willen, is TB de tegenbeweging."
+  },
+  {
+    id: 11,
+    title: "TB als Transactionele Intelligentielaag",
+    tag: "now",
+    tagLabel: "Regelgeving actief",
+    verified: true,
+    briefingStatus: "active",
+    lastBriefing: "2026-03-04",
+    desc: "EU Data Act (sept 2025) en eIDAS 2.0 (dec 2026) verplichten data-portabiliteit en data-importeerbaarheid. TB is niet de EUDI Wallet — TB is de waarde erin. Alle transactionele data van webshops, reisplatforms, verzekeraars, bioscopen en andere diensten kan wettelijk worden opgevraagd en samengebracht.",
+    impact: "Data-importeerbaarheid als product-feature. TB verzamelt alle transactionele data via wettelijk afdwingbaar recht. Niet alleen exporteren — maar actief importeren. TB wordt de centrale transactie-intelligentielaag van de gebruiker. Dit is het nieuwe architectuurprincipe dat volgde op verified voorspelling #V09.",
+    principle: "Vertrouwen boven afhankelijkheid — gebruikers bezitten hun data. De EU maakt dit nu afdwingbaar. TB was hier al op voorbereid."
+  },
+  {
+    id: 12,
+    title: "Mentale Rust als Werkprestatie-factor",
+    tag: "now",
+    tagLabel: "Groeit nu",
+    verified: true,
+    desc: "De verbinding tussen digitale overbelasting en werkprestatie wordt breed erkend. Werkgevers ontdekken dat medewerkers met mentale rust aantoonbaar beter presteren, minder verzuimen en langer inzetbaar blijven. Digitale rust verschuift van persoonlijke keuze naar HR-investering met aantoonbare bedrijfswaarde.",
+    impact: "TB wordt een legitiem B2B2C-instrument: werkgever betaalt, medewerker ervaart rust en presteert beter. Het product hoeft niet aan te passen — alleen de verkoopbeweging verandert. Eén werkgeverscontract levert meerdere gebruikers; TB hoeft het probleem niet meer per individu uit te leggen.",
+    principle: "Rust boven engagement — ook in een werkcontext: minder digitale ruis = meer focus = betere output. TB's kernprincipe vertaald naar werkgeverswaarde en meetbaar HR-resultaat."
+  },
+  {
+    id: 14,
+    title: "TB en het Handelsprotocol-landschap",
+    tag: "near",
+    tagLabel: "2–4 jaar",
+    desc: "De opkomst van concurrerende handelsprotocollen (Google UCP, MCP, A2A) creëert een nieuwe infrastructuurlaag voor de digitale economie. Wie de standaard bepaalt, bepaalt wie er mee mag doen — en op welke voorwaarden. TB moet expliciet kiezen: deelnemer in een bestaand protocol-ecosysteem, of bewust onafhankelijk alternatief dat juist vanwege die onafhankelijkheid vertrouwen verdient.",
+    impact: "TB's keuze is fundamenteel. UCP geeft bereik maar creëert afhankelijkheid van Google. Onafhankelijk blijven versterkt de vertrouwenspropositie. De keuze bepaalt ook de acquisitielogica: UCP-compatibel is overnamebaar; privacy-soeverein is moeilijker te kopiëren. René onderzoekt drie opties: UCP-deelnemer, privacy-soeverein alternatief, of hybride (UCP-inkomend + eigen profiellaag). Zie trackandback-lead #267.",
+    principle: "Vertrouwen boven afhankelijkheid — de protocol-keuze is geen technische maar een identiteitskeuze: aan welke standaard TB zijn neutraliteit verbindt, bepaalt hoe lang die neutraliteit houdbaar is."
+  },
+  {
+    id: 13,
+    title: "TB als Gatekeeper in de Agent-Economie",
+    tag: "near",
+    tagLabel: "2–4 jaar",
+    desc: "AI-agenten van aanbieders onderhandelen direct met consumentenprofielen. Wie de toegang tot dat profiel beheert, bepaalt welke aanbiedingen de consument bereiken. TB positioneert zich als de neutrale, consument-gestuurde poortwachter: aanbieders mogen het profiel bevragen en een aanbieding doen — de consument beslist wat hij ziet.",
+    impact: "TB verdient per onderhandeling, niet per aankoop. Dit is structureel anders dan commissiemodellen: TB heeft geen belang bij de winnaar, alleen bij het faciliteren. Dit maakt TB betrouwbaar voor zowel consument als aanbieder. Fee-model: vaste vergoeding per inkomende agent-query op het TB-profiel.",
+    principle: "Vertrouwen boven afhankelijkheid — TB als neutrale infralaag: aanbieders betalen voor toegang, consument behoudt controle. Geen commissie, geen bias."
+  },
+  {
+    id: 16,
+    title: "Pioneer Community als Ontwikkelmethode",
+    tag: "now",
+    tagLabel: "Nu in uitvoering",
+    desc: "TB bouwt parsers niet in isolatie maar samen met bewuste vroege gebruikers — pioneers. Per categorie (aankopen, tanken, uitgaan, reizen, verzekeringen) wordt een nieuwe ronde uitgerold. Pioneers kiezen expliciet mee te werken en kunnen bij elke categorie opnieuw kiezen. De methode is herhaalbaar en schaalt zonder de kernarchitectuur te raken.",
+    impact: "De pioneer-methode versnelt parser-ontwikkeling én bouwt een gemeenschap die eigenaarschap voelt over TB. Elke ronde levert technische data én productinzicht. De bereidheid tot inbox-toegang als expliciete opt-in is een directe meting van gebruikersvertrouwen — data die geen interne sprint kan opleveren.",
+    principle: "Vertrouwen boven afhankelijkheid — pioneers geven toegang omdat ze begrijpen wat ze bouwen. TB groeit door mensen die er iets van henzelf in hebben."
+  },
+  {
+    id: 17,
+    title: "Autonome Levensadministratie",
+    tag: "near",
+    tagLabel: "3–5 jaar",
+    desc: "De opkomst van persoonlijke AI-agenten die de administratieve last van het dagelijks leven overnemen. Gebruikers hoeven niet meer te zoeken, vergelijken of bijhouden — een stille agent doet dat. Alleen bij echte keuzemomententen of handelingen met externe gevolgen wordt de gebruiker aangesproken. De agent werkt vanuit kennis die de gebruiker zelf heeft opgebouwd: contracten, aankopen, afspraken, polissen — een querybaar persoonlijk archief dat de gebruiker toebehoort. Dit is fundamenteel anders dan een assistent (die converseert) of automatisering (die regels uitvoert). De interruptie is de uitzondering, niet de regel.",
+    impact: "TB's profiel wordt het fundament van een stille administratieve agent: niet een assistent die wacht op vragen, maar een systeem dat handelt, vergelijkt en alleen interrupteert voor wat alleen de gebruiker kan beslissen — merkvoorkeur, autorisatie voor externe handelingen, echte ambiguïteit. De neutraliteit van TB — betaling voor profielinteractie vóór de transactie, niet erna — is de architecturele voorwaarde waarop aanbieders dit model vertrouwen.",
+    principle: "Loslaten boven controle — de gebruiker draagt verantwoordelijkheid over aan een systeem dat betrouwbaarder is dan zijn eigen geheugen. Rust boven engagement — de agent spreekt alleen als het ertoe doet."
+  },
+  {
+    id: 18,
+    title: "De Alias Paradox — Blokkering Creëert Marktruimte",
+    tag: "now",
+    tagLabel: "Nu al urgent",
+    verified: true,
+    lastVerified: "2026-03-08",
+    desc: "Webshops blokkeren actief wegwerp-aliassen als fraudepreventie. Tegelijkertijd is er structurele vraag naar een oplossing die het e-mailadres beschermt zonder geblokkeerd te worden. TB's alias — persoonlijk, permanent, geauthentiseerd op eigen domein — is precies die oplossing. De blokkering van slechte aliassen vergroot de marktruimte voor een goede.",
+    impact: "TB communiceert actief dat zijn alias verschilt van wat webshops blokkeren: niet anoniem, niet wegwerp, maar transparant voor de webshop en privé voor de gebruiker. Vereist ook technisch domein-reputatiebeheer — TB's alias-domein mag nooit op een blokkeerlijst belanden. René onderzoekt architectuur (trackandback-lead #279).",
+    principle: "Vertrouwen boven afhankelijkheid — TB's alias is vertrouwd door zowel gebruiker als webshop. Unieke positie tussen twee extremen die beide nadelen hebben."
+  },
+  {
+    id: 15,
+    title: "Verdienmodel: Gratis Kern, Betaalde Uitbreidingen, Agent-fees",
+    tag: "now",
+    tagLabel: "Strategisch fundament",
+    desc: "TB's businessmodel is opgebouwd in drie lagen die elkaar versterken. Laag 1: de basis-app is altijd gratis — niet als freemium-tactiek maar als vertrouwensfundament. De gebruiker wordt nooit gegijzeld en kiest actief elke dag voor TB. Laag 2: betaalde add-ons, tools en uitbreidingen die gebruikers vrijwillig huren voor extra waarde — slim, innovatief, nooit noodzakelijk voor de basis. Upselling verloopt via e-mail, buiten de app-stores, om platform-fees (30%) te vermijden. Laag 3: naarmate meer aankopen via TB lopen, wordt het gebruikersprofiel rijker. AI-agenten van aanbieders betalen een vaste fee voor toegang tot dat profiel. De gebruiker behoudt controle; TB beheert de toegang en incasseert de fee.",
+    impact: "Fase 1 betaalt de ontwikkeling via add-on omzet én bouwt tegelijk het profiel dat fase 2 waardevol maakt. Elke betalende gebruiker versterkt de data-asset die later de agent-fee rechtvaardigt. Dit maakt product en verdienmodel strategisch aligned: de beste manier om morgen te verdienen is vandaag de best mogelijke gratis basis bieden.",
+    principle: "Vertrouwen boven afhankelijkheid — gratis basis is de architectuur van vertrouwen. Rust boven engagement — geen betaalmuur, geen kunstmatige urgentie. Betalen is vrijwillig en op basis van geleverde waarde."
+  },
+  {
+    id: 19,
+    title: "De Vertrouwenstransitie: van Overzicht naar Onzichtbaarheid",
+    tag: "near",
+    tagLabel: "Nu → 5 jaar",
+    desc: "Track & Back's belofte is volledige rust — geen overzichten, geen schermen die gemonitord moeten worden. Maar dat is het eindpunt, niet het startpunt. Mensen zijn gewend aan overzichten; ze zijn een vertrouwd anker. Niets meer kunnen zien voelt niet als rust, maar als verlies van controle. De transitie verloopt in vier fasen: (1) Overzicht als vangnet — gebruiker kán kijken maar hoeft niet. (2) Semantisch zoeken via tekst en spraak — 'Had ik vorige week niet iets besteld?' geeft een rustbrengend antwoord, geen scan. (3) Ambient awareness via Buds — het stemmetje informeert proactief, systeem komt naar de gebruiker. (4) Volledige rust — overzichten zijn overbodig, TB werkt onzichtbaar. Vertrouwen is het mechanisme. Het groeit per fase.",
+    impact: "De transitiefasen geven richting aan de productroadmap én openen een tijdelijk verdienmodel. Elke fase kent add-ons die bij die fase passen: semantisch zoeken als premium functie, Buds-integratie als betaalde uitbreiding, proactieve voice-notificaties. Die add-ons genereren inkomsten in de brug naar het uiteindelijke model — transactiebetalingen door aanbieders voor toegang tot het gebruikersprofiel. De add-ons zijn bewust tijdelijk: zodra het profielmodel voldoende volume heeft, kunnen ze losgelaten worden zonder schade aan het product of de gebruiker. De brug is zichzelf bewust.",
+    principle: "Loslaten boven controle — ook het product zelf maakt een loslaatbeweging: van overzicht naar onzichtbaarheid. Vertrouwen boven afhankelijkheid — elke fase bouwt het vertrouwen dat de volgende fase mogelijk maakt."
+  }
+];
+
+// horizon tag colors
+const H_TAG_DOTS = { now: '#D97706', near: '#1D4ED8', far: '#9CA3AF' };
+
+// GitHub issue nummers per voorspelling (L2-01 t/m L2-12 = #15 t/m #26)
+const PRED_ISSUES = {1:15,2:16,3:17,4:18,5:19,6:20,7:21,8:22,9:23,10:24,11:25,12:26,13:29,14:30,15:37,16:38,17:39,18:40,19:41,20:43,21:44,22:45,23:48,24:49,25:50,26:52};
+
+// ══ KOPPELING L2 ↔ L3 ══
+// cluster-id → [prediction-ids die dit cluster dragen]
+const CLUSTER_PREDS = {
+  1:[11,18,19], 2:[3,11,18], 3:[9,17], 4:[3,11,19], 5:[2,4],
+  6:[11,12], 7:[5,9,16,17], 8:[2,8], 9:[1,7,16,19], 10:[8,12], 11:[9,17], 12:[1,10], 13:[13,14,15], 14:[13,14], 15:[5,10,15,16,17], 16:[2,4,5,7,20,21,22], 18:[4,6,21,23,24,25], 19:[11,18,19,20]
+};
+// cluster-id → GitHub issue nummer
+const CLUSTER_ISSUES = {
+  1:5, 2:6, 3:7, 4:8, 5:9, 6:10, 7:11, 8:12, 9:13, 10:14, 11:27, 12:28, 13:31, 14:32, 15:36, 16:42, 17:46, 18:47, 19:53
+};
+// ══ CLUSTER BRIEFINGS ══
+// cluster-id → meest recente CEO briefing
+const BRIEFINGS = {
+  8: {
+    date: "2026-03-23",
+    status: "active",
+    expertOordeel: "Big Tech geeft je een alias maar bezit hem — TB's differentiatie is eigendom dat je niet kwijtraakt als je van platform wisselt.",
+    watErSpeelt: "Apple Hide My Email en Google Shielded Email normaliseren aliassen, maar beide zijn platform-gebonden: verlaat je Apple of Google, dan verlies je je alias. TB's alias is eigendom — persistent, overdraagbaar, niet gekoppeld aan een platform. De post-eigendomseconomie speelt hier op twee niveaus: consumenten wennen aan managed diensten, maar beginnen ook de afhankelijkheid te voelen.",
+    tbImpact: "TB's sterkste argument tegen Big Tech is niet functionaliteit maar eigendomsstructuur. Dit is nog niet expliciet gecommuniceerd — terwijl het het meest duurzame onderscheid is.",
+    beslissing: {
+      vraag: "Communiceert TB eigendom als expliciete kernwaarde, en wat moet TB technisch garanderen om die belofte waar te maken?",
+      optieA: { label: "Eigendom expliciet claimen", gevolg: "Directe differentiatie op het moment dat consumenten de platformafhankelijkheidsvraag stellen — maar vereist technische garanties (portabiliteit, export, continuïteit)" },
+      optieB: { label: "Eigendom impliciet laten", gevolg: "TB mist het momentum terwijl Big Tech aliassen normaliseert" },
+      aanbeveling: "Optie A — maar eerst bepalen wat TB technisch moet garanderen. Optie A zonder die garantie is een holle belofte."
+    },
+    acties: [
+      { naam: "Gertjan", actie: "Besluit: eigendom als expliciete merkboodschap + bepaal technische garanties die nodig zijn", githubIssue: 57 }
+    ]
+  },
+  1: {
+    date: "2026-03-05",
+    status: "stable",
+    expertOordeel: "Voice rijpt sneller dan verwacht door Apple Intelligence en OpenAI realtime voice — maar de kritische vraag voor TB is nu architectureel, niet strategisch.",
+    watErSpeelt: "Apple Intelligence (iOS 18.3+) geeft Siri via App Intents API toegang tot third-party app-data. OpenAI's realtime voice mode zet een nieuwe kwaliteitsstandaard. Amazon Alexa focust op commerce-taken — exact de ruimte waar TB straks actief is. Ambient earbuds worden in 2026 voor het eerst echt bruikbaar voor praktische taken.",
+    tbImpact: "TB hoeft nog niets te bouwen, maar de architectuurkeuze van vandaag bepaalt of voice over 18 maanden snel kan worden toegevoegd of een rebuild vereist. Kanaalagnostische output is de sleutel.",
+    beslissing: {
+      vraag: "Is TB's huidige output-architectuur kanaalagnostisch genoeg om voice toe te voegen als adapter, of zit de interface-logica verweven in de kern?",
+      optieA: { label: "Output is al kanaalagnostisch", gevolg: "Geen actie nodig; voice is een toekomstige adapter die snel gebouwd kan worden" },
+      optieB: { label: "Output zit verweven in notificatie/e-mail-laag", gevolg: "Nu architectureel loskoppelen vóór verdere feature-bouw" },
+      aanbeveling: "Dezelfde architectuurcheck die voor L3-04 uitstaat dekt ook deze vraag — combineer ze tot één audit."
+    },
+    acties: [
+      { naam: "René", actie: "Architectuurcheck: is TB's event-output kanaalagnostisch? Combineer met L3-04 background audit", githubIssue: 277 },
+      { naam: "Gertjan", actie: "Apple App Intents API monitoren als leading indicator voor voice MVP-moment", githubIssue: 278 }
+    ]
+  },
+  4: {
+    date: "2026-03-04",
+    status: "stable",
+    expertOordeel: "TB is per definitie al een background internet product — de vraag is of de architectuur dat ook echt is.",
+    watErSpeelt: "Background internet als categorie is volledig bevestigd: Apple, Shopify Flow, n8n, Zapier bewegen allemaal richting autonoom werkende background services. De kwaliteitslimiet van deze categorie is uitzonderingsafhandeling — wie dat het beste oplost wint. Het platformrisico (Shopify die post-purchase automation native inbouwt) is reëel maar speelt alleen voor single-platform shoppers.",
+    tbImpact: "TB's positionering is correct en de markt beweegt mee. Wat ontbreekt is de interne architectuuraudit: is TB's MVP echt event-driven, of zijn er flows die de gebruiker nog steeds om interactie vragen? Die vraag moet beantwoord zijn vóór verdere feature-bouw.",
+    beslissing: {
+      vraag: "Is TB's MVP-architectuur al echt background-first, of zijn er flows die de gebruiker nog steeds vragen om iets te doen of te bevestigen?",
+      optieA: { label: "Architectuur is al volledig event-driven", gevolg: "Geen structurele actie nodig; focus op uitzonderingsafhandeling als volgende kwaliteitslaag" },
+      optieB: { label: "MVP heeft nog poll- of interactie-afhankelijkheden", gevolg: "Technische schuld die nu benoemd en geprioriteerd moet worden vóór schaal het verergert" },
+      aanbeveling: "Laat René een expliciete architectuur-audit uitvoeren. De vraag is eenvoudig te beantwoorden maar de consequentie is groot — dit wil je weten vóór nieuwe features worden gebouwd."
+    },
+    acties: [
+      { naam: "René", actie: "Architectuur-audit: is TB event-driven of poll-driven? Welke flows vereisen nog gebruikersinteractie?", githubIssue: 272 },
+      { naam: "Gertjan", actie: "Grens bepalen: waar ligt de grens tussen autonoom afhandelen en de gebruiker notificeren bij uitzonderingen?", githubIssue: 273 }
+    ]
+  },
+  5: {
+    date: "2026-03-23",
+    status: "active",
+    expertOordeel: "De inbox verdwijnt niet snel, maar agenten omzeilen hem — dat maakt TB's architectuurkeuze urgenter dan de tijdlijn doet vermoeden.",
+    watErSpeelt: "Transactionele e-mail blijft tot 2030+ dominant (open rates >50% voor bestelbevestigingen). Maar de agent-economie trekt een parallelle lijn: AI-agenten communiceren direct via APIs — e-mail is de legacy interface die ze omzeilen, niet doorlopen. Nu L2-13 (AI agenten) BEVESTIGD is, wordt TB's tweede intake eerder relevant dan de tijdlijn-verschuiving naar 2030-2037 suggereert.",
+    tbImpact: "TB's e-mailparser is de juiste M1-keuze — dat verandert niet. Maar Shopify-webhooks (lead #268) zijn beschikbaar en onbenut. Elke maand zonder webhook-adapter is een maand dat TB architectureel aan de e-mail-afhankelijkheid vastgekluisterd blijft terwijl de markt klaarstaat.",
+    beslissing: {
+      vraag: "Start René de Shopify-webhook adapter nú als parallelle track, of wacht TB tot M1-e-mail parser volledig stabiel is?",
+      optieA: { label: "Shopify webhook adapter ná M1 parser stabilisatie", gevolg: "Veilig, maar vertraagt architecturele vrijheid met 3–6 maanden" },
+      optieB: { label: "Shopify webhook als parallelle track — beperkte scope", gevolg: "TB bewijst adapter-architectuur vroeg; eerste signaal van channel-agnostic positionering; geen M1-risico" },
+      aanbeveling: "Optie B — begrensde scope, hoge strategische waarde. De adapter hoeft niet productie-klaar te zijn; het bewijst dat de architectuur werkt en geeft René een tastbaar tweede anker naast de parser."
+    },
+    acties: [
+      { naam: "Gertjan", actie: "Beslissing Optie A of B — go/no-go voor Shopify webhook adapter als parallelle track", githubIssue: 41, githubRepo: "product" },
+      { naam: "René", actie: "Scope Shopify webhook MVP (welke events minimaal voor één adapter-test) — koppel aan lead #268", githubIssue: 322 }
+    ]
+  },
+  11: {
+    date: "2026-03-04",
+    status: "active",
+    expertOordeel: "De juridische basis voor TB als actieve data-importeur is er — de EU Data Act is al negen maanden van kracht; de vraag is niet meer óf TB dit kan, maar wanneer en hoe TB de adapter-laag bouwt.",
+    watErSpeelt: "De EU Data Act (van kracht september 2025) geeft consumenten nu het afdwingbare recht om transactionele data op te vragen bij webshops en andere aanbieders. eIDAS 2.0 voegt een gestandaardiseerde identiteitsinfrastructuur toe met nationale implementatiedeadline oktober 2026. De banking sector is drie jaar verder via PSD2 — Tink en Plaid tonen hoe data-portabiliteit in de praktijk werkt. Hetzelfde model is toepasbaar op retail. Big Tech (Google, Meta) verkennen dezelfde Data Act-grondslag — TB's early-mover window sluit.",
+    tbImpact: "TB kan vandaag beginnen met de adapter-laag: de wettelijke grondslag bestaat al. Elke maand zonder adapter-architectuur is een maand waarin de window om early mover te zijn smaller wordt.",
+    beslissing: {
+      vraag: "Start René nu met de architectuuruitwerking van adapter 2 (eIDAS data-import), of wacht TB tot de eIDAS 2.0 nationale implementaties concreter zijn?",
+      optieA: { label: "Nu beginnen op Data Act-grondslag", gevolg: "Eerste data-import feature vóór eIDAS 2.0; early mover positie; banking sector heeft het pad gebaand" },
+      optieB: { label: "Wachten op eIDAS 2.0 implementaties", gevolg: "Lagere technische onzekerheid, maar 6-9 maanden achterstand op mogelijke concurrenten" },
+      aanbeveling: "Optie A — begin met adapter-architectuur op Data Act-grondslag; start reactief (gebruiker vraagt zelf, TB verwerkt) en groei naar proactief zodra de compliance-structuur staat."
+    },
+    acties: [
+      { naam: "René", actie: "Architectuurvoorstel adapter-laag: e-mailparser als adapter 1, Data Act import als adapter 2 (art. 3-5 als startpunt)", githubIssue: 274 },
+      { naam: "Gertjan", actie: "Beslissing: wil TB als 'data trust agent' opereren (juridisch gemachtigd namens gebruiker)? Zo ja: compliance-scan nodig vóór bouw", githubIssue: 35, githubRepo: "visie" },
+      { naam: "Gertjan", actie: "Scan banking sector precedenten (Tink/Plaid model) op toepasbaarheid voor retail data-portabiliteit", githubIssue: 276 }
+    ]
+  }
+};
+
+// prediction-id → [cluster-ids] (automatisch afgeleid)
+const PRED_CLUSTERS = {};
+Object.entries(CLUSTER_PREDS).forEach(([cid, pids]) => {
+  pids.forEach(pid => {
+    if (!PRED_CLUSTERS[pid]) PRED_CLUSTERS[pid] = [];
+    PRED_CLUSTERS[pid].push(parseInt(cid));
+  });
+});
+
+// ══ PREDICTIONS DATA ══
+const PREDICTIONS = [
+  { id:1, title:"Mentale belasting wordt erkend maatschappelijk probleem", verified:'bevestigd', variants:{ conservatief:{scenario:"Blijft niche-bewustzijn tot 2031-Q2 (bandbreedte 2030-Q2 – 2033-Q4). Alleen vroege adopters herkennen het concept; TB moet het probleem actief blijven uitleggen.",implicatie:"Investeer meer in educatieve communicatie. Hogere kosten per nieuwe gebruiker."},neutraal:{scenario:"Alledaags begrip verwacht rond 2028-Q2 (bandbreedte 2027-Q3 – 2029-Q2). TB profiteert van groeiend bewustzijn.",implicatie:"Bouw mee op de golf. Go-to-market gericht op bewuste vroege meerderheid."},progressief:{scenario:"Erkende mainstream consumentencategorie verwacht rond 2027-Q1 (bandbreedte 2026-Q3 – 2027-Q4). TB hoeft het probleem niet meer uit te leggen.",implicatie:"Versnelt go-to-market. Richt je op schaal. Merkbekendheid wordt cruciaal."}}},
+  { id:2, title:"Post-purchase e-mailverkeer neemt toe, niet af", verified:'bevestigd', variants:{ conservatief:{scenario:"Groei vlakt af door regulering en consumer pushback. Mainstream TB-adoptie verwacht rond 2032-Q1 (bandbreedte 2030-Q3 – 2033-Q1). Regulatoire en gedragsdrempels voor alias-adoptie zijn taai.",implicatie:"TB's markt is begrensd maar stabiel. Groei vereist actieve acquisitie. TB positioneert als compliance-partner voor webshops die opt-in moeten aantonen."},neutraal:{scenario:"Gestage groei van 15–25% per jaar in geautomatiseerde post-purchase communicatie. Mainstream adoptie alias-e-mail verwacht rond 2029-Q2 (bandbreedte 2027-Q3 – 2031-Q2). Bredere adoptie volgt 2–3 jaar na mainstream awareness.",implicatie:"De wind zit mee. Zorg dat product en capaciteit meegroeit. TB positioneert nu als de alias-laag die de post-purchase stroom opvangt."},progressief:{scenario:"Exponentiële groei door AI-gegenereerde post-purchase flows. Early adopter-moment verwacht rond 2027-Q2 (bandbreedte 2026-Q1 – 2028-Q4). Volume- en revenue-data tonen het probleem is nú actueel.",implicatie:"TB is urgenter dan ooit. Positionering als alias-laag nu versnellen. Partnership met deliverability-platforms (Klaviyo, Postmark) is logische stap."}}},
+  { id:3, title:"AI-inbox-tools beloven overzicht maar versterken betrokkenheid", verified:'bevestigd', variants:{ conservatief:{scenario:"AI-tools benaderen echte afronding. Het onderscheid tussen overzicht en loslaten vervaagt.",implicatie:"TB moet filosofische differentiatie scherper articuleren."},neutraal:{scenario:"AI-tools groeien snel maar kunnen afronding structureel niet leveren. TB blijft onderscheidend.",implicatie:"Positioneer TB expliciet tegenover AI-inbox-hype."},progressief:{scenario:"AI-tools worden zo veeleisend dat ze de behoefte aan échte loslaten versterken.",implicatie:"TB profiteert van de overcrowded 'meer AI'-markt."}}},
+  { id:4, title:"E-mailaliassen worden mainstream door privacy-trend", verified:'bijgesteld', lastVerified:"2026-03-06", variants:{ conservatief:{scenario:"Adoptie blijft structureel traag door webshop-blokkering en betaalmuur Apple. Aliassen blijven voor tech-savvy gebruikers. Mainstream verwacht rond 2032-Q3 (bandbreedte 2031-Q1 – 2034-Q2).",implicatie:"Onboarding moet aliasconcept blijven uitleggen. TB communiceert actief het verschil tussen een TB-alias (persoonlijk, geauthentiseerd) en wegwerp-aliassen."},neutraal:{scenario:"Organische groei via Proton-ecosysteem en privacy-bewuste early majority. Mainstream verwacht rond 2029-Q2 (bandbreedte 2028-Q2 – 2030-Q4). Webshop-blokkering blijft een wrijvingsfactor maar remt niet fundamenteel.",implicatie:"Onboarding vereenvoudigt geleidelijk. TB positioneert alias als trusted laag — niet anoniem, maar geauthentiseerd en permanent."},progressief:{scenario:"Apple pusht Hide My Email via iOS 19/20 proactief. Mainstream verwacht rond 2027-Q4 (bandbreedte 2027-Q1 – 2028-Q3). OS-integratie maakt aliassen de standaard voor bewuste shoppers.",implicatie:"Focus verschuift van aliasuitleg naar differentiatie ná het alias: wat doet TB met de nazorg? Proton-partnership overwegen voor snellere bereik in privacy-segment."}}},
+  { id:5, title:"Betalen voor digitale rust wordt sociaal geaccepteerd", variants:{ conservatief:{scenario:"Betalingsbereidheid blijft laag. Freemium blijft noodzakelijk.",implicatie:"Sterk freemium product. Betaald model op langetermijnwaarde."},neutraal:{scenario:"Groeiend segment (5–15%) bereid te betalen. Abonnementsbereidheid groeit gestaag.",implicatie:"Gelaagd abonnementsmodel. Waarde positioneren als investering in rust."},progressief:{scenario:"Digital wellness abonnementen worden normaal. TB zit vroeg in een groeiende categorie.",implicatie:"Premium pricing is haalbaar. Inzetten op merkautoriteit."}}},
+  { id:6, title:"Regulering van post-purchase e-mailcommunicatie", variants:{ conservatief:{scenario:"Regulering blijft beperkt. Webshops mogen grotendeels vrij communiceren.",implicatie:"TB kan niet leunen op regulatory tailwind."},neutraal:{scenario:"Lichte aanscherping EU-regels. Meer opt-out verplichtingen.",implicatie:"Regelgeving als communicatieargument: het systeem is kapot."},progressief:{scenario:"Strikte regulering verplicht consent voor post-purchase communicatie.",implicatie:"Ontwikkel B2B propositie als compliance-partner voor webshops."}}},
+  { id:7, title:"Digital minimalism versterkt de bewuste consumentensegment", variants:{ conservatief:{scenario:"Trend blijft niche. Mainstream kiest voor meer apps, meer engagement.",implicatie:"TB richt zich op een bewuste niche. Community-strategie is waardevol."},neutraal:{scenario:"Stabiele groei bij bewuste consument. Digital minimalism blijft een krachtige niche — detox-retreats, app-free weekends en intentioneel leven groeien als markt. Mainstream adopteert het concept niet breed.",implicatie:"Claim nu de niche-autoriteit — niet afwachten op schaal. TB positioneert zich in de detox customer journey: voorbij het retreat, thuis = TB nodig."},progressief:{scenario:"De bewuste consument groeit sneller dan verwacht. Digital minimalism wordt een erkende levensstijlcategorie — niet mainstream, maar significant en groeiend. TB's doelgroep verveelvoudigt binnen de niche.",implicatie:"Niche-autoriteit vertaalt zich naar community-gedreven groei. TB bouwt merk en vertrouwen bij de groep die het hardst groeit — en het meest bereid is te betalen."}}},
+  { id:8, title:"Bezorgfragmentatie neemt toe ondanks marktconsolidatie", variants:{ conservatief:{scenario:"Consolidatie wint. Grote platforms standaardiseren post-purchase communicatie.",implicatie:"Richt TB op multi-webshop shoppers en niche e-commerce."},neutraal:{scenario:"Lichte toename fragmentatie door cross-border en specialistische webshops.",implicatie:"TB blijft relevant voor de brede online shopper."},progressief:{scenario:"Extreme fragmentatie door hyperlocal delivery en social commerce.",implicatie:"TB wordt urgenter. De waarde van één centraal punt neemt exponentieel toe."}}},
+  { id:9, title:"Data-eigenaarschap wordt een consumentenrecht", verified:'bevestigd', variants:{ conservatief:{scenario:"Wetgeving blijft achter. Consumenten passief over data-eigenaarschap.",implicatie:"Data-eigenaarschap is een morele keuze maar geen marktdifferentiator."},neutraal:{scenario:"Geleidelijke verschuiving. Consumenten beginnen actief te vragen naar data-eigenaarschap.",implicatie:"Communiceer data-eigenaarschap prominenter. Data-importeerbaarheid (zie L3-11 / #27) is de concrete productvertaling — benoem het als onderscheidend argument naast exporteerbaarheid."},progressief:{scenario:"Doorbraak in wetgeving. TB's architectuur is hier al op ingericht.",implicatie:"TB heeft structureel compliance-voordeel. Maak data-exporteerbaarheid concreet op de roadmap. Data-importeerbaarheid — het actief ophalen van transactionele data bij webshops als wettelijk recht — is de volgende productstap. Zie L3-11 / #27 voor de architectuuruitwerking."}}},
+  { id:10, title:"Werkgevers ontdekken digitale welzijn als medewerkersbenefit", variants:{ conservatief:{scenario:"B2B-markt blijft klein. HR-budgetten gaan naar traditionele tools.",implicatie:"Geen B2B-investering in vroege fase."},neutraal:{scenario:"Kleine maar groeiende markt. TB kan een B2B2C-pilot opzetten.",implicatie:"Exploreer B2B2C als tweede groeispoor, niet als hoofdfocus."},progressief:{scenario:"Digital wellbeing wordt standaard employment benefit. Werkgevers betalen TB.",implicatie:"Ontwikkel volwaardige B2B2C propositie."}}},
+  { id:11, title:"Voice en ambient computing veranderen informatieconsumptie", variants:{ conservatief:{scenario:"Voice blijft niche. E-mail en app dominant voor 5+ jaar.",implicatie:"Geen investering in voice in vroege fase."},neutraal:{scenario:"Geleidelijke verschuiving. TB's kanaalagnostische architectuur biedt kansen.",implicatie:"Houd architectuur open voor kanaaluitbreiding."},progressief:{scenario:"Ambient computing doorbraak. Post-purchase communicatie verschuift weg van e-mail.",implicatie:"TB positioneert zich als aankoop-intelligentie-laag, ongeacht medium."}}},
+  { id:12, title:"Kleinere webshops zoeken partners voor post-purchase kwaliteit", variants:{ conservatief:{scenario:"Webshops blijven post-purchase intern oplossen.",implicatie:"Geen B2B webshop-strategie in vroege fase."},neutraal:{scenario:"Groeiende interesse van middelgrote webshops.",implicatie:"Pilot met 2–3 webshops. Propositie: geef je klanten rust, niet ruis."},progressief:{scenario:"Post-purchase wordt uitbesteed specialisme. TB wordt e-commerce infrastructuur.",implicatie:"Bouw webshop-API-product. TB wordt platform."}}},
+  { id:13, title:"Aanbieders zetten AI-agenten in voor actieve onderhandeling met consumenten", verified:'bijgesteld', variants:{ conservatief:{scenario:"Regulering en consumentenweerstand remmen opschaling. Massale NL-adoptie verwacht rond 2031-Q4 (bandbreedte 2030-Q2 – 2033-Q2). MKB en traditionele sectoren zijn de vertragers, niet wetgeving zelf.",implicatie:"TB heeft meer architectuurruimte dan gedacht. Richt op tracking-kern en profiel-opbouw; gatekeeper-infrastructuur kan gefaseerd."},neutraal:{scenario:"Grote NL platforms (Booking, Bol) volgen 12–18 maanden na Silicon Valley. Mainstream verwacht rond 2028-Q3 (bandbreedte 2027-Q3 – 2030-Q1). EU AI Act ordent adoptie maar remt niet fundamenteel.",implicatie:"TB-profiel wordt commercieel waardevolle asset. Bouw gestructureerde profiellaag vóór 2027-Q2 — dat venster is eerder dan verwacht."},progressief:{scenario:"MCP/A2A-protocollen zijn al gereed. Vroege adopters NL implementeren nu. Mainstream verwacht rond 2026-Q4 (bandbreedte 2026-Q2 – 2027-Q4). Visa voert al agent-transacties uit.",implicatie:"Het gatekeeper-moment is eerder dan gedacht. Agent-protocol keuze (MCP/A2A) en fee-model validatie zijn beslissingen van nu, niet 2027."}}},
+  { id:14, title:"Consument-agent platforms worden de nieuwe poortwachters van commercieel bereik", verified:'bijgesteld', variants:{ conservatief:{scenario:"Privacyregulering en consumentenwantrouwen remmen brede adoptie. TB als privacy-alternatief is survival-factor. Mainstream verwacht rond 2032-Q2 (bandbreedte 2030-Q4 – 2033-Q4).",implicatie:"TB's privacyarchitectuur is dan een survival-factor, geen groeifactor. Participeer nu in W3C/IETF-standaarden als positioneringsinvestering."},neutraal:{scenario:"Meerdere platforms coëxisteren; gespecialiseerde agents winnen per domein. Mainstream verwacht rond 2028-Q4 (bandbreedte 2027-Q4 – 2030-Q2). EU-regelgeving ordent maar remt niet.",implicatie:"TB's focus op vertrouwen en privacy is een structureel voordeel. Investeer in EU-compliance en positioneer als Europees alternatief voor Google UCP."},progressief:{scenario:"Google UCP live jan 2026. Big tech dominantie volgt zodra retailadoptie scale bereikt. Mainstream verwacht rond 2027-Q1 (bandbreedte 2026-Q1 – 2027-Q3). Consolidatie (Meta/Manus $2B) begonnen.",implicatie:"TB moet positie kiezen: deelnemer in UCP of bewust alternatief. Onvervangbaarheid opbouwen vóórdat acquisitiedruk toeneemt."}}},
+  { id:15, title:"Agentic commerce fee-modellen worden de standaard voor digitale tussenpartijen", variants:{ conservatief:{scenario:"De markt fragmenteert: transactiefee (OpenAI), gratis (Google), access-fee (niche) coëxisteren zonder duidelijke winnaar tot 2031.",implicatie:"TB ondersteunt meerdere fee-varianten; één model is onvoldoende voor brede aanbieder-adoptie."},neutraal:{scenario:"Transactiefees domineren aankopen; access-fees worden de standaard voor profiel-intelligence (targeting, personalisatie). TB zit in het access-segment — gevalideerd rond 2028-Q3.",implicatie:"TB positioneert zich expliciet als 'access, not transaction' — een andere markt dan OpenAI met een sterkere neutraliteitspropositie."},progressief:{scenario:"Google UCP schakelt over naar betaald model in 2026-2027. Access-fee wordt de geaccepteerde standaard. Eerste TB-aanbieder-pilots al mogelijk in 2026. Mainstream 2027-Q1.",implicatie:"Versnelde onboarding van early-adopter aanbieders nog in 2026. TB bouwt fee-infrastructuur nu."}}},
+  { id:16, title:"Gebruikers kiezen bewust voor gratis-altijd-basis boven freemium-beperkingen", variants:{ conservatief:{scenario:"Bewustzijn over freemium-lock-in blijft laag. Gebruikers ervaren het verschil niet; switching cost is de rem. TB's gratis-altijd is filosofisch correct maar extern niet merkbaar differentiërend. Mainstream 2031+.",implicatie:"Marketing richt zich op andere differentiators dan de betalingsstructuur. Gratis basis is intern principe, niet extern verkoopargument."},neutraal:{scenario:"EU DMA-handhaving en media-aandacht voor dark patterns creëren geleidelijk bewustzijn. 'Altijd gratis kern' wordt een herkenbare merkbelofte voor een groeiend segment. Mainstream 2028-Q2.",implicatie:"TB communiceert 'altijd gratis kern' actief als merkbelofte, niet als voetnoot in de FAQ."},progressief:{scenario:"DMA-handhaving dwingt grote platforms dark-pattern-vrije interfaces aan te bieden — educatiegolf volgt. Consumenten kiezen bewust voor eerlijk gratis. Mainstream 2026-Q4.",implicatie:"TB's gratis-altijd principe is een directe DMA-compliance asset. Nu communiceren als strategisch onderscheid."}}},
+  { id:17, title:"Het gebruikersprofiel als eigendomsdata wordt commercieel waardevoller dan platformdata", variants:{ conservatief:{scenario:"Advertentieplatforms behouden dominantie door schaal. Eigendomsprofielen blijven kwalitatief beter maar kwantitatief te klein voor mainstream adoptie. Mainstream 2033+.",implicatie:"TB focust op kwaliteit over kwantiteit; premium niche-markt als eerste stap richting aanbieder-onboarding."},neutraal:{scenario:"EU Data Act verplicht transparantie over profielgebruik. Aanbieders die consent-gebaseerde profielen kunnen tonen krijgen voorkeursbehandeling in EU-markten. TB's profiel is per definitie consent-based. Mainstream 2028-Q4.",implicatie:"TB positioneert EU-compliance als commercieel voordeel bij aanbieder-onboarding. Consent-kwaliteit is het verkoopargument."},progressief:{scenario:"Verdere wetgeving maakt platformdata commercial onbetrouwbaar. Eigendomsdata van de gebruiker wordt de nieuwe goudstandaard voor agentic targeting. Eerste aanbieder-interesse al in 2027-Q2.",implicatie:"TB's profiel is de meest waardevolle asset in het agentic commerce landschap. Versnelde aanbieder-interesse vóór schaalgroei van Big Tech-alternatieven."}}},
+  { id:18, title:"Voice-interfaces voor AI-tools versnellen consumenten-adoptie van spraakinteractie", verified:'bijgesteld', lastVerified:"2026-03-05", variants:{ conservatief:{scenario:"Voice in AI-tools blijft niche voor developers. Spillover naar consumentengedrag is minimaal. Mainstream drempeleffect verwacht rond 2030-Q1 (bandbreedte 2029-Q2 – 2031-Q1).",implicatie:"L3-01 tijdlijn onveranderd. Voice voor TB blijft een 2–4 jaar horizon. Geen versnelling gerechtvaardigd."},neutraal:{scenario:"Claude Code, Cursor en Copilot normaliseren spraakinteractie bij een groeiend techsegment en verlagen de drempel voor voice in consumenten-apps. Mainstream drempeleffect verwacht rond 2027-Q1 (bandbreedte 2026-Q4 – 2027-Q3).",implicatie:"TB's voice MVP (App Intents) eerder relevant dan gedacht bij tech-savvy gebruikerssegment. Architectuur open houden voor spraakkanaal."},progressief:{scenario:"Claude Code voice mode (live maart 2026) versnelt normalisatie van spraak als standaard interactie in professionele én consumenten-context. Mainstream drempeleffect verwacht rond 2026-Q3 (bandbreedte 2026-Q2 – 2026-Q4).",implicatie:"Voice is no longer optional voor TB's early adopter segment. App Intents MVP wordt urgenter. Richting klopt — tijdlijn aangescherpt."}}},
+  { id:20, title:"Consumenten verwachten post-purchase rust voor alle transactiecategorieën", variants:{ conservatief:{scenario:"Consumenten compartimenteren mentaal. Post-purchase rust blijft geassocieerd met pakketten. Uitbreiding vraagt actieve educatie per domein.",implicatie:"Pioneer-rondes per categorie zijn noodzakelijk voor bewustwording. Traag maar mogelijk."},neutraal:{scenario:"Bewuste gebruikers herkennen het patroon na gebruik in één categorie en vragen zelf om uitbreiding. Categoriegroei volgt gebruikersgedrag, niet marketingcampagnes.",implicatie:"Pioneer-rondes bepalen de volgorde. Laat de data spreken: welke categorie vraagt het meest?"},progressief:{scenario:"Gebruikers begrijpen TB van meet af aan als universele nazorg-laag. De categorie is niet e-commerce — de categorie is transacties.",implicatie:"Positioneer TB direct als universeel, niet als pakket-tool. Pioneer-rondes versnellen de bewijslast."}}},
+  { id:21, title:"Gebruikers delen bewust data met diensten die ze vertrouwen en helpen bouwen", variants:{ conservatief:{scenario:"Wantrouwen richting data-delen blijft dominant. Zelfs bij transparante opt-in kiezen de meeste pioneers voor alias-only. Inbox-toegang blijft onder 20% adoptie.",implicatie:"Inbox-toegang is geen schaalbaar acquisitiemodel. Parser-ontwikkeling blijft alias-gedreven."},neutraal:{scenario:"Een bewust segment (30–50% van pioneers) kiest voor inbox-toegang als de ruil helder is. Vertrouwen groeit met elke categorie-ronde.",implicatie:"Inbox-toegang werkt als opt-in ontwikkeltool. Gebruikers die meedoen worden ambassadeurs."},progressief:{scenario:"Bewuste opt-in data-bijdrage wordt geaccepteerde norm bij vertrouwde diensten. Pioneers zien het als eerlijke ruil en halen actief anderen binnen. Inbox-toegang boven 60% adoptie.",implicatie:"Co-creatie als structureel groeimodel. TB's pioneer-aanpak wordt benchmark voor privacy-first productontwikkeling."}}},
+  { id:22, title:"Early-adopter gemeenschappen worden het fundament van organische groei voor vertrouwensproducten", variants:{ conservatief:{scenario:"Community-groei blijft traag en niche. Pioneers bereiken voornamelijk gelijkgestemden. Mond-tot-mond schaalvoordeel pas zichtbaar na 3–5 jaar.",implicatie:"Community is waardevol voor productverbetering maar geen primaire groeistrategie."},neutraal:{scenario:"Pioneers worden aantoonbaar betere ambassadeurs dan betaalde kanalen voor TB's doelgroep. Elke category-ronde breidt de gemeenschap uit met nieuwe, geëngageerde leden.",implicatie:"Investeer in de pioneer-ervaring als primair acquisitiekanaal. Meten: referral-ratio per pioneer-cohort."},progressief:{scenario:"Co-creatie wordt erkend en gewenst model bij digitaal bewuste consumenten. 'Ik heb meegebouwd aan TB' wordt een identiteitsstatement.",implicatie:"Pioneer-community is TB's sterkste onderscheidende groeifactor. Geen marketing die dit kan evenaren."}}},
+  { id:19, title:"Ambient notificaties via earbuds vervangen smartphone push voor praktische updates", lastVerified:"2026-03-05", variants:{ conservatief:{scenario:"Earbud-notificaties blijven niche. Gebruikers willen schermcontrole bij praktische updates. Ambient awareness blijft entertainment-focused. Mainstream: 2032+.",implicatie:"TB blijft primair app-notificaties bouwen. Ambient is geen prioriteit."},neutraal:{scenario:"AirPods en Android-equivalenten maken ambient notificaties voor praktische updates gemeengoed bij 20–30% van TB's doelgroep. Mainstream: 2029-Q2.",implicatie:"TB bouwt ambient-notificatie adapter als tweede uitbreiding na App Intents MVP. Kanaalagnostische architectuur is voorwaarde."},progressief:{scenario:"iOS 19/20 maakt proactieve Siri-notificaties standaard voor geïnstalleerde apps. TB-gebruikers ontvangen post-purchase updates automatisch ambient. Mainstream: 2027-Q1.",implicatie:"TB's ambient notificatie is de meest pure uitdrukking van 'loslaten boven controle'. Versneld kanaalagnostische architectuur bouwen."}}},
+  { id:23, title:"Webshops hanteren standaard email-kwaliteitsscore bij registratie", variants:{ conservatief:{scenario:"Grote platforms voegen email-scoring toe als optionele plugin. Adoptie traag door complexiteit en weerstand van kleinere shops. Standaard pas na 2030.",implicatie:"TB bewaakt proactief dat het alias-domein niet op blocklists belandt. Geen verdere actie noodzakelijk in vroege fase."},neutraal:{scenario:"Shopify, WooCommerce en vergelijkbare platforms bouwen email-kwaliteitsscoring in als standaardinstelling. Webshops hoeven niets te kiezen — het zit er gewoon in. Mainstream 2027–2029.",implicatie:"TB zoekt actief classificatie als 'trusted persistent alias' bij grote verificatiediensten (AbstractAPI, Kickbox, Prospeo) vóór 2027-Q2."},progressief:{scenario:"Google Shielded Email en Apple HME dwingen het gesprek over 'trusted alias' versneld af. Platforms reageren met scoring-APIs binnen 1–2 jaar. Mainstream 2026–2027.",implicatie:"Domein-reputatiebeheer is nu urgent. TB's alias-domein moet vóór 2026-Q2 geclassificeerd zijn bij de toonaangevende verificatiediensten."}}},
+  { id:24, title:"Big Tech normaliseert alias als standaard privacy-laag", variants:{ conservatief:{scenario:"Google Shielded Email blijft beperkt tot Android; Apple HME blijft achter iCloud+ paywall. Mainstream adoptie traag — alias blijft niche voor tech-savvy gebruikers. Mainstream 2028–2031.",implicatie:"TB hoeft zich niet te haasten op concurrentiepositie t.o.v. Big Tech. Eigen positionering op post-purchase focus is voldoende onderscheid."},neutraal:{scenario:"Google lanceert Shielded Email breed, Apple verlaagt drempel voor HME. Alias wordt een bekende optie voor hogere-middenklasse smartphone-gebruiker. Mainstream 2026–2028.",implicatie:"TB differentieert op permanentie, eigendom en post-purchase focus — wat Big Tech aliassen niet bieden. 'Niet afhankelijk van één platform' wordt een eigen positionering."},progressief:{scenario:"Google Shielded Email lanceert snel en breed, wordt standaard bij Android-accountregistratie. Alias wordt de norm voor nieuwe accounts. Mainstream 2025–2026.",implicatie:"TB's timing is precies goed: de markt is voorbereid door Big Tech, maar de post-purchase use case is nog niet ingevuld. Nu versneld positioneren als het specialistisch alternatief."}}},
+  { id:26, title:"Email-verificatie wordt standaard toegangspoort voor alias-gebruik", variants:{ conservatief:{scenario:"Verificatie groeit geleidelijk maar blijft optioneel voor veel webshops. Problemen met alias-forwarding raken principalmente tech-savvy gebruikers. Mainstream 2029–2033.",implicatie:"TB lost ARC-configuratie op als achtergrondtaak. UX-uitleg volstaat voor vroege fase."},neutraal:{scenario:"Email-verificatie wordt de norm bij nieuwe registraties in e-commerce. Aliassen die verificatie-emails niet intact doorsluizen verliezen geloofwaardigheid. TB bouwt verificatie-detectie en fast-path. Mainstream 2027–2029.",implicatie:"ARC-configuratie en parser-bypass voor verificatie-emails worden prioriteit vóór pioneer-lancering. UX-notificatie 'verificatie vereist' wordt standaard feature."},progressief:{scenario:"Verificatie combineert zich met e-mailadres-scoring. Een alias die verificaties niet afrondt krijgt slechte reputatiescore en belandt op blocklists. TB's domein staat direct op het spel. Mainstream 2025–2027.",implicatie:"ARC + fast-path forwarding is blokkerende prioriteit. Elke dag zonder fix is een dag dat het domein reputatie opbouwt als spam trap."}}},
+  { id:25, title:"Email-reputatie wordt een persoonlijk vermogen van de gebruiker", variants:{ conservatief:{scenario:"Reputatie-awareness bij consumenten groeit langzaam. Pas relevant als grote platforms expliciete signalen geven over adreskwaliteit. Niche-concept tot vroege jaren '30. Mainstream 2031–2035.",implicatie:"TB communiceert permanentie als gebruiksgemak, niet als reputatievermogen. Te vroeg voor dit frame."},neutraal:{scenario:"Email-deliverability en reputatiescores worden zichtbaarder voor eindgebruikers via weigeringen of registratie-feedback. Consumenten beginnen te begrijpen dat hun adres een 'score' heeft. Mainstream 2028–2031.",implicatie:"TB introduceert het frame 'adres als vermogen' via content en onboarding. Permanentie wordt een expliciet communicatie-argument."},progressief:{scenario:"Big Tech alias-normalisatie (Apple/Google) versnelt bewustwording. Gebruikers die hun alias verwijderen of vervangen merken concrete gevolgen. TB kan het concept van 'adres als vermogen' vroeg introduceren. Mainstream 2026–2028.",implicatie:"TB positioneert de alias als digitaal eigendom dat waarde opbouwt. 'Loslaten' geldt voor de mentale last, niet voor het adres zelf. Dit frame versterkt de permanentie-propositie structureel."}}}
+];
+
+// ══ VERIFIED META ══
+const VERIFIED_META = {
+  bevestigd:   { icon: '✓', label: 'Bevestigd',   bg: 'linear-gradient(135deg,#065F46 0%,#047857 100%)', border: '#10B981' },
+  weersproken: { icon: '✗', label: 'Weersproken',  bg: 'linear-gradient(135deg,#78350F 0%,#B45309 100%)', border: '#F59E0B' },
+  bijgesteld:  { icon: '↻', label: 'Bijgesteld',   bg: 'linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 100%)', border: '#3B82F6' }
+};
+
+function renderVerifiedBanner() {
+  const container = document.getElementById('verified-banner-container');
+  const vPreds = PREDICTIONS.filter(p => p.verified);
+  const newInsights = CLUSTERS.filter(c => c.verified);
+  if (!vPreds.length && !newInsights.length) { container.innerHTML = ''; return; }
+
+  // Banner kleur: eerste richting als er één is, anders neutraal donker
+  const dirs = [...new Set(vPreds.map(p => p.verified))];
+  const m = dirs.length === 1 ? VERIFIED_META[dirs[0]] : { icon: vPreds.length, bg: 'linear-gradient(135deg,#1A1A18 0%,#2D2D2B 100%)', border: '#4B5563' };
+
+  const predTags = vPreds.map(p => {
+    const vm = VERIFIED_META[p.verified];
+    return `<span class="vbadge vbadge-${p.verified}" style="cursor:pointer;" onclick="goToL2Pred(${p.id})" title="${p.title}">${vm.icon} #V${String(p.id).padStart(2,'0')} ${vm.label}</span>`;
+  }).join('');
+
+  const insightTags = newInsights.map(c =>
+    `<span class="vbadge vbadge-bevestigd" style="cursor:pointer;" onclick="goToL3Cluster(${c.id})" title="${c.title}">💡 L3-${String(c.id).padStart(2,'0')} Nieuw inzicht</span>`
+  ).join('');
+
+  const bannerTitle = vPreds.length === 1
+    ? `Verified Moment — ${vPreds[0].title}`
+    : `${vPreds.length} Verified Momenten`;
+
+  const rightPanel = newInsights.length ? `
+    <div class="verified-banner-right">
+      <div class="verified-banner-insight">
+        <span class="verified-insight-label">Nieuw inzicht geboren uit verified</span>
+        <span class="verified-insight-text">${newInsights[0].title}</span>
+      </div>
+      <div class="verified-banner-links">
+        ${newInsights.map(c => `<span class="verified-link" onclick="goToL3Cluster(${c.id})">→ L3-${String(c.id).padStart(2,'0')} Cluster</span>`).join('')}
+      </div>
+    </div>` : '';
+
+  container.innerHTML = `
+    <div class="verified-banner" style="background:${m.bg};border-bottom:2px solid ${m.border};">
+      <div class="verified-banner-inner">
+        <div class="verified-banner-left">
+          <div class="verified-banner-icon">${m.icon}</div>
+          <div>
+            <div class="verified-banner-title">${bannerTitle}</div>
+            <div class="verified-banner-tags">${predTags}${insightTags}</div>
+          </div>
+        </div>
+        ${rightPanel}
+      </div>
+    </div>`;
+}
+
+// ══ RENDER HORIZON ══
+let horizonFilter = 'all';
+function renderHorizon() {
+  const container = document.getElementById('h-clusters-container');
+  const filterBar = document.getElementById('h-filter-bar');
+
+  // Filter bar
+  const filters = [
+    { key: 'all', label: 'Alle clusters' },
+    { key: 'now', label: 'Nu al relevant' },
+    { key: 'near', label: '2–4 jaar' },
+    { key: 'far', label: '5–10 jaar' }
+  ];
+  filterBar.innerHTML = filters.map(f =>
+    `<button class="h-filter-btn ${horizonFilter===f.key?'h-active':''}" onclick="setHorizonFilter('${f.key}')">${f.label}</button>`
+  ).join('');
+
+  const visible = CLUSTERS.filter(c => horizonFilter === 'all' || c.tag === horizonFilter);
+  container.innerHTML = visible.map(c => `
+    <div class="h-card${c.verified ? ' h-card-verified' : ''}">
+      <div class="h-card-head">
+        <span class="h-card-num">#${String(c.id).padStart(2,'0')}</span>
+        <div class="h-card-meta">
+          <div class="h-card-title" style="display:flex;align-items:center;gap:8px;">
+            ${c.title}
+            ${c.verified ? `<span class="h-verified-badge">✓ Nieuw Inzicht</span>` : ''}
+            <span style="font-size:10px;color:var(--muted);font-weight:500;" title="GitHub issue #${CLUSTER_ISSUES[c.id]}">GH#${CLUSTER_ISSUES[c.id]}</span>
+          </div>
+          <span class="h-card-tag tag-${c.tag}">${c.tagLabel}</span>
+        </div>
+      </div>
+      <div class="h-card-body">
+        <div class="h-card-desc">${c.desc}</div>
+        <div class="h-card-impact">
+          <div class="h-card-impact-label">TB Impact</div>
+          ${c.impact}
+        </div>
+        <div class="h-card-horizon">
+          <span class="h-horizon-dot" style="background:${H_TAG_DOTS[c.tag]}"></span>
+          <span><strong style="color:var(--text);">Fundament:</strong> ${c.principle}</span>
+        </div>
+        ${(() => {
+          const preds = CLUSTER_PREDS[c.id] || [];
+          if (!preds.length) return '';
+          const tags = preds.map(pid => {
+            const p = PREDICTIONS.find(x => x.id === pid);
+            return `<span class="h-pred-tag" onclick="goToL2Pred(${pid})" title="${p ? p.title : ''}">#V${String(pid).padStart(2,'0')}</span>`;
+          }).join('');
+          return `<div class="h-card-preds"><span class="h-pred-label">Gedragen door</span>${tags}</div>`;
+        })()}
+        ${c.briefingStatus ? (() => {
+          const bColors = { urgent: '#EF4444', active: '#F59E0B', stable: '#10B981' };
+          const bLabels = { urgent: 'Urgent', active: 'Actief', stable: 'Stabiel' };
+          const d = new Date(c.lastBriefing);
+          const dateStr = d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: '2-digit' });
+          return `<div class="h-briefing-row bm-badge-clickable" onclick="openBriefingModal(${c.id})"><span class="h-briefing-dot" style="background:${bColors[c.briefingStatus]}"></span><span class="h-briefing-label">Expert briefing · ${bLabels[c.briefingStatus]}</span><span class="h-briefing-date">${dateStr} ›</span></div>`;
+        })() : ''}
+      </div>
+    </div>`).join('');
+}
+function setHorizonFilter(f) { horizonFilter = f; renderHorizon(); }
+
+// ══ STATE ══
+function loadState() { try { const s = localStorage.getItem('tb-visie-v2'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
+function saveState() { localStorage.setItem('tb-visie-v2', JSON.stringify(state)); const now = new Date(); document.getElementById('savedAt').textContent = 'Opgeslagen ' + now.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}); }
+const stored = loadState();
+const state = { variants: stored.variants || Object.fromEntries(PREDICTIONS.map(p=>[p.id,'neutraal'])), decisions: stored.decisions || [], collapsed: stored.collapsed || {}, nextDecId: stored.nextDecId || 1, pijlerTabs: stored.pijlerTabs || {1:'commercieel',2:'commercieel',3:'commercieel'} };
+
+// ══ RENDER FUNDAMENT ══
+function renderFundament() {
+  const container = document.getElementById('f-pijlers-container');
+  container.innerHTML = PIJLERS.map(p => {
+    const activeTab = state.pijlerTabs[p.id] || 'commercieel';
+    return `
+    <div class="f-pijler">
+      <div class="f-pijler-head">
+        <div class="f-pijler-num">Pijler ${p.id}</div>
+        <div class="f-pijler-title">${p.title}</div>
+        <div class="f-pijler-sub">${p.sub}</div>
+      </div>
+      <div class="f-pijler-tabs">
+        <button class="f-tab commercieel ${activeTab==='commercieel'?'active':''}" onclick="setPijlerTab(${p.id},'commercieel')">Commercieel</button>
+        <button class="f-tab filosofie ${activeTab==='filosofie'?'active':''}" onclick="setPijlerTab(${p.id},'filosofie')">Filosofie</button>
+      </div>
+      <div class="f-pijler-body ${activeTab==='commercieel'?'':'hidden'}" id="p${p.id}-commercieel">${p.commercieel}</div>
+      <div class="f-pijler-body ${activeTab==='filosofie'?'':'hidden'}" id="p${p.id}-filosofie">${p.filosofie}</div>
+    </div>`;
+  }).join('');
+}
+
+function setPijlerTab(pijlerId, tab) {
+  state.pijlerTabs[pijlerId] = tab;
+  saveState();
+  const tabs = document.querySelectorAll(`.f-pijler:nth-child(${pijlerId}) .f-tab`);
+  tabs.forEach(t => { t.classList.toggle('active', t.classList.contains(tab)); });
+  document.getElementById(`p${pijlerId}-commercieel`).classList.toggle('hidden', tab !== 'commercieel');
+  document.getElementById(`p${pijlerId}-filosofie`).classList.toggle('hidden', tab !== 'filosofie');
+}
+
+// ══ RENDER PREDICTIONS ══
+let currentFilter = 'all';
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  let visible = 0;
+  PREDICTIONS.forEach(pred => {
+    const active = state.variants[pred.id] || 'neutraal';
+    if (!state.variants[pred.id]) state.variants[pred.id] = 'neutraal';
+    if (currentFilter !== 'all' && active !== currentFilter) return;
+    visible++;
+    const collapsed = state.collapsed[pred.id] ? 'collapsed' : '';
+    const v = pred.variants[active];
+    const card = document.createElement('div');
+    card.className = `card ${collapsed}`;
+    card.id = `card-${pred.id}`;
+    const clusterIds = PRED_CLUSTERS[pred.id] || [];
+    const clusterTags = clusterIds.length
+      ? `<div class="pred-cluster-row"><span class="pred-cluster-label">L3</span>${clusterIds.map(cid=>`<span class="pred-cluster-tag" onclick="goToL3Cluster(${cid})" title="L3-${String(cid).padStart(2,'0')}">L3-${String(cid).padStart(2,'0')}</span>`).join('')}</div>`
+      : '';
+    const issueNum = PRED_ISSUES[pred.id];
+    if (pred.verified) card.classList.add(`card-v-${pred.verified}`);
+    const vm = pred.verified ? VERIFIED_META[pred.verified] : null;
+    card.innerHTML = `
+      <div class="card-head" onclick="toggleCard(${pred.id})">
+        <span class="card-num">#${String(pred.id).padStart(2,'0')}</span>
+        <span class="card-title">${pred.title}</span>
+        <span class="card-badge badge-${active[0]}">${cap(active)}</span>
+        ${vm ? `<span class="vbadge vbadge-${pred.verified}">${vm.icon} ${vm.label}</span>` : ''}
+        ${issueNum ? `<span style="font-size:10px;color:var(--muted);font-weight:500;flex-shrink:0;" title="GitHub issue #${issueNum}">GH#${issueNum}</span>` : ''}
+        ${pred.lastVerified ? `<span style="font-size:10px;color:var(--muted);flex-shrink:0;" title="Laatste signaalcheck: ${pred.lastVerified}">↺ ${pred.lastVerified.slice(8)}-${pred.lastVerified.slice(5,7)}</span>` : ''}
+        <span class="card-chevron">▶</span>
+      </div>
+      <div class="card-body">
+        <div class="variant-tabs">
+          ${['conservatief','neutraal','progressief'].map(vn=>`<button class="v-tab ${active===vn?'sel-'+vn[0]:''}" onclick="setVariant(${pred.id},'${vn}',event)">${cap(vn)}</button>`).join('')}
+        </div>
+        <div class="v-content ${active[0]}">
+          <div class="v-scenario">${pred.variants[active].scenario}</div>
+          <div class="v-impl"><strong>Implicatie:</strong> ${pred.variants[active].implicatie}</div>
+        </div>
+        ${clusterTags}
+      </div>`;
+    container.appendChild(card);
+  });
+  document.getElementById('filter-count').textContent = currentFilter==='all' ? `${visible} voorspellingen` : `${visible} van ${PREDICTIONS.length}`;
+  updateSidebarStats();
+}
+
+function setVariant(predId, variant, event) { event.stopPropagation(); state.variants[predId]=variant; delete state.collapsed[predId]; saveState(); renderCards(); }
+function toggleCard(predId) { state.collapsed[predId]=!state.collapsed[predId]; if(!state.collapsed[predId]) delete state.collapsed[predId]; saveState(); const c=document.getElementById(`card-${predId}`); if(c) c.classList.toggle('collapsed'); }
+function filterCards(f) {
+  currentFilter=f;
+  ['all','c','n','p'].forEach(x=>document.getElementById(`fb-${x}`).className='filter-btn');
+  const map={all:'on-n',c:'on-c',n:'on-n',p:'on-p'};
+  document.getElementById(`fb-${f==='conservatief'?'c':f==='neutraal'?'n':f==='progressief'?'p':'all'}`).className=`filter-btn ${map[f==='conservatief'?'c':f==='neutraal'?'n':f==='progressief'?'p':'all']}`;
+  renderCards();
+}
+
+// ══ DECISIONS ══
+function renderDecisions() {
+  const container = document.getElementById('decisions-container');
+  document.getElementById('dec-badge').textContent = state.decisions.length;
+  if (!state.decisions.length) { container.innerHTML=`<div class="empty"><div class="empty-icon">◎</div><div class="empty-title">Nog geen beslissingen</div><div class="empty-sub">Voeg een beslissing toe en koppel deze aan de relevante voorspellingen.</div></div>`; return; }
+  container.innerHTML = '';
+  state.decisions.forEach(dec => {
+    const statusClass={open:'s-open',lopend:'s-lopend',besloten:'s-besloten'}[dec.status];
+    const statusLabel={open:'Open',lopend:'In behandeling',besloten:'Besloten'}[dec.status];
+    const linkedTags=(dec.linked||[]).map(pid=>{const v=state.variants[pid];return `<span class="pred-tag tag-${v[0]}">#${String(pid).padStart(2,'0')} · ${cap(v)}</span>`;}).join('');
+    const card=document.createElement('div'); card.className='dec-card';
+    card.innerHTML=`<div class="dec-head"><span class="dec-title">${esc(dec.title)}</span><span class="dec-status ${statusClass}">${statusLabel}</span></div>${linkedTags?`<div class="dec-linked">Voorspellingen: ${linkedTags}</div>`:''} ${dec.notes?`<div class="dec-notes">${esc(dec.notes)}</div>`:''}<div class="dec-date">Aangemaakt: ${dec.date}</div><div class="dec-actions"><button class="btn-sm" onclick="openModal(${dec.id})">Bewerken</button><button class="btn-sm del" onclick="deleteDecision(${dec.id})">Verwijderen</button></div>`;
+    container.appendChild(card);
+  });
+}
+
+// ══ SUMMARY ══
+function renderSummary() {
+  const c=Object.values(state.variants).filter(v=>v==='conservatief').length;
+  const n=Object.values(state.variants).filter(v=>v==='neutraal').length;
+  const p=Object.values(state.variants).filter(v=>v==='progressief').length;
+  const dominant=c>=n&&c>=p?'conservatief':n>=p?'neutraal':'progressief';
+  const openDecs=state.decisions.filter(d=>d.status==='open').length;
+  const dir={conservatief:`<p>Het dominante scenario is <strong>conservatief</strong>. De markt valideert TB's propositie niet vanzelf. TB bouwt aan een solide niche. Focus op retentie boven acquisitie, lage burn en bewijs van concept vóór schaal.</p>`,neutraal:`<p>Het dominante scenario is <strong>neutraal</strong>. De markt beweegt in de goede richting maar niet automatisch naar TB. Groei is haalbaar mits TB consistent zijn propositie waarmaakt. Methodisch bouwen, met ruimte voor opportunisme.</p>`,progressief:`<p>Het dominante scenario is <strong>progressief</strong>. Externe ontwikkelingen werken in TB's voordeel. De window of opportunity is korter. Versnellen op de punten die schaal mogelijk maken.</p>`}[dominant];
+  document.getElementById('summary-container').innerHTML=`
+    <div class="sum-grid">
+      <div class="sum-stat"><div class="sum-stat-num stat-c">${c}</div><div class="sum-stat-lbl">Conservatief</div></div>
+      <div class="sum-stat"><div class="sum-stat-num stat-n">${n}</div><div class="sum-stat-lbl">Neutraal</div></div>
+      <div class="sum-stat"><div class="sum-stat-num stat-p">${p}</div><div class="sum-stat-lbl">Progressief</div></div>
+    </div>
+    <div class="sum-section"><div class="sum-title">Strategische richting</div><div class="sum-direction">${dir}</div></div>
+    <div class="sum-section"><div class="sum-title">Alle voorspellingen</div>${PREDICTIONS.map(pred=>{const v=state.variants[pred.id];return `<div class="sum-row"><span class="sum-num">#${String(pred.id).padStart(2,'0')}</span><span class="sum-pred-title">${pred.title}</span><span class="sum-var sv-${v[0]}">${cap(v)}</span></div>`;}).join('')}</div>
+    ${state.decisions.length?`<div class="sum-section"><div class="sum-title">Beslissingen (${state.decisions.length} totaal, ${openDecs} open)</div>${state.decisions.map(dec=>{const sc={open:'s-open',lopend:'s-lopend',besloten:'s-besloten'}[dec.status];const sl={open:'Open',lopend:'In behandeling',besloten:'Besloten'}[dec.status];return `<div class="sum-row"><span class="sum-pred-title">${esc(dec.title)}</span><span class="dec-status ${sc}" style="font-size:11px;">${sl}</span></div>`;}).join('')}</div>`:``}`;
+}
+
+function updateSidebarStats() {
+  const l2=document.getElementById('l2-badge'); if(l2) l2.textContent=PREDICTIONS.length;
+  const l3=document.getElementById('l3-badge'); if(l3) l3.textContent=CLUSTERS.length;
+  const c=Object.values(state.variants).filter(v=>v==='conservatief').length;
+  const n=Object.values(state.variants).filter(v=>v==='neutraal').length;
+  const p=Object.values(state.variants).filter(v=>v==='progressief').length;
+  const vB=PREDICTIONS.filter(pr=>pr.verified==='bevestigd').length;
+  const vW=PREDICTIONS.filter(pr=>pr.verified==='weersproken').length;
+  const vBij=PREDICTIONS.filter(pr=>pr.verified==='bijgesteld').length;
+  const vTotal=vB+vW+vBij;
+  const verifiedRows = vTotal ? `
+    <div class="stat-row" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;font-weight:600;"><span>Verified</span><span class="stat-val">${vTotal}</span></div>
+    ${vB   ? `<div class="stat-row" style="padding-left:8px;"><span style="color:#059669;">✓ Bevestigd</span><span class="stat-val" style="color:#059669;">${vB}</span></div>` : ''}
+    ${vW   ? `<div class="stat-row" style="padding-left:8px;"><span style="color:#D97706;">✗ Weersproken</span><span class="stat-val" style="color:#D97706;">${vW}</span></div>` : ''}
+    ${vBij ? `<div class="stat-row" style="padding-left:8px;"><span style="color:#2563EB;">↻ Bijgesteld</span><span class="stat-val" style="color:#2563EB;">${vBij}</span></div>` : ''}` : '';
+  document.getElementById('sidebar-stats').innerHTML=`<div class="legend-title" style="margin-bottom:8px;">Verdeling L2</div><div class="stat-row"><span>Conservatief</span><span class="stat-val stat-c">${c}</span></div><div class="stat-row"><span>Neutraal</span><span class="stat-val stat-n">${n}</span></div><div class="stat-row"><span>Progressief</span><span class="stat-val stat-p">${p}</span></div>${verifiedRows}<div class="stat-row" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;"><span>Beslissingen</span><span class="stat-val">${state.decisions.length}</span></div>`;
+}
+
+// ══ MODAL ══
+function openModal(decId) {
+  const overlay=document.getElementById('modal-overlay');
+  const dec=decId?state.decisions.find(d=>d.id===decId):null;
+  document.getElementById('modal-title').textContent=dec?'Beslissing bewerken':'Beslissing toevoegen';
+  document.getElementById('edit-id').value=dec?dec.id:'';
+  document.getElementById('f-title').value=dec?dec.title:'';
+  document.getElementById('f-status').value=dec?dec.status:'open';
+  document.getElementById('f-notes').value=dec?(dec.notes||''):'';
+  const grid=document.getElementById('pred-checkboxes'); grid.innerHTML='';
+  PREDICTIONS.forEach(pred=>{const checked=dec&&dec.linked&&dec.linked.includes(pred.id);const label=document.createElement('label');label.className=`pred-check${checked?' on':''}`;label.innerHTML=`<input type="checkbox" value="${pred.id}" ${checked?'checked':''}><span class="pred-check-num">#${String(pred.id).padStart(2,'0')}</span><span style="flex:1;font-size:12px;line-height:1.3;">${pred.title}</span>`;label.querySelector('input').addEventListener('change',function(){label.classList.toggle('on',this.checked);});grid.appendChild(label);});
+  overlay.classList.add('open');
+  document.getElementById('f-title').focus();
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOnOverlay(e) { if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+// ══ BRIEFING MODAL ══
+function openBriefingModal(clusterId) {
+  const b = BRIEFINGS[clusterId];
+  if (!b) return;
+  const cluster = CLUSTERS.find(c => c.id === clusterId);
+  if (!cluster) return;
+
+  const bColors = { urgent: '#EF4444', active: '#F59E0B', stable: '#10B981' };
+  const bLabels = { urgent: '🔴 Urgent', active: '🟡 Actief', stable: '🟢 Stabiel' };
+  const d = new Date(b.date);
+  const dateStr = d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
+  const naamClass = n => n === 'René' ? 'naam-rene' : n === 'CEO' ? 'naam-ceo' : n === 'Timo' ? 'naam-timo' : '';
+
+  document.getElementById('bm-status-dot').style.background = bColors[b.status];
+  document.getElementById('bm-cluster-label').textContent = `L3-${String(clusterId).padStart(2,'0')} · ${bLabels[b.status]}`;
+  document.getElementById('bm-date').textContent = dateStr;
+  document.getElementById('bm-cluster-title').textContent = cluster.title;
+  document.getElementById('bm-expert-oordeel').textContent = b.expertOordeel;
+  document.getElementById('bm-wat-er-speelt').textContent = b.watErSpeelt;
+  document.getElementById('bm-tb-impact').textContent = b.tbImpact;
+  document.getElementById('bm-vraag').textContent = b.beslissing.vraag;
+  document.getElementById('bm-opties').innerHTML = `
+    <div class="bm-optie"><span class="bm-optie-letter">A</span><span class="bm-optie-body"><strong>${b.beslissing.optieA.label}</strong> — <span class="bm-optie-gevolg">${b.beslissing.optieA.gevolg}</span></span></div>
+    <div class="bm-optie"><span class="bm-optie-letter">B</span><span class="bm-optie-body"><strong>${b.beslissing.optieB.label}</strong> — <span class="bm-optie-gevolg">${b.beslissing.optieB.gevolg}</span></span></div>`;
+  document.getElementById('bm-aanbeveling').innerHTML = `<strong>Aanbeveling:</strong> ${b.beslissing.aanbeveling}`;
+  document.getElementById('bm-acties').innerHTML = b.acties.map(a => {
+    const ghRepo = a.githubRepo === 'visie' ? 'GertjanAntonisse/trackandback-visie' : 'triadflow/trackandback-lead';
+    const ghLink = a.githubIssue
+      ? `<a href="https://github.com/${ghRepo}/issues/${a.githubIssue}" target="_blank" class="bm-gh-link">#${a.githubIssue}</a>`
+      : '';
+    return `<div class="bm-actie"><input type="checkbox" class="bm-actie-checkbox"><span class="bm-actie-naam ${naamClass(a.naam)}">${a.naam}</span><span class="bm-actie-tekst">${a.actie}</span>${ghLink}</div>`;
+  }).join('');
+
+  document.getElementById('bm-overlay').classList.add('open');
+}
+function closeBriefingModal() { document.getElementById('bm-overlay').classList.remove('open'); }
+function closeBriefingModalOnOverlay(e) { if(e.target===document.getElementById('bm-overlay')) closeBriefingModal(); }
+function saveDecision() {
+  const title=document.getElementById('f-title').value.trim(); if(!title){document.getElementById('f-title').focus();return;}
+  const status=document.getElementById('f-status').value;
+  const notes=document.getElementById('f-notes').value.trim();
+  const linked=Array.from(document.querySelectorAll('#pred-checkboxes input:checked')).map(el=>parseInt(el.value));
+  const editId=document.getElementById('edit-id').value;
+  if(editId){const dec=state.decisions.find(d=>d.id===parseInt(editId));if(dec){dec.title=title;dec.status=status;dec.notes=notes;dec.linked=linked;}}
+  else{state.decisions.push({id:state.nextDecId++,title,status,notes,linked,date:new Date().toLocaleDateString('nl-NL')});}
+  saveState(); closeModal(); renderDecisions(); updateSidebarStats();
+}
+function deleteDecision(decId) { if(!confirm('Beslissing verwijderen?'))return; state.decisions=state.decisions.filter(d=>d.id!==decId); saveState(); renderDecisions(); updateSidebarStats(); }
+
+// ══ CROSS-LAYER NAVIGATION ══
+function goToL2Pred(predId) {
+  const navItem = document.querySelector('.nav-item:not(.fundament-nav)');
+  const allNavItems = document.querySelectorAll('.nav-item');
+  // find the Laag 2 nav item
+  allNavItems.forEach(n => {
+    if (n.textContent.includes('Laag 2')) showView('voorspellingen', n);
+  });
+  setTimeout(() => {
+    const card = document.getElementById(`card-${predId}`);
+    if (card) {
+      if (card.classList.contains('collapsed')) toggleCard(predId);
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.style.outline = '2px solid #D97706';
+      setTimeout(() => card.style.outline = '', 1500);
+    }
+  }, 80);
+}
+function goToL3Cluster(clusterId) {
+  const allNavItems = document.querySelectorAll('.nav-item');
+  allNavItems.forEach(n => {
+    if (n.textContent.includes('Laag 3')) showView('horizon', n);
+  });
+  setTimeout(() => {
+    setHorizonFilter('all');
+    const cards = document.querySelectorAll('.h-card');
+    const target = cards[clusterId - 1];
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.style.outline = '2px solid #7C3AED';
+      setTimeout(() => target.style.outline = '', 1500);
+    }
+  }, 80);
+}
+
+// ══ NAVIGATION ══
+function showView(name, el) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='samenvatting') renderSummary();
+  if(name==='beslissingen') renderDecisions();
+  if(name==='horizon') renderHorizon();
+}
+
+// ══ UTILS ══
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ══ INIT ══
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeBriefingModal();}});
+document.getElementById('l2-badge').textContent = PREDICTIONS.length;
+document.getElementById('l3-badge').textContent = CLUSTERS.length;
+renderVerifiedBanner();
+renderFundament();
+filterCards('all');
+renderHorizon();
+updateSidebarStats();
+document.getElementById('savedAt').textContent='Lokaal opgeslagen';
+(function(){
+  const DOEL = 10;
+  const el = document.getElementById('betalerCirkel');
+  if(!el) return;
+  const n = parseInt(el.textContent, 10) || 0;
+  if(n >= DOEL) el.classList.add('heeft-betalers');
+})();
+</script>
+</body>
+</html>

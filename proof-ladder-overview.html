@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof Ladder Overview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f8f8; color: #1a1a1a; padding: 32px; line-height: 1.5; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 32px; }
+
+  .flow { display: flex; flex-direction: column; gap: 0; max-width: 900px; margin: 0 auto; }
+  .arrow { text-align: center; font-size: 20px; color: #999; line-height: 28px; user-select: none; }
+  .arrow-label { text-align: center; font-size: 12px; color: #666; line-height: 20px; }
+  .parallel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: #999; margin-top: 28px; margin-bottom: 10px; padding-left: 4px;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  .block {
+    border: 2px solid #ccc; border-radius: 8px;
+    padding: 16px 20px; background: #fff; position: relative;
+  }
+  .block h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .block p { font-size: 13px; color: #444; }
+  .block .progress { margin-top: 6px; font-size: 12px; padding: 8px 12px; border-radius: 4px; background: #fefef5; border-left: 3px solid #e0d8a8; }
+  .block .progress[data-tone="positive"] { color: #155724; background: #f0faf2; border-left-color: #28a745; }
+  .block .progress[data-tone="warning"] { color: #856404; background: #fffdf0; border-left-color: #ffc107; }
+  .block .progress[data-tone="negative"] { color: #721c24; background: #fff5f5; border-left-color: #dc3545; }
+  .refs { font-size: 11px; color: #888; margin-top: 8px; }
+  .refs a { color: #0969da; text-decoration: none; }
+  .refs a:hover { text-decoration: underline; }
+  .block-updated { font-size: 10px; color: #aaa; float: right; margin-top: -2px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.92em; background: #f6f8fb; border: 1px solid #e1e7ef; padding: 1px 5px; border-radius: 5px; }
+
+  .status {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle;
+  }
+  .status-built { background: #d4edda; color: #155724; }
+  .status-partial { background: #fff3cd; color: #856404; }
+  .status-not-built { background: #f0f0f0; color: #666; }
+  .status-gap { background: #f8d7da; color: #721c24; }
+  .status-blocked { background: #e2d6f3; color: #4a2578; }
+
+  .block.built { border-color: #28a745; border-left-width: 5px; }
+  .block.partial { border-color: #ffc107; border-left-width: 5px; }
+  .block.not-built { border-color: #ccc; border-left-width: 5px; background: #fafafa; }
+  .block.gap { border-color: #dc3545; border-left-width: 5px; border-style: dashed; background: #fff5f5; }
+  .block.blocked { border-color: #7b4fbf; border-left-width: 5px; border-style: dashed; background: #f9f5ff; }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; max-width: 900px; margin-left: auto; margin-right: auto; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #555; }
+  .legend-swatch { width: 20px; height: 12px; border-radius: 3px; border: 2px solid; }
+  .legend-swatch.sw-built { border-color: #28a745; background: #fff; }
+  .legend-swatch.sw-partial { border-color: #ffc107; background: #fff; }
+  .legend-swatch.sw-not-built { border-color: #ccc; background: #fafafa; }
+  .legend-swatch.sw-gap { border-color: #dc3545; background: #fff5f5; border-style: dashed; }
+  .legend-swatch.sw-blocked { border-color: #7b4fbf; background: #f9f5ff; border-style: dashed; }
+
+  .summary { margin-top: 48px; max-width: 900px; margin-left: auto; margin-right: auto; }
+  .summary h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+  .summary table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .summary th { padding: 8px 12px; text-align: left; border-bottom: 2px solid #ddd; }
+  .summary td { padding: 8px 12px; border-bottom: 1px solid #eee; vertical-align: top; }
+
+  .gaps { margin: 32px auto 0; padding: 16px 20px; border: 2px dashed #dc3545; border-radius: 8px; background: #fff5f5; max-width: 900px; }
+  .gaps h2 { font-size: 14px; font-weight: 600; color: #721c24; margin-bottom: 8px; }
+  .gaps ul { font-size: 13px; color: #444; padding-left: 20px; }
+  .gaps li { margin-bottom: 4px; }
+
+  @media (max-width: 640px) {
+    .parallel { grid-template-columns: 1fr; }
+    body { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<script type="application/json" id="doc-meta">
+{
+  "title": "Proof Ladder Overview",
+  "repo": "triadflow/trackandback-parser-mvp",
+  "updated": "2026-04-03",
+  "statuses": ["built", "partial", "not-built", "gap", "blocked"],
+  "blocks": [
+    {
+      "id": "proof-operating-model",
+      "name": "Operating Model Defined",
+      "status": "built",
+      "tickets": ["#129", "#135", "#143", "#144"],
+      "note": "The intended operating model is explicit in the epics, acceptance tickets, and architecture docs: real failed email, live queue/API claim, same-run local inference from the claimed .eml, iterate until the relevant local suite is 100% green, then operator apply, deploy, replay."
+    },
+    {
+      "id": "shop-scoped-graph-execution",
+      "name": "Shared Runtime, Per-Shop Programs",
+      "status": "built",
+      "tickets": ["#129", "#143", "#144"],
+      "note": "The system already runs as one interpreter with many per-shop programs: a shared generic runtime executes one selected shop/profile graph at a time. A proof run therefore proves one shop program under the shared interpreter, not global stability."
+    },
+    {
+      "id": "architecture-enforcement",
+      "name": "Architecture Enforcement Of Iterate-To-Green",
+      "status": "built",
+      "tickets": ["#129", "#130", "#143", "#144"],
+      "note": "The architecture docs describe bounded iterate-to-pass, and the orchestration now enforces it in the staged proof runner and the bridge runtime: when post-state tests remain red, the next same-run pass is launched with the latest failing test output and extract state fed back in until green or bounded budget exhaustion."
+    },
+    {
+      "id": "runtime-gap-handoff",
+      "name": "Generic Runtime Gap Handoff",
+      "status": "built",
+      "tickets": ["#129", "#130", "#143", "#144", "#151"],
+      "note": "The shop-specific end state should still be graph-defined when the current generic runtime can support a valid graph expression. Same-run inference may assess that a failure looks blocked by generic runtime semantics and may draft the platform-gap ticket, but that is only a diagnosis candidate. The gap is only confirmed when a matching shared-runtime reproduction also fails."
+    },
+    {
+      "id": "proof-integrity",
+      "name": "Proof Integrity Guardrails",
+      "status": "built",
+      "tickets": ["#129", "#130", "#131", "#135", "#143", "#144"],
+      "note": "Manual parser/runtime/graph edits, reused proposals or inference logs, and deploy/replay before local green are explicitly disallowed."
+    },
+    {
+      "id": "inference-visibility",
+      "name": "Inference-Time Visibility",
+      "status": "built",
+      "tickets": ["#130", "#131", "#143", "#144"],
+      "note": "Inference-time reasoning and tool calling are now recognized as essential operating visibility, not optional debugging detail. The primary local inference path is now Codex. New runs keep a direct Codex event transcript as a first-class proof artifact, preserve fallback native transcripts for Claude when used, and feed explicit proof requirements plus runtime-boundary cues into the handoff."
+    },
+    {
+      "id": "blank-slate-baseline",
+      "name": "Blank-Slate Baseline Allowed",
+      "status": "built",
+      "tickets": ["#129", "#131", "#143", "#144"],
+      "note": "Blank-slate start is now working end to end in the live GitHub prepare phase. The deploy role can clear the remote graph baseline before attempt 1, so proof runs can start from a clean online state instead of inheriting old proof residue."
+    },
+    {
+      "id": "golden-basics",
+      "name": "Goldens Encode Order Basics",
+      "status": "built",
+      "tickets": ["#143", "#131"],
+      "note": "The proof-local green gate now includes both a shared visibility-based order-basics rule and a proof-case-driven minimum-payload test. Visible order identifiers are now enforced too, and proof runs can declare the exact fields and error prefixes that must be absent before local green counts."
+    },
+    {
+      "id": "level-1",
+      "name": "Level 1 — One Real AWS Email To Useful Payload",
+      "status": "built",
+      "tickets": ["#143"],
+      "note": "Level 1 is now closed by the AliExpress live proof chain: blank-slate attempt 1 failed honestly, same-run local Codex inference generated the shop graph changes, the relevant local suite went fully green, deploy completed, and the replayed AWS record returned the minimum useful payload required by #143."
+    },
+    {
+      "id": "level-2",
+      "name": "Level 2 — Next Eligible Email By Predeclared Rule",
+      "status": "built",
+      "tickets": ["#145"],
+      "note": "Level 2 is now closed by the next-eligible AliExpress run. The selection rule was frozen before evaluation, the first eligible candidate from the live failure surface was selected automatically, same-run local Codex inference converged, and the replayed AWS record returned the minimum useful payload required by #143."
+    },
+    {
+      "id": "level-3",
+      "name": "Level 3 — Direct Claim From Live Queue Surface",
+      "status": "not-built",
+      "tickets": ["#146"],
+      "note": "Direct queue/API starting point remains open."
+    },
+    {
+      "id": "level-4",
+      "name": "Level 4 — Small Batch Across Merchants",
+      "status": "not-built",
+      "tickets": ["#147"],
+      "note": "Multi-case proof remains open."
+    },
+    {
+      "id": "level-5",
+      "name": "Level 5 — Repeat Later Without Redesign",
+      "status": "not-built",
+      "tickets": ["#148"],
+      "note": "Repeatability remains open."
+    },
+    {
+      "id": "evidence-runbook",
+      "name": "Evidence Bundle And Runbook",
+      "status": "built",
+      "tickets": ["#131"],
+      "note": "Evidence requirements now include same-run inference/proposal artifacts and pre/post local test outputs showing 100% pass."
+    }
+  ]
+}
+</script>
+
+<div style="max-width:900px;margin:0 auto;">
+  <h1>Proof Ladder Overview</h1>
+  <p class="subtitle">Track the proof work as a living status map for the intended operating model, not as a presentation. Updated 2026-04-03.</p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch sw-built"></div> Built</div>
+    <div class="legend-item"><div class="legend-swatch sw-partial"></div> Partial</div>
+    <div class="legend-item"><div class="legend-swatch sw-not-built"></div> Not yet built</div>
+    <div class="legend-item"><div class="legend-swatch sw-gap"></div> Gap</div>
+    <div class="legend-item"><div class="legend-swatch sw-blocked"></div> Blocked</div>
+  </div>
+
+  <div class="flow">
+
+    <div class="section-label">Operating Model</div>
+
+    <div class="block built" data-block-id="proof-operating-model">
+      <h3>Operating Model Defined <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-02">2026-04-02</span>
+      <p class="desc">
+        The proof is not “can a human manually rescue the parser.” The proof is “does the system run in the intended way.”
+        That intended way is now explicit in the epics, acceptance tickets, and architecture docs:
+        claim a real failed email from the live system, generate the parser fix through same-run local inference
+        on the claimed <code>.eml</code>, keep iterating until the relevant local parser test suite is
+        <code>100%</code> green, then have an operator apply, deploy, complete, and replay.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-02">
+        This target behavior is now written directly into the epics and acceptance tickets, and it also matches the
+        bounded-iteration language in <code>docs/evolution-loop.md</code> and <code>docs/pipeline-overview.html</code>.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129" data-ticket="#129">#129</a> epic &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/135" data-ticket="#135">#135</a> acceptance &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> Level 1 &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144" data-ticket="#144">#144</a> ladder
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="shop-scoped-graph-execution">
+      <h3>Shared Runtime, Per-Shop Programs <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-03">2026-04-03</span>
+      <p class="desc">
+        The system is already shop-scoped at the graph layer. Each proof run selects one <code>profile_id</code>,
+        materializes that shop's graph into a proof-local repo, runs that shop's parser suite, and deploys only that
+        shop graph. The shared parser runtime is the interpreter; each shop graph is a separate program executed by that
+        interpreter.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-03">
+        This means the architectural question is no longer whether shop behavior is isolated structurally. It is whether
+        that isolation is sufficient operationally: one shop proof proves one shop program under the shared interpreter,
+        not global stability across every shop.
+      </div>
+      <p class="desc">
+        The important boundary rules are:
+      </p>
+      <ul>
+        <li>a change to one shop graph should affect only that shop's execution</li>
+        <li>a successful shop proof demonstrates that shop program, not the whole fleet</li>
+        <li>if a needed capability cannot be expressed by the current graph primitives, that is a shared-runtime issue, not a shop issue</li>
+        <li>the next real complexity wall is within-shop variation: multiple real email families for one merchant competing inside the same graph</li>
+      </ul>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129" data-ticket="#129">#129</a> epic &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> Level 1 &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144" data-ticket="#144">#144</a> ladder &bull;
+        <a href="/Users/rene/projects/trackandback-parser-mvp/docs/evolution-loop.md">evolution-loop.md</a>
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="architecture-enforcement">
+      <h3>Architecture Enforcement Of Iterate-To-Green <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-02">2026-04-02</span>
+      <p class="desc">
+        The intended behavior is architectural, not proof-only: the local evolution loop should keep working the claimed
+        item until the relevant parser suite is fully green. The current docs already describe that bounded iteration model,
+        and the orchestration now enforces it in both the staged proof runner and the bridge runtime.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-02">
+        Current implementation: when a pass still leaves tests red, the orchestrator launches another same-run evolution
+        pass with the latest failing test output and extract result supplied as the next handoff. This continues until
+        the suite is green or the bounded retry budget is exhausted.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129" data-ticket="#129">#129</a> epic &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130" data-ticket="#130">#130</a> workflow &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> Level 1 &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144" data-ticket="#144">#144</a> ladder
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="runtime-gap-handoff">
+      <h3>Generic Runtime Gap Handoff <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-03">2026-04-03</span>
+      <p class="desc">
+        The desired end state is still that shop-specific behavior lives in the graph. But if same-run inference discovers
+        that the current generic runtime cannot execute the needed graph semantics, that is not something the proof loop
+        should patch ad hoc. The run must stop, surface a generic runtime/platform gap, and hand that off for manual
+        review and generalization outside the run.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-03">
+        Working rule: graph first when the generic runtime already supports the needed semantics; manual platform work
+        only when inference exposes that the generic runtime is too weak. After that generic improvement lands, the shop
+        should still be fixed through graph changes rather than shop-specific code.
+      </div>
+      <p class="desc">
+        The important discipline is that inference is allowed to make the assessment, but not to define the boundary by
+        itself. During the run, the model already has the graph, the generated local repo, the shared runtime code, the
+        failing shop tests, and the proof handoff. That means it can often say something useful like <code>still graph-solvable</code>
+        or <code>likely generic runtime gap</code>. We should use that. But we should not treat that statement as final.
+      </p>
+      <p class="desc">
+        The operating rule is:
+      </p>
+      <ul>
+        <li>the shop proof failure shows the real claimed email is still failing</li>
+        <li>same-run inference may explain why the graph path appears exhausted and may draft the GitHub issue text</li>
+        <li>that result is a diagnosis candidate only</li>
+        <li>a matching minimal shared-runtime reproduction must also fail before the case is classified as confirmed manual platform work</li>
+        <li>if that shared-runtime reproduction does not fail, the proof loop should keep treating the issue as graph work, not platform work</li>
+      </ul>
+      <p class="desc">
+        This keeps the model useful without letting difficult graph work drift into a vague <code>runtime gap</code> label.
+        The model can accelerate diagnosis and ticket creation; the shared-runtime reproduction is what makes the classification
+        real.
+      </p>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129" data-ticket="#129">#129</a> epic &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130" data-ticket="#130">#130</a> workflow &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> Level 1 &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144" data-ticket="#144">#144</a> ladder &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/151" data-ticket="#151">#151</a> confirmation rule
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="proof-integrity">
+      <h3>Proof Integrity Guardrails <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-02">2026-04-02</span>
+      <p class="desc">
+        The living rule is that replay success only counts if it comes from the normal proof-generated fix for that run.
+        Manual parser/runtime/schema/test edits, hand-curated graph changes, reused proposals, reused inference logs,
+        or stopping before the local suite is fully green are all invalid proof paths.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-02">
+        The recurring confusion has been called out explicitly in the epics so it cannot be quietly reinterpreted later.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129" data-ticket="#129">#129</a> &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130" data-ticket="#130">#130</a> &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131" data-ticket="#131">#131</a> &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/135" data-ticket="#135">#135</a>
+      </div>
+    </div>
+
+    <div class="arrow-label">Once the operating model and integrity rules are fixed, the proof can be climbed in levels.</div>
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="inference-visibility">
+      <h3>Inference-Time Visibility <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-03">2026-04-03</span>
+      <p class="desc">
+        The inference moments are the key driving element of this process, so visibility into live reasoning and tool
+        calling is a requirement for improving the pipeline, not an optional debugging extra. Wrapper summaries are not
+        enough; we need direct access to the native inference transcript so we can inspect what the model read, which
+        tools it called, where it spent time, and why it converged or stalled.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-03">
+        Current state: this is now part of the artifact contract. New runs keep a direct Codex event transcript in the
+        artifact bundle, and the fallback Claude path still copies the native <code>.jsonl</code> transcript when used,
+        so inference-time reasoning and tool calls can be inspected after the run. The handoff context
+        now also carries the proof-required fields, disallowed error prefixes, and the rule that the run must stop
+        cleanly if same-run inference determines that the current generic runtime cannot support the required graph semantics.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130" data-ticket="#130">#130</a> workflow &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131" data-ticket="#131">#131</a> evidence &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> Level 1 &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144" data-ticket="#144">#144</a> ladder
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="blank-slate-baseline">
+      <h3>Blank-Slate Baseline Allowed <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-03">2026-04-03</span>
+      <p class="desc">
+        A contaminated online state does not make the proof stronger. If earlier manual deployments, partial runs,
+        or stale proof artifacts complicate interpretation, the correct move is to reset to a blank baseline and
+        rerun the proof chain cleanly.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-03">
+        This is now part of the proof discipline and it is live. The GitHub prepare phase can clear the remote profile graph
+        before attempt 1, so the proof chain starts from a blank online baseline instead of inheriting earlier manual or
+        proof-created state. The Decathlon prepare run <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23929273000">23929273000</a>
+        demonstrated that the blank-slate delete and first failed attempt now work in the live system.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129" data-ticket="#129">#129</a> epic &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131" data-ticket="#131">#131</a> evidence &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> Level 1 &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144" data-ticket="#144">#144</a> ladder &bull;
+        <a href="https://github.com/triadflow/trackandback-devops-dashboard/pull/131">devops #131</a> IAM fix &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23929273000">prepare 23929273000</a>
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="block built" data-block-id="golden-basics">
+      <h3>Goldens Encode Order Basics <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-02">2026-04-02</span>
+      <p class="desc">
+        The proof-local green gate is not just schema smoke. It already includes the generated shop-local golden test.
+        That matters because the golden is where the system should encode the conceptual minimum for what an order email
+        must yield. If the golden allows obviously basic business fields to stay null, the run can look green while still
+        missing the core order semantics we care about.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-02">
+        The architecture now enforces this directly. Generated shop-local tests and auto-golden generation both call the same
+        visibility-based rule, which now also includes visible <code>order_id</code>. And for proof runs, the local profile
+        now gets a dedicated <code>proof_requirements.json</code> plus a shared minimum-payload test, so the claimed email
+        cannot go locally green while the fields the proof explicitly asks for are still null. Re-checking the Decathlon
+        proof-local repo under this new gate now fails on both visible <code>order_id</code> and the proof-minimum payload.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> useful payload gate &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131" data-ticket="#131">#131</a> evidence &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23896489367">finalize 23896489367</a>
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="section-label">Proof Ladder</div>
+
+    <div class="block built" data-block-id="level-1">
+      <h3>Level 1 — One Real AWS Email To Useful Payload <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-03">2026-04-03</span>
+      <p class="desc">
+        This level closes only when one real failed AWS email goes through the full live loop and the same-run proof ends
+        in the minimum useful payload required by <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a>.
+        The local proof loop must reach <code>100%</code> green on the relevant parser suite before deploy/replay count,
+        and that green state has to come from the normal same-run evolution flow rather than a manual rescue. If a pass
+        still leaves tests red, the run is not done; it must continue with the current failure output handed to the next pass.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-03">
+        Current state: Level 1 is now satisfied. The successful AliExpress proof chain used a blank-slate online baseline,
+        produced the expected first live failure, generated the required shop fix inside the same run, reached local green,
+        deployed, completed the claimed production item, and replayed the same email bytes to a successful AWS parse with
+        <code>event_type=order_confirmation</code>, <code>merchant=AliExpress</code>, <code>order_id=3067935014739925</code>,
+        <code>order_date=2026-02-19</code>, <code>currency=EUR</code>, and <code>total_amount=73.35</code>.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143" data-ticket="#143">#143</a> current gate &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23941644863">prepare 23941644863</a> &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23941759126">deploy 23941759126</a> &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23941797962">finalize 23941797962</a> &bull;
+        <a href="/tmp/proof-final-23941797962/proof-stage-finalize-9cce58c7-aliexpress-live-gha-23941644863-1/summary.json">final summary</a> &bull;
+        <a href="/tmp/proof-final-23941797962/proof-stage-finalize-9cce58c7-aliexpress-live-gha-23941644863-1/aws_attempt_2_record.json">AWS replay record</a> &bull;
+        <a href="/tmp/proof-final-23941797962/proof-stage-finalize-9cce58c7-aliexpress-live-gha-23941644863-1/evolution-9cce58c7a526-20260403-173431.jsonl">Codex transcript</a>
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="parallel">
+      <div class="block built" data-block-id="level-2">
+        <h3>Level 2 — Next Eligible Email By Predeclared Rule <span class="status status-built">Built</span></h3>
+        <p class="desc">
+          The next strengthening step is to remove hand-picking. The selection rule must be declared before the run, and the
+          next eligible email matching that rule becomes the proof case. That rule should be frozen into the proof artifacts
+          themselves so the run can show what counted as eligible before the candidate was evaluated. Level 2 is now closed:
+          the first eligible AliExpress failure under the frozen rule was selected automatically, same-run local Codex inference
+          converged, the graph was redeployed cleanly, and the replayed AWS record returned a useful parsed payload.
+        </p>
+        <div class="refs">
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/145" data-ticket="#145">#145</a> &bull;
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23947780968">prepare 23947780968</a> &bull;
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23948084750">deploy 23948084750</a> &bull;
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23949185852">redeploy 23949185852</a> &bull;
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/actions/runs/23949213483">finalize 23949213483</a>
+        </div>
+      </div>
+
+      <div class="block not-built" data-block-id="level-3">
+        <h3>Level 3 — Direct Claim From Live Queue Surface <span class="status status-not-built">Not Built</span></h3>
+        <p class="desc">
+          This level starts directly from the live queue/API surface rather than a reviewed backlog list, so the proof begins
+          exactly where the production contract begins.
+        </p>
+        <div class="refs">
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/146" data-ticket="#146">#146</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="parallel">
+      <div class="block not-built" data-block-id="level-4">
+        <h3>Level 4 — Small Batch Across Merchants <span class="status status-not-built">Not Built</span></h3>
+        <p class="desc">
+          A single-case proof can still be lucky. This level requires a small predefined batch across multiple merchants.
+        </p>
+        <div class="refs">
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/147" data-ticket="#147">#147</a>
+        </div>
+      </div>
+
+      <div class="block not-built" data-block-id="level-5">
+        <h3>Level 5 — Repeat Later Without Redesign <span class="status status-not-built">Not Built</span></h3>
+        <p class="desc">
+          Repeatability is its own proof level. The same path must work again later without redesigning the harness.
+        </p>
+        <div class="refs">
+          <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/148" data-ticket="#148">#148</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">&darr;</div>
+
+    <div class="section-label">Supporting Surface</div>
+
+    <div class="block built" data-block-id="evidence-runbook">
+      <h3>Evidence Bundle And Runbook <span class="status status-built">Built</span></h3>
+      <span class="block-updated" data-updated="2026-04-02">2026-04-02</span>
+      <p class="desc">
+        A qualifying proof run has to be legible after the fact. The evidence ticket covers the artifact package, summary, and
+        operator runbook. It now also requires local test progression and the final <code>100%</code> green state to be visible.
+      </p>
+      <div class="progress" data-tone="positive" data-updated="2026-04-02">
+        The evidence contract now makes proof-purity violations and early-stop violations visible instead of allowing them to blend into a successful-looking run.
+      </div>
+      <div class="refs">
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131" data-ticket="#131">#131</a> &bull;
+        <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130" data-ticket="#130">#130</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h2>Status Summary</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Block</th>
+          <th>Status</th>
+          <th>Key Tickets</th>
+          <th>Notes</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Operating Model Defined</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129">#129</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/135">#135</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144">#144</a></td>
+          <td>Target operating model is explicit in tickets and architecture docs.</td>
+          <td>2026-04-02</td>
+        </tr>
+        <tr>
+          <td>Shared Runtime, Per-Shop Programs</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129">#129</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144">#144</a></td>
+          <td>The architecture is already one shared interpreter executing one selected shop graph at a time. Shop proofs are therefore shop-scoped by design, not global claims.</td>
+          <td>2026-04-03</td>
+        </tr>
+        <tr>
+          <td>Architecture Enforcement Of Iterate-To-Green</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129">#129</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130">#130</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a></td>
+          <td>Staged proof runner and bridge now rerun same-run evolution with the latest failing test output and extract state until green or bounded exhaustion.</td>
+          <td>2026-04-02</td>
+        </tr>
+        <tr>
+          <td>Generic Runtime Gap Handoff</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129">#129</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130">#130</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/151">#151</a></td>
+          <td>Inference may assess and draft a likely platform gap, but the classification is only confirmed when a matching shared-runtime reproduction also fails.</td>
+          <td>2026-04-03</td>
+        </tr>
+        <tr>
+          <td>Proof Integrity Guardrails</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129">#129</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130">#130</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131">#131</a></td>
+          <td>Manual rescue and early-stop paths now explicitly invalidate proof.</td>
+          <td>2026-04-02</td>
+        </tr>
+        <tr>
+          <td>Inference-Time Visibility</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/130">#130</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131">#131</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a></td>
+          <td>Codex event transcripts are now the primary inference artifact, with fallback native Claude transcripts still preserved when that backend is used.</td>
+          <td>2026-04-03</td>
+        </tr>
+        <tr>
+          <td>Blank-Slate Baseline Allowed</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/129">#129</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/144">#144</a></td>
+          <td>Blank-slate start is now working in the live GitHub prepare phase. The Decathlon prepare run cleared the remote graph before attempt 1 and produced a real failed record from a clean baseline.</td>
+          <td>2026-04-03</td>
+        </tr>
+        <tr>
+          <td>Goldens Encode Order Basics</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a> <a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131">#131</a></td>
+          <td>Shop-local tests and auto-golden generation now share a visibility-based gate that includes order_id, and proof runs add an explicit minimum-payload test from the proof case itself.</td>
+          <td>2026-04-02</td>
+        </tr>
+        <tr>
+          <td>Level 1 — One Real AWS Email To Useful Payload</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/143">#143</a></td>
+          <td>The AliExpress live proof now closes Level 1 end to end: blank-slate failure, same-run local green, deploy, complete, and useful replay payload in AWS.</td>
+          <td>2026-04-03</td>
+        </tr>
+        <tr>
+          <td>Level 2 — Next Eligible Email By Predeclared Rule</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/145">#145</a></td>
+          <td>The next eligible AliExpress email was selected by the frozen rule, the local stage went green, and the clean redeploy plus replay returned a useful parsed payload in AWS.</td>
+          <td>2026-04-03</td>
+        </tr>
+        <tr>
+          <td>Level 3 — Direct Claim From Live Queue Surface</td>
+          <td><span class="status status-not-built">Not Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/146">#146</a></td>
+          <td>Direct live queue start remains open.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Level 4 — Small Batch Across Merchants</td>
+          <td><span class="status status-not-built">Not Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/147">#147</a></td>
+          <td>Multi-case proof remains open.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Level 5 — Repeat Later Without Redesign</td>
+          <td><span class="status status-not-built">Not Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/148">#148</a></td>
+          <td>Repeatability remains open.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Evidence Bundle And Runbook</td>
+          <td><span class="status status-built">Built</span></td>
+          <td><a href="https://github.com/triadflow/trackandback-parser-mvp/issues/131">#131</a></td>
+          <td>Evidence now must show same-run inference and local green progression.</td>
+          <td>2026-04-02</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="gaps">
+    <h2>Open Gaps</h2>
+    <ul>
+      <li>The runtime-gap assessment rule is now important as an operating guardrail, because higher proof levels increase the chance of ambiguous failures across merchants.</li>
+      <li>The next architectural complexity is within-shop variation, not shop isolation itself: multiple real email families for one merchant can still compete for the same extraction fields inside one shop graph.</li>
+      <li>The Decathlon run remains useful as a negative control: it showed the proof loop can fail honestly when the email body itself cannot satisfy the minimum useful-payload bar.</li>
+      <li>The current evidence is stronger because it now shows same-run convergence, the direct Codex transcript, and the replayed AWS payload without manual rescue or hidden state leakage.</li>
+      <li>The higher proof levels remain open because the current program still depends on one real-email example rather than a non-cherry-picked sequence or repeated run.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrackAndBack — Distributie</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F7F5;
+  --surface: #FFFFFF;
+  --border: #E8E8E4;
+  --text: #1A1A18;
+  --muted: #6B6B65;
+  --red: #DC2626;
+  --red-bg: #FEF2F2;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --header-h: 52px;
+  --tab-h: 44px;
+}
+
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* Header */
+.header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 10px; z-index: 100; }
+.header-brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+.header-sep { color: var(--border); font-size: 20px; }
+.header-doc { font-size: 13px; color: var(--muted); }
+.header-owner { margin-left: auto; font-size: 12px; color: var(--muted); font-style: italic; }
+
+/* Tabs */
+.tabs-nav {
+  position: fixed; top: var(--header-h); left: 0; right: 0; height: var(--tab-h);
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: stretch; padding: 0 20px; gap: 4px; z-index: 99;
+}
+.tab-btn {
+  padding: 0 16px; font-size: 13px; font-weight: 600; color: var(--muted);
+  background: none; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; letter-spacing: -0.01em; white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.actief { color: var(--text); border-bottom-color: var(--text); }
+
+/* Main */
+.main { margin-top: calc(var(--header-h) + var(--tab-h)); padding: 48px 28px 80px; max-width: 720px; margin-left: auto; margin-right: auto; }
+
+.tab-panel { display: none; }
+.tab-panel.actief { display: block; }
+
+/* Hero teller */
+.hero { text-align: center; padding: 56px 0 48px; }
+.hero-cirkel-wrap { position: relative; display: inline-flex; flex-direction: column; align-items: center; gap: 16px; }
+.hero-cirkel {
+  width: 160px; height: 160px; border-radius: 50%;
+  background: var(--red); color: white;
+  font-size: 72px; font-weight: 800; letter-spacing: -0.04em;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.5s, transform 0.15s;
+  box-shadow: 0 8px 32px rgba(220,38,38,0.25);
+  user-select: none;
+}
+.hero-cirkel:hover { transform: scale(1.03); }
+.hero-cirkel.doel-bereikt { background: var(--green); box-shadow: 0 8px 32px rgba(22,163,74,0.25); }
+.hero-label { font-size: 13px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+.hero-titel { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-top: 8px; }
+.hero-subtitel { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+/* Voortgangsbalk */
+.voortgang-wrap { margin: 0 auto 48px; max-width: 480px; }
+.voortgang-bar-bg { height: 8px; background: var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+.voortgang-bar { height: 8px; background: var(--red); border-radius: 8px; transition: width 0.5s ease, background 0.5s; }
+.voortgang-bar.doel-bereikt { background: var(--green); }
+.voortgang-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Sectie */
+.sectie { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+.sectie-titel { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px; }
+
+/* Funnel */
+.funnel { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.funnel-stap { text-align: center; padding: 16px 8px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); position: relative; }
+.funnel-stap::after { content: '→'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); color: var(--border); font-size: 16px; font-weight: 300; }
+.funnel-stap:last-child::after { display: none; }
+.funnel-getal { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; color: var(--text); outline: none; display: block; }
+.funnel-getal:focus { background: #EFF6FF; border-radius: 4px; }
+.funnel-naam { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px; }
+.funnel-stap.actief .funnel-getal { color: #1D4ED8; }
+.funnel-stap.betaalt .funnel-getal { color: var(--red); }
+.funnel-stap.betaalt.doel-bereikt .funnel-getal { color: var(--green); }
+
+/* Kompas */
+.kompas-tekst { font-size: 16px; font-weight: 600; line-height: 1.5; letter-spacing: -0.01em; outline: none; cursor: text; border-radius: 6px; padding: 2px 4px; margin: -2px -4px; }
+.kompas-tekst:focus { background: #EFF6FF; }
+.kompas-hint { font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; }
+
+/* Vandaag actie */
+.actie-wrap { display: flex; gap: 12px; align-items: flex-start; }
+.actie-bullet { width: 8px; height: 8px; background: var(--red); border-radius: 50%; flex-shrink: 0; margin-top: 6px; transition: background 0.5s; }
+.actie-bullet.doel-bereikt { background: var(--green); }
+.actie-tekst { font-size: 16px; font-weight: 500; outline: none; cursor: text; flex: 1; border-radius: 6px; padding: 2px 4px; margin: -2px -4px; line-height: 1.5; }
+.actie-tekst:focus { background: #EFF6FF; }
+
+/* Waarom 10 */
+.waarom-tekst { font-size: 14px; line-height: 1.7; color: var(--text); }
+.waarom-tekst strong { font-weight: 700; }
+
+/* Vragen */
+.vragen-intro { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.vraag { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.vraag:last-child { border-bottom: none; padding-bottom: 0; }
+.vraag-nr { width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: white; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; transition: background 0.4s; }
+.doel-bereikt .vraag-nr { background: var(--green); }
+.vraag-body { flex: 1; }
+.vraag-tekst { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.vraag-context { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.vraag-antwoord { font-size: 13px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; min-height: 36px; outline: none; cursor: text; line-height: 1.5; }
+.vraag-antwoord:empty::before { content: attr(placeholder); color: #A8A8A0; font-style: italic; }
+.vraag-antwoord:focus { border-color: #94A3B8; background: white; }
+
+/* Edit hint */
+.edit-hint { font-size: 11px; color: var(--border); text-align: center; margin-top: 32px; font-style: italic; }
+
+/* Confetti moment */
+@keyframes pulse-green { 0%,100%{box-shadow:0 8px 32px rgba(22,163,74,0.25)} 50%{box-shadow:0 8px 48px rgba(22,163,74,0.5)} }
+.hero-cirkel.doel-bereikt { animation: pulse-green 2s ease-in-out infinite; }
+
+/* ── Tab 2: Praatdocument ── */
+.praat-header { padding: 48px 0 40px; }
+.praat-eyebrow { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+.praat-titel { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 12px; }
+.praat-subtitel { font-size: 16px; color: var(--muted); line-height: 1.6; max-width: 560px; }
+
+.praat-tien {
+  background: var(--red); color: white; border-radius: 16px;
+  padding: 32px; margin-bottom: 28px; text-align: center;
+}
+.praat-tien.doel-bereikt { background: var(--green); }
+.praat-tien-getal { font-size: 80px; font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+.praat-tien-label { font-size: 14px; font-weight: 600; opacity: 0.85; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+.praat-tien-sub { font-size: 13px; opacity: 0.7; margin-top: 6px; }
+
+.praat-sectie { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+.praat-sectie-nr { font-size: 11px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.praat-sectie h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 14px; line-height: 1.3; }
+.praat-sectie p { font-size: 14px; line-height: 1.75; color: var(--text); margin-bottom: 12px; }
+.praat-sectie p:last-child { margin-bottom: 0; }
+.praat-sectie p strong { font-weight: 700; }
+.praat-sectie ul { margin: 12px 0 12px 18px; }
+.praat-sectie li { font-size: 14px; line-height: 1.75; color: var(--text); margin-bottom: 4px; }
+.praat-sectie li strong { font-weight: 700; }
+
+.praat-laag { display: grid; grid-template-columns: 28px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: start; }
+.praat-laag:last-child { border-bottom: none; padding-bottom: 0; }
+.praat-laag-nr { width: 28px; height: 28px; border-radius: 50%; background: var(--text); color: white; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.praat-laag-body h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.praat-laag-body p { font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0; }
+
+.praat-quote { border-left: 3px solid var(--red); padding: 12px 16px; margin: 16px 0; background: var(--red-bg); border-radius: 0 8px 8px 0; }
+.praat-quote p { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.6; margin: 0; font-style: italic; }
+
+.praat-stap { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.praat-stap:last-child { border-bottom: none; padding-bottom: 0; }
+.praat-stap-nr { font-size: 22px; font-weight: 800; color: var(--red); width: 32px; flex-shrink: 0; line-height: 1.4; }
+.praat-stap-body h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.praat-stap-body p { font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0; }
+
+.praat-footer { padding: 40px 0 20px; text-align: center; }
+.praat-footer p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.praat-footer strong { color: var(--text); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span class="header-brand">TrackAndBack</span>
+  <span class="header-sep">|</span>
+  <span class="header-doc" id="headerDoc">Distributie</span>
+  <span class="header-owner">Timo — jouw dashboard</span>
+</header>
+
+<nav class="tabs-nav">
+  <button class="tab-btn actief" onclick="wisselTab('dashboard', this)">Dashboard</button>
+  <button class="tab-btn" onclick="wisselTab('verhaal', this)">Waarom ik dit doe</button>
+  <button class="tab-btn" onclick="wisselTab('pitch', this)">Praatdocument</button>
+</nav>
+
+<main class="main">
+
+<!-- ══ TAB 1: DASHBOARD ══ -->
+<div class="tab-panel actief" id="tab-dashboard">
+
+  <!-- Hero teller -->
+  <div class="hero">
+    <div class="hero-cirkel-wrap">
+      <div class="hero-cirkel" id="heroCirkel" onclick="updateBetalers()" title="Klik om bij te werken">
+        <span id="betalerAantal">0</span>
+      </div>
+      <span class="hero-label">betalende klanten</span>
+    </div>
+    <div class="hero-titel" id="heroTitel">Van 0 naar 10</div>
+    <div class="hero-subtitel" id="heroSubtitel">Dit is het enige getal dat er nu toe doet</div>
+  </div>
+
+  <!-- Voortgangsbalk -->
+  <div class="voortgang-wrap">
+    <div class="voortgang-bar-bg">
+      <div class="voortgang-bar" id="voortgangBar" style="width:0%"></div>
+    </div>
+    <div class="voortgang-meta">
+      <span>0</span>
+      <span id="voortgangLabel">0 / 10</span>
+      <span>10</span>
+    </div>
+  </div>
+
+  <!-- Funnel -->
+  <div class="sectie">
+    <div class="sectie-titel">De funnel van vandaag</div>
+    <div class="funnel">
+      <div class="funnel-stap">
+        <span class="funnel-getal" id="fKennen" contenteditable="true" onblur="slaOp()">0</span>
+        <div class="funnel-naam">Kennen TB</div>
+      </div>
+      <div class="funnel-stap">
+        <span class="funnel-getal" id="fAangemeld" contenteditable="true" onblur="slaOp()">0</span>
+        <div class="funnel-naam">Aangemeld</div>
+      </div>
+      <div class="funnel-stap actief">
+        <span class="funnel-getal" id="fActief" contenteditable="true" onblur="slaOp()">0</span>
+        <div class="funnel-naam">Actief alias</div>
+      </div>
+      <div class="funnel-stap betaalt" id="fBetaaltStap">
+        <span class="funnel-getal" id="fBetaalt" contenteditable="true" onblur="syncBetalers()">0</span>
+        <div class="funnel-naam">Betaalt</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Distributiestrategie -->
+  <div class="sectie">
+    <div class="sectie-titel">Kompas</div>
+    <div class="kompas-tekst" id="kompas" contenteditable="true" onblur="slaOp()">Praat niet over de app. Praat over het probleem. Sluit af met de betaalvraag.</div>
+    <div class="kompas-hint">Eén zin die elke dag richting geeft. Klik om aan te passen.</div>
+  </div>
+
+  <!-- Vandaag -->
+  <div class="sectie">
+    <div class="sectie-titel">Eén actie vandaag</div>
+    <div class="actie-wrap">
+      <div class="actie-bullet" id="actieBullet"></div>
+      <div class="actie-tekst" id="actie" contenteditable="true" onblur="slaOp()">Schrijf 10 namen op van mensen die ik ken. Morgen bel ik de eerste.</div>
+    </div>
+  </div>
+
+  <!-- Vragen -->
+  <div class="sectie">
+    <div class="sectie-titel">De acht vragen — beantwoord ze alleen door mensen op te zoeken</div>
+    <div class="vragen-intro">
+      Ik weet wat er speelt. Je koopt iets online en daarna begint het: mails over de verzending, mails over de retour, mails die je niet vroeg maar toch krijgt. Eentje mis je, en dan weet je het niet meer zeker. Die last is niet groot — maar hij is er altijd.<br><br>
+      Wat als je één berichtje krijgt via WhatsApp op het moment dat het ertoe doet? En wat als je met één tik kunt zeggen: retour doe ik niet, stop alle mails hierover. Dan is het klaar. Dat is wat ik wil weten of mensen voor willen betalen.<br><br>
+      Ik praat niet over een app. Ik praat over het probleem. En aan het einde stel ik één vraag.
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">1</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Wie ken ik die dit probleem echt heeft?</div>
+        <div class="vraag-context">Geen doelgroepen, geen typen mensen — gewoon namen. Wie komt er bij me op als ik denk aan iemand die zich ergert aan de chaos na een online aankoop? Die schrijf ik op.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v1" placeholder="Namen..."></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">2</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Heb ik deze week iemand gesproken — en écht geluisterd?</div>
+        <div class="vraag-context">Niet over TB, niet over mijn idee. Gewoon gevraagd: hoe was je laatste online bestelling? Wat irriteerde je? Als ik zelf ben gaan uitleggen, heb ik niet geluisterd.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v2" placeholder="Wat hoorde ik?"></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">3</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Wat was het moment waarop iemand verrast werd — wat was er precies aan de hand?</div>
+        <div class="vraag-context">Niet het algemene gevoel, maar het concrete verhaal. Pakket gemist. Retour te laat. Bezorger aan de deur terwijl ik aan het werk was. Die verhalen snap ik beter dan elk onderzoek.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v3" placeholder="Het verhaal, in hun woorden..."></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">4</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Heb ik dit scenario voorgelegd — en wat zeiden ze letterlijk?</div>
+        <div class="vraag-context">"Stel dat je via WhatsApp één berichtje krijgt als er iets is met je bestelling. Eén tik om je retour te starten, of om te zeggen dat het niet hoeft — en daarna zie je er niets meer van." Ik schrijf op wat ze zeggen, niet wat ik denk dat ze bedoelen.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v4" placeholder="Hun woorden, niet mijn interpretatie..."></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">5</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Noemden ze zelf andere situaties waarbij ze ook wilden loslaten?</div>
+        <div class="vraag-context">Niet zelf suggereren — gewoon luisteren. Restaurants, reizen, concerten, abonnementen: als ze het zelf zeggen, is het een echte pijn. Als ik het moet noemen, is het dat minder. Ik schrijf op wat ze noemen, in hun woorden.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v5b" placeholder="Wat noemden ze zelf?"></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">6</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Hoeveel mensen hebben ja gezegd op de betaalvraag?</div>
+        <div class="vraag-context">"Misschien" en "lijkt me handig" tellen niet mee. Ik stel de vraag gewoon: "Als dit voor je geregeld wordt — betaal je daar een paar euro per maand voor?" Pas als iemand ja zegt, tel ik hem mee.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v5" placeholder="Aantal ja's..."></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">7</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Waarom zeiden mensen nee — wat hoorde ik het vaakst?</div>
+        <div class="vraag-context">Nee is geen mislukking, het is informatie. Te duur? Niet het goede probleem? Verkeerde mensen? Wat ik hier invul vertelt me wat ik moet aanpassen — aan de prijs, het verhaal, of wie ik aanspreek.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v6" placeholder="Wat zeiden ze?"></div>
+      </div>
+    </div>
+
+    <div class="vraag">
+      <div class="vraag-nr">8</div>
+      <div class="vraag-body">
+        <div class="vraag-tekst">Wat doe ik morgen?</div>
+        <div class="vraag-context">Niet een plan voor de week. Eén ding — een naam bellen, een gesprek inplannen, een vraag stellen. Als ik dit niet kan invullen, is dat het probleem van vandaag.</div>
+        <div class="vraag-antwoord" contenteditable="true" onblur="slaVraagOp()" data-id="v7" placeholder="Eén actie..."></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="edit-hint">Alle getallen en teksten zijn bewerkbaar — klik erop om aan te passen. Wijzigingen worden lokaal opgeslagen.</div>
+
+</div><!-- /tab-dashboard -->
+
+
+<!-- ══ TAB 2: WAAROM IK DIT DOE ══ -->
+<div class="tab-panel" id="tab-verhaal">
+
+  <div class="praat-header">
+    <div class="praat-eyebrow">TrackAndBack — het verhaal achter het getal</div>
+    <div class="praat-titel">Tien betalende klanten.<br>Dat is het enige wat ik nu doe.</div>
+    <div class="praat-subtitel">Niet omdat tien het eindpunt is. Maar omdat tien het bewijs is dat alles hierna mogelijk maakt. Dit is waarom.</div>
+  </div>
+
+  <!-- Het getal -->
+  <div class="praat-tien" id="praatTien">
+    <div class="praat-tien-getal" id="praatTienGetal">0</div>
+    <div class="praat-tien-label">betalende klanten</div>
+    <div class="praat-tien-sub" id="praatTienSub">Hier werk ik elke dag naartoe</div>
+  </div>
+
+  <!-- Het probleem -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">01 — het probleem</div>
+    <h2>Online kopen eindigt nooit echt</h2>
+    <p>Je klikt op "bestellen" — en dan begint het. Bevestigingsmail. Verzendbericht. Vertragingsmelding. Retourinstructies die je niet vroeg. Herinneringen. Enquêtes. Elke aankoop sleept een staart van communicatie achter zich aan die jij moet bijhouden, checken en wegklikken.</p>
+    <p>Dat kost geen uren, maar het kost <strong>continue mentale aanwezigheid</strong>. Je bent er nooit echt klaar mee. En dat gevoel — die lichte, permanente last — zit in elke online aankoop ingebakken.</p>
+    <div class="praat-quote"><p>"Ik wil gewoon weten wanneer het aankomt. En daarna wil ik er nooit meer aan denken."</p></div>
+    <p>Dat zeggen mensen als ik ernaar vraag. Niet in die woorden — maar dat is wat ze bedoelen. Ze willen loslaten. En dat kan nu niet.</p>
+  </div>
+
+  <!-- De oplossing -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">02 — de oplossing</div>
+    <h2>TrackAndBack neemt de nazorg over</h2>
+    <p>De gebruiker registreert één TrackAndBack-e-mailadres — een alias — en gebruikt dat bij online aankopen. Alle nazorg komt daar binnen: bevestigingen, verzendupdates, retourinformatie. TrackAndBack vangt het op, begrijpt wat er staat, en informeert de gebruiker alleen als het ertoe doet.</p>
+    <p>Niet via een inbox. Niet via een dashboard dat gemonitord moet worden. Via één WhatsApp-bericht op het juiste moment. En als er een retour openstaat, eén tik: starten of sluiten. Daarna is het voorbij.</p>
+    <div class="praat-quote"><p>TrackAndBack is geen tool die je gebruikt. Het is een dienst die werkt terwijl jij iets anders doet.</p></div>
+    <p>Dat is de belofte. <strong>Wat je kunt loslaten, geeft ruimte.</strong></p>
+  </div>
+
+  <!-- Het verdienmodel -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">03 — het verdienmodel</div>
+    <h2>Gratis om in te komen. Betaald als je meer wilt.</h2>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">1</div>
+      <div class="praat-laag-body">
+        <h3>Gratis basislaag</h3>
+        <p>Alias aanmaken, e-mails ontvangen en organiseren, basisnotificaties. Geen betaalscherm, geen drempel. Zo bereiken we volume en bouwen we vertrouwen.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">2</div>
+      <div class="praat-laag-body">
+        <h3>Betaalde uitbreidingen — in-app</h3>
+        <p>WhatsApp-notificaties, retour-automatisering met één tik, prioriteitsafhandeling. Kleine maandprijs, groot verschil in ervaring. Betaling via StoreKit of Google Play — geen aparte webshop.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">3</div>
+      <div class="praat-laag-body">
+        <h3>Agentlaag — de toekomst</h3>
+        <p>Als AI-agenten namens gebruikers aankopen gaan doen, is TB de resolutielaag: de infrastructuur die zorgt dat elke transactie netjes wordt afgerond. Provisie per afgehandelde actie.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Waarom dit werkt -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">04 — de positie</div>
+    <h2>TB zit op de plek waar niemand anders zit</h2>
+    <p>De webshop wil geen verantwoordelijkheid na de klik. De bezorgdienst wil geen klantrelatie. De gebruiker wil rust. Niemand organiseert die overdracht.</p>
+    <p>TrackAndBack is die schakel. Niet als inbox, niet als dashboard — maar als <strong>resolutie-infrastructuur</strong>. De laag die zorgt dat alles wat na "kopen" komt ook écht wordt afgerond.</p>
+    <p>De EU Data Act en eIDAS 2.0 versterken dit: als gebruikers wettelijk recht krijgen op hun transactiedata, heeft TB de infrastructuur om die data te organiseren, te begrijpen en terug te geven. Dat is het kompas — niet het doel van vandaag.</p>
+    <div class="praat-quote"><p>De agent-economy heeft een resolutielaag nodig. TB is gebouwd om die te zijn.</p></div>
+  </div>
+
+  <!-- De route naar 10 -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">05 — de route</div>
+    <h2>Hoe ik bij 10 kom</h2>
+    <p>We hebben €150.000, drie mensen, en geen betalende klanten. De enige route is bewijs verzamelen — snel, meedogenloos en persoonlijk.</p>
+
+    <div class="praat-stap">
+      <div class="praat-stap-nr">1</div>
+      <div class="praat-stap-body">
+        <h3>Namen, geen doelgroepen</h3>
+        <p>Ik schrijf namen op. Mensen die ik ken. Die online kopen. Die ik kan bellen. Geen personas, geen segmentaties — gewoon mensen.</p>
+      </div>
+    </div>
+
+    <div class="praat-stap">
+      <div class="praat-stap-nr">2</div>
+      <div class="praat-stap-body">
+        <h3>Luisteren, niet pitchen</h3>
+        <p>Ik vraag naar hun laatste bestelling. Wat irriteerde ze. Wat ze misten. Ik leg niets uit over TB totdat zij me het probleem hebben verteld.</p>
+      </div>
+    </div>
+
+    <div class="praat-stap">
+      <div class="praat-stap-nr">3</div>
+      <div class="praat-stap-body">
+        <h3>Het scenario voorleggen</h3>
+        <p>"Stel dat je via WhatsApp één bericht krijgt als er iets is. Eén tik om te besluiten. Dan is het klaar." Dan kijk ik wat ze zeggen — niet wat ik hoop dat ze zeggen.</p>
+      </div>
+    </div>
+
+    <div class="praat-stap">
+      <div class="praat-stap-nr">4</div>
+      <div class="praat-stap-body">
+        <h3>De betaalvraag stellen</h3>
+        <p>"Als dit voor je wordt geregeld — betaal je daar een paar euro per maand voor?" Pas als iemand ja zegt, tel ik hem mee. Misschien is geen ja.</p>
+      </div>
+    </div>
+
+    <div class="praat-stap">
+      <div class="praat-stap-nr">10</div>
+      <div class="praat-stap-body">
+        <h3>10 ja's openen het volgende gesprek</h3>
+        <p>Niet het eindpunt. Het bewijs. Dat TB werkt, dat mensen willen betalen, en dat de volgende ronde — met een investeerder, een partner, of iemand die de resolutielaag wil bezitten — een feit is, geen hoop.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- De samenvatting -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">06 — de kern</div>
+    <h2>Wat ik weet en wat ik nog moet bewijzen</h2>
+    <ul>
+      <li><strong>Ik weet:</strong> het probleem bestaat. Elke online koper heeft de nazorg ooit genegeerd of gemist.</li>
+      <li><strong>Ik weet:</strong> de infrastructuur werkt. Alias live, mails worden verwerkt, WhatsApp-notificaties zijn in ontwikkeling.</li>
+      <li><strong>Ik weet:</strong> de visie klopt. De resolutielaag van e-commerce is ongebouwd en TB is er vroeg.</li>
+      <li><strong>Ik moet bewijzen:</strong> mensen betalen voor rust. Tien keer. Met naam en handtekening.</li>
+    </ul>
+    <p style="margin-top: 16px;">Dat is mijn werk. Niet de app bouwen — dat doen René en Gertjan. Mijn werk is die tien mensen vinden, hun probleem horen, en de betaalvraag stellen tot er tien ja zeggen.</p>
+  </div>
+
+  <div class="praat-footer">
+    <p><strong>TrackAndBack</strong> — wat je kunt loslaten, geeft ruimte.<br>
+    Drie mensen. €150.000. Één doel: <strong>10 betalende klanten</strong>.</p>
+  </div>
+
+</div><!-- /tab-verhaal -->
+
+
+<!-- ══ TAB 3: PRAATDOCUMENT ══ -->
+<div class="tab-panel" id="tab-pitch">
+
+  <div class="praat-header">
+    <div class="praat-eyebrow">Track &amp; Back — Praatdocument pitch</div>
+    <div class="praat-titel">De resolutielaag van e-commerce.<br>Nog ongebouwd. Wij bouwen hem.</div>
+    <div class="praat-subtitel">Concept - maart 2026 - Nog niet definitief, beslissingen in progress. Dit document is bedoeld voor het gesprek - niet als presentatie, maar als vertrekpunt.</div>
+  </div>
+
+  <!-- De categorie -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">de categorie</div>
+    <h2>Post-purchase afronding als infrastructuur</h2>
+    <p>Elke laag van digitale handel is gebouwd voor het moment vóór de aankoop. Ontdekking. Conversie. Betaling. Logistiek.</p>
+    <p><strong>Niemand heeft iets gebouwd voor wat daarna komt.</strong></p>
+    <p>Post-purchase is geen informatieprobleem en geen organisatieprobleem. Het is een gedragsprobleem. Consumenten dragen de mentale last van elke openstaande bestelling, elke retour in behandeling, elke garantie die ze weten bij te houden maar niet bijhouden. Die last is onzichtbaar, universeel, en permanent aanwezig - totdat iemand hem oplost.</p>
+    <div class="praat-quote"><p>Track &amp; Back definieert een nieuwe categorie: post-purchase afronding als infrastructuur.</p></div>
+  </div>
+
+  <!-- Het probleem -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">het probleem</div>
+    <h2>12 tot 15 open aankoopcycli. Altijd.</h2>
+    <p>De gemiddelde online consument heeft op elk willekeurig moment 12 tot 15 openstaande aankoopcycli - bestellingen onderweg, retouren in behandeling, garanties niet geregistreerd. Geen ervan vereist nú actie. Allemaal vragen ze aandacht.</p>
+    <p>Die aandachtskosten wordt continu betaald, op de achtergrond van het dagelijks leven. Ze verschijnt in geen enkele metric. Ze wordt niet opgelost door betere logistiek. Ze wordt niet opgelost door een betere inbox.</p>
+    <p>Ze wordt opgelost door de cyclus te sluiten - volledig, automatisch, onzichtbaar.</p>
+    <p><strong>Niemand doet dit vandaag.</strong></p>
+  </div>
+
+  <!-- De oplossing -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">de oplossing</div>
+    <h2>De gebruiker koopt. Track &amp; Back regelt de rest.</h2>
+    <p>De gebruiker registreert een Track &amp; Back e-mailadres - een persoonlijk alias op het TB-domein - en gebruikt dit bij online aankopen.</p>
+    <p>Vanaf dat moment neemt Track &amp; Back de volledige post-purchase cyclus over: bevestigingen, verzendupdates, retourvensters, garantieregistratie. Het verwerkt wat relevant is, handelt waar actie nodig is, en informeert de gebruiker alleen wanneer het er werkelijk toe doet.</p>
+    <div class="praat-quote"><p>Dan is het klaar. Geen scherm om te checken. Geen inbox om bij te houden. Geen mentale last om te dragen.</p></div>
+  </div>
+
+  <!-- Waarom nu -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">waarom nu</div>
+    <h2>Drie structurele krachten</h2>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">1</div>
+      <div class="praat-laag-body">
+        <h3>Cognitieve belasting wordt een mainstream consumentencategorie</h3>
+        <p>Digitaal welzijn verschuift van niche-bewustzijn naar marktverwachting. Diensten die mentale belasting verminderen worden premium. TB is vroeg in een categorie waar de markt naartoe beweegt - niet andersom. Dit is externe validatie van TB's propositie, geen toeval.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">2</div>
+      <div class="praat-laag-body">
+        <h3>EU-regelgeving creëert een structureel voordeel</h3>
+        <p>De EU Data Act (2025) en eIDAS 2.0 (december 2026) verplichten dataportabiliteit bij alle commerciële diensten. TB kan wettelijk transactiedata ophalen namens de gebruiker bij elke retailer, verzekeraar, reisplatform of nutsbedrijf. Het resultaat: een volledig transactioneel geheugen - eigendom van de gebruiker, beheerd door TB.</p>
+        <p><strong>Dit is geen feature. Het is een wettelijk afdwingbare moat.</strong></p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">3</div>
+      <div class="praat-laag-body">
+        <h3>De agent-economie heeft een neutrale poortwachter nodig</h3>
+        <p>Naarmate AI-agenten van aanbieders commerciële transacties gaan onderhandelen namens consumenten, hebben ze een vertrouwde, neutrale profiellaag nodig om te bevragen. TB is die laag. Aanbieders betalen een vaste fee per profielinteractie - ongeacht de uitkomst. TB verdient aan het faciliteren, niet aan het sturen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- De moat -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">de moat</div>
+    <h2>Vier factoren die de positie verdedigen</h2>
+    <p>TB's verdediging komt niet alleen uit datavolume. Het komt uit de samenkomst van vier factoren.</p>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr" style="background:#1A1A18;">1</div>
+      <div class="praat-laag-body">
+        <h3>Gedragslock-in</h3>
+        <p>Gebruikers veranderen hun shop-e-mailadres niet. Het TB-alias wordt permanente infrastructuur in het commerciële leven van de gebruiker. Net als een bankrekeningnummer.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr" style="background:#1A1A18;">2</div>
+      <div class="praat-laag-body">
+        <h3>Cross-retailer resolutiedataset</h3>
+        <p>TB heeft de enige dataset van post-purchase gedrag over alle retailers, categorieën en kanalen heen. Die bestaat nergens anders.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr" style="background:#1A1A18;">3</div>
+      <div class="praat-laag-body">
+        <h3>Regelgevingsrugwind</h3>
+        <p>EU-dataportabiliteitswetgeving maakt TB's importcapaciteit niet een productfeature maar een wettelijk recht - voor elke gebruiker, in elke markt.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr" style="background:#1A1A18;">4</div>
+      <div class="praat-laag-body">
+        <h3>Kanaalagnosticisme</h3>
+        <p>TB start met e-mail als eerste adapter. De architectuur is ontworpen om kanaalagnostisch te worden - Shopify-webhooks, API-integraties en agentprotocollen staan op de roadmap. Het kanaal verandert. TB's positie niet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Het verdienmodel -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">het verdienmodel</div>
+    <h2>Drie lagen, gesequenceerd op vertrouwen</h2>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">1</div>
+      <div class="praat-laag-body">
+        <h3>Gratis kern (altijd)</h3>
+        <p>De basis-app is permanent gratis. Niet als freemium-tactiek - als vertrouwensarchitectuur. De gebruiker is nooit gegijzeld, kiest elke dag actief voor TB. Besloten: de gratis kern wordt na lancering nooit teruggetrokken.</p>
+        <p>Wat gratis is in M1: alias aanmaken, automatisch bijhouden van aankopen bij de standaard webshops.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">2</div>
+      <div class="praat-laag-body">
+        <h3>Betaalde uitbreidingen via in-app aankopen</h3>
+        <p>Add-ons worden aangeboden als in-app aankopen (StoreKit op iOS, Google Play Billing op Android). Gebruikers betalen voor extra mogelijkheden - direct vanuit de app, zonder extra drempel.</p>
+        <p>M2 betaalde tiers in beeld: Tier 1 retour-automatisering — Tier 2 alias als slimme communicatiefilter.</p>
+        <p>De keuze voor in-app aankopen betekent dat Apple en Google platformcommissie nemen (15-30%). Dit is de bewuste afweging: maximale toegankelijkheid en naadloze gebruikerservaring boven lagere distributiekosten. De add-ons zijn nooit noodzakelijk voor de basis.</p>
+      </div>
+    </div>
+
+    <div class="praat-laag">
+      <div class="praat-laag-nr">3</div>
+      <div class="praat-laag-body">
+        <h3>Agent-fees (toekomstig verdienmodel)</h3>
+        <p>Naarmate meer aankopen via TB lopen, wordt het gebruikersprofiel rijker. AI-agenten van aanbieders betalen een vaste fee voor toegang tot dat profiel om namens de aanbieder een aanbod te doen. De gebruiker behoudt controle; TB beheert de toegang en int de fee. Niet per aankoop - per profielinteractie. TB verdient hetzelfde ongeacht welke aanbieder wint.</p>
+        <p><strong>De strategische logica: fase 1-omzet (uitbreidingen) betaalt de ontwikkeling. Fase 1-gebruik bouwt het profiel dat fase 2 onvermijdelijk maakt.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- De metrics -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">de metrics die ertoe doen</div>
+    <h2>TB slaagt als gebruikers het niet hoeven te openen</h2>
+    <p>Geen monthly active users - dat is de verkeerde metric voor een dienst die juist bewijst te werken door onzichtbaar te zijn.</p>
+    <ul>
+      <li><strong>Alias-retentie</strong> - percentage gebruikers dat het TB-alias actief houdt als primair shop-adres</li>
+      <li><strong>Autonoom afgehandeld</strong> - percentage bestellingen volledig verwerkt zonder gebruikersinteractie</li>
+      <li><strong>Notificaties per gebruiker per maand</strong> - target zo dicht mogelijk bij nul</li>
+      <li><strong>Tijd tot resolutie</strong> - hoe snel sluit TB een aankoopcyclus?</li>
+      <li><strong>Conversie gratis naar betaald</strong> - validatie van de uitbreidingspropositie</li>
+    </ul>
+  </div>
+
+  <!-- De positie -->
+  <div class="praat-sectie">
+    <div class="praat-sectie-nr">de positie</div>
+    <h2>Track &amp; Back betreedt niet de e-commerce markt. Het claimt de laag die nog niet bestaat.</h2>
+    <p><strong>De resolutielaag.</strong></p>
+    <p>De partij die post-purchase afronding bezit, bezit het enige moment in de handel waar consumentenvertrouwen wordt opgebouwd of permanent verloren gaat - het moment nadat het geld weg is en er nog niets is geleverd.</p>
+    <p>Op schaal wordt TB de vertrouwde infrastructuur tussen elke consument en elke commerciële transactie in zijn leven — inclusief transacties die worden gestart door een autonoom of via voice gestuurd verzoek. Niet omdat het hem opsluit. Omdat het de enige is die de onderhandelingen tussen commerciële partijen begeleidt op basis van het verzoek van de gebruiker, de belangen van de gebruiker bewaakt door juiste informatie aan onderhandelaars te verstrekken zonder zelf commercieel belang te hebben, en elke cyclus werkelijk sluit — bij een koop, bij een ontvangst, bij elk moment waarop een beslissing wordt genomen of uitgevoerd.</p>
+    <div class="praat-quote"><p>Die positie is beschikbaar. Wij pakken hem.</p></div>
+  </div>
+
+  <!-- Live teller -->
+  <div class="praat-tien" id="praatPitchTien">
+    <div class="praat-tien-getal" id="praatPitchGetal">0</div>
+    <div class="praat-tien-label">betalende klanten — vandaag</div>
+    <div class="praat-tien-sub" id="praatPitchSub">Dit is het bewijs we nu verzamelen. Doel: 10.</div>
+  </div>
+
+  <div class="praat-footer">
+    <p>Verdienmodel laag 2 en laag 3 worden definitief na afsluiting van issues #7 en #14 in trackandback-product.<br>
+    <strong>Praatdocument - versie 11 maart 2026</strong></p>
+  </div>
+
+</div><!-- /tab-pitch -->
+
+</main>
+
+<script>
+const DOEL = 10;
+
+// ── Tab navigatie ──
+function wisselTab(tabId, knop) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('actief'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('actief'));
+  document.getElementById('tab-' + tabId).classList.add('actief');
+  knop.classList.add('actief');
+  localStorage.setItem('tb-actieve-tab', tabId);
+}
+
+// ── Data laden ──
+function laadData() {
+  const d = JSON.parse(localStorage.getItem('tb-marketing') || '{}');
+  if(d.betalers !== undefined) setBetalers(d.betalers);
+  if(d.fKennen)    document.getElementById('fKennen').textContent    = d.fKennen;
+  if(d.fAangemeld) document.getElementById('fAangemeld').textContent = d.fAangemeld;
+  if(d.fActief)    document.getElementById('fActief').textContent    = d.fActief;
+  if(d.fBetaalt)   { document.getElementById('fBetaalt').textContent = d.fBetaalt; syncBetalers(true); }
+  if(d.kompas)     document.getElementById('kompas').textContent     = d.kompas;
+  const oudeActie = 'Schrijf op wie de eerste 10 betalers worden. Met naam.';
+  if(d.actie && d.actie !== oudeActie) document.getElementById('actie').textContent = d.actie;
+}
+
+function slaOp() {
+  const d = {
+    betalers:    parseInt(document.getElementById('betalerAantal').textContent) || 0,
+    fKennen:     document.getElementById('fKennen').textContent,
+    fAangemeld:  document.getElementById('fAangemeld').textContent,
+    fActief:     document.getElementById('fActief').textContent,
+    fBetaalt:    document.getElementById('fBetaalt').textContent,
+    kompas:      document.getElementById('kompas').textContent,
+    actie:       document.getElementById('actie').textContent,
+  };
+  localStorage.setItem('tb-marketing', JSON.stringify(d));
+}
+
+function slaVraagOp() {
+  const vragen = {};
+  document.querySelectorAll('.vraag-antwoord[data-id]').forEach(el => {
+    vragen[el.dataset.id] = el.textContent;
+  });
+  localStorage.setItem('tb-vragen', JSON.stringify(vragen));
+}
+
+function laadVragen() {
+  const v = JSON.parse(localStorage.getItem('tb-vragen') || '{}');
+  document.querySelectorAll('.vraag-antwoord[data-id]').forEach(el => {
+    if(v[el.dataset.id]) el.textContent = v[el.dataset.id];
+  });
+}
+
+// ── Betalers ──
+function setBetalers(n) {
+  n = Math.max(0, parseInt(n) || 0);
+  document.getElementById('betalerAantal').textContent = n;
+  document.getElementById('fBetaalt').textContent = n;
+
+  // Tab 2 + Tab 3 sync
+  document.getElementById('praatTienGetal').textContent = n;
+  document.getElementById('praatPitchGetal').textContent = n;
+  document.getElementById('praatPitchTien').classList.toggle('doel-bereikt', bereikt);
+  document.getElementById('praatPitchSub').textContent = bereikt
+    ? 'Het bewijs is geleverd. Nu het volgende gesprek.'
+    : 'Dit is het bewijs we nu verzamelen. Doel: 10.';
+
+  const pct = Math.min(100, (n / DOEL) * 100);
+  document.getElementById('voortgangBar').style.width = pct + '%';
+  document.getElementById('voortgangLabel').textContent = n + ' / ' + DOEL;
+
+  const bereikt = n >= DOEL;
+  document.getElementById('heroCirkel').classList.toggle('doel-bereikt', bereikt);
+  document.getElementById('voortgangBar').classList.toggle('doel-bereikt', bereikt);
+  document.getElementById('fBetaaltStap').classList.toggle('doel-bereikt', bereikt);
+  document.getElementById('actieBullet').classList.toggle('doel-bereikt', bereikt);
+  document.getElementById('praatTien').classList.toggle('doel-bereikt', bereikt);
+
+  if(bereikt) {
+    document.getElementById('heroTitel').textContent = 'Doel bereikt.';
+    document.getElementById('heroSubtitel').textContent = 'Nu het volgende gesprek.';
+    document.getElementById('praatTienSub').textContent = 'Het bewijs is er. Nu het volgende gesprek.';
+  } else {
+    const resterend = DOEL - n;
+    document.getElementById('heroTitel').textContent = 'Van ' + n + ' naar 10';
+    document.getElementById('heroSubtitel').textContent = resterend === 1
+      ? 'Nog één betaler. Wie wordt het?'
+      : 'Nog ' + resterend + ' betalers te gaan';
+    document.getElementById('praatTienSub').textContent = resterend === 1
+      ? 'Nog één betaler. Wie wordt het?'
+      : 'Hier werk ik elke dag naartoe — nog ' + resterend + ' te gaan';
+  }
+}
+
+function updateBetalers() {
+  const huidig = parseInt(document.getElementById('betalerAantal').textContent) || 0;
+  const nieuw = prompt('Aantal betalende klanten:', huidig);
+  if(nieuw === null) return;
+  const n = parseInt(nieuw);
+  if(isNaN(n)) return;
+  setBetalers(n);
+  slaOp();
+}
+
+function syncBetalers(stilletjes) {
+  const n = parseInt(document.getElementById('fBetaalt').textContent) || 0;
+  setBetalers(n);
+  if(!stilletjes) slaOp();
+}
+
+// ── Init ──
+laadData();
+laadVragen();
+
+// Herstel actieve tab
+const opgeslagenTab = localStorage.getItem('tb-actieve-tab');
+if(opgeslagenTab && opgeslagenTab !== 'dashboard') {
+  const knop = document.querySelector('.tab-btn[onclick*="' + opgeslagenTab + '"]');
+  if(knop) wisselTab(opgeslagenTab, knop);
+}
+</script>
+</body>
+</html>

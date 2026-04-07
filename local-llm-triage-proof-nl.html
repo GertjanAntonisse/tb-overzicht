@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lokaal LLM in de Proof Pipeline</title>
+<style>
+  :root {
+    --bg: #f6f3ee;
+    --panel: #fffdf9;
+    --panel-strong: #fffaf2;
+    --ink: #1d1b18;
+    --muted: #675f55;
+    --line: #d8d1c6;
+    --local: #1f6f5f;
+    --local-bg: #edf8f5;
+    --cloud: #245d9b;
+    --cloud-bg: #edf4fc;
+    --hot: #8d2222;
+    --hot-bg: #fff1f1;
+    --gold: #8a4b16;
+    --gold-bg: #fff4e9;
+    --purple: #6f42a8;
+    --purple-bg: #f4eefb;
+    --shadow: 0 10px 30px rgba(25, 20, 14, 0.06);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 80px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+
+  .slide-number {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    font-size: 13px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 22px;
+    color: var(--muted);
+    max-width: 700px;
+    line-height: 1.5;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .card + .card { margin-top: 20px; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+
+  .tag-local { background: var(--local-bg); color: var(--local); }
+  .tag-cloud { background: var(--cloud-bg); color: var(--cloud); }
+  .tag-hot { background: var(--hot-bg); color: var(--hot); }
+  .tag-gold { background: var(--gold-bg); color: var(--gold); }
+  .tag-purple { background: var(--purple-bg); color: var(--purple); }
+
+  .metric-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+  }
+
+  .metric {
+    text-align: center;
+  }
+
+  .metric-value {
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .metric-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 32px 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-node {
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--muted);
+    padding: 0 10px;
+  }
+
+  .flow-local { background: var(--local-bg); color: var(--local); border: 2px solid var(--local); }
+  .flow-cloud { background: var(--cloud-bg); color: var(--cloud); border: 2px solid var(--cloud); }
+  .flow-neutral { background: var(--panel-strong); color: var(--ink); border: 1px solid var(--line); }
+  .flow-hot { background: var(--hot-bg); color: var(--hot); border: 2px solid var(--hot); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--line);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .check { color: var(--local); font-weight: 700; }
+  .cross { color: var(--hot); font-weight: 700; }
+  .maybe { color: var(--gold); font-weight: 700; }
+
+  code {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 14px;
+    background: var(--panel-strong);
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+  }
+
+  .code-block {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 14px;
+    background: #1d1b18;
+    color: #e8e2d8;
+    padding: 24px 28px;
+    border-radius: 14px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+
+  .code-block .comment { color: #7a7568; }
+  .code-block .string { color: #a8d4a0; }
+  .code-block .flag { color: #7cc4e8; }
+  .code-block .cmd { color: #e8c87a; }
+
+  .json-block {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    background: #1d1b18;
+    color: #e8e2d8;
+    padding: 24px 28px;
+    border-radius: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+    margin-top: 16px;
+  }
+
+  .json-block .key { color: #7cc4e8; }
+  .json-block .str { color: #a8d4a0; }
+  .json-block .num { color: #e8c87a; }
+
+  .callout {
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-size: 15px;
+  }
+
+  .callout-local { background: var(--local-bg); border-left: 4px solid var(--local); }
+  .callout-gold { background: var(--gold-bg); border-left: 4px solid var(--gold); }
+  .callout-hot { background: var(--hot-bg); border-left: 4px solid var(--hot); }
+
+  .pipeline-map {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    margin-top: 24px;
+  }
+
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 120px 100px;
+    align-items: center;
+    padding: 14px 20px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    font-size: 14px;
+  }
+
+  .pipeline-row:first-child {
+    border-radius: 14px 14px 0 0;
+  }
+
+  .pipeline-row:last-child {
+    border-radius: 0 0 14px 14px;
+  }
+
+  .pipeline-row.header {
+    background: var(--panel-strong);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+
+  .pipeline-row.highlight {
+    background: var(--local-bg);
+    border-color: var(--local);
+  }
+
+  .verdict {
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 640px;
+  }
+
+  .verdict strong {
+    color: var(--local);
+  }
+
+  .footer-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 900px) {
+    .slide { padding: 40px 24px; }
+    h1 { font-size: 36px; }
+    h2 { font-size: 26px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .metric-row { flex-wrap: wrap; }
+    .flow-diagram { flex-direction: column; align-items: flex-start; }
+    .flow-arrow { transform: rotate(90deg); padding: 6px 0; }
+    .pipeline-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================== SLIDE 1: TITEL ======================== -->
+<div class="slide" style="justify-content: flex-end; padding-bottom: 100px;">
+  <span class="slide-number">01</span>
+  <span class="tag tag-local">Proof bewijs</span>
+  <h1>Lokaal LLM in de<br>Proof Pipeline</h1>
+  <p class="subtitle">
+    Waar een 4B-parameter model op localhost cloud API-calls kan vervangen
+    in de TrackAndBack parser pipeline — en waar niet.
+  </p>
+  <div class="metric-row" style="margin-top: 48px;">
+    <div class="metric">
+      <div class="metric-value" style="color: var(--local);">Gemma 4</div>
+      <div class="metric-label">Model</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">E4B</div>
+      <div class="metric-label">Parameterklasse</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">localhost</div>
+      <div class="metric-label">Endpoint</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color: var(--gold);">$0</div>
+      <div class="metric-label">Kosten per call</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 2: SAMENVATTING ======================== -->
+<div class="slide" style="justify-content: flex-end; padding-bottom: 100px;">
+  <span class="slide-number">02</span>
+  <h2>Samenvatting</h2>
+
+  <div class="verdict">
+    Een snelle ochtendtest met <strong>Gemma 4 E4B op een laptop</strong> bewees dat
+    de minst intelligentie-vereisende LLM-aanroep in de pipeline — triage-classificatie —
+    perfect werkt op een klein lokaal model. De implementatie is een <strong>wisselbaar backend</strong>:
+    een enkele env-variabele schakelt tussen cloud API, localhost, of een AWS GPU-endpoint.
+    <br><br>
+    Met <strong>Gemma 4 27B op een AWS g5 instance</strong> breidt hetzelfde patroon zich uit naar
+    coach-diagnostiek en golden-validatie — dat dekt <strong>de helft van de LLM-aanroepen in de pipeline</strong>
+    op self-hosted inference. De code is al geschreven. Alleen de URL verandert.
+  </div>
+
+  <div class="metric-row" style="margin-top: 48px;">
+    <div class="metric">
+      <div class="metric-value" style="color: var(--local);">1</div>
+      <div class="metric-label">Bewezen vandaag</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color: var(--gold);">2</div>
+      <div class="metric-label">Ontsloten door 27B</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color: var(--hot);">3</div>
+      <div class="metric-label">Blijft in de cloud</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">$0,32</div>
+      <div class="metric-label">Spot GPU / uur</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    TrackAndBack Parser MVP &mdash; Lokaal LLM Proof Bewijs &mdash; April 2026 &mdash; #156
+  </div>
+</div>
+
+<!-- ======================== SLIDE 3: DE VRAAG ======================== -->
+<div class="slide">
+  <span class="slide-number">03</span>
+  <h2>De pipeline heeft 6 LLM-aanroepen.<br>Welke vereisen intelligentie?</h2>
+
+  <div class="pipeline-map">
+    <div class="pipeline-row header">
+      <span>Component</span>
+      <span>Taak</span>
+      <span>Intelligentie</span>
+      <span>Lokaal?</span>
+    </div>
+    <div class="pipeline-row">
+      <span><strong>Evolutie</strong></span>
+      <span>Meerstaps graph-redenering via MCP-tools</span>
+      <span><span class="tag tag-hot" style="margin:0">Hoog</span></span>
+      <span class="cross">Nee</span>
+    </div>
+    <div class="pipeline-row">
+      <span><strong>Bootstrap</strong></span>
+      <span>Genereer parser + schema + tests uit 1 e-mail</span>
+      <span><span class="tag tag-hot" style="margin:0">Hoog</span></span>
+      <span class="cross">Nee</span>
+    </div>
+    <div class="pipeline-row">
+      <span><strong>Refine</strong></span>
+      <span>Lees testfouten, produceer precieze diffs</span>
+      <span><span class="tag tag-hot" style="margin:0">Hoog</span></span>
+      <span class="cross">Nee</span>
+    </div>
+    <div class="pipeline-row">
+      <span><strong>Coach</strong></span>
+      <span>Diagnose waarom tests falen, hints voor refine</span>
+      <span><span class="tag tag-gold" style="margin:0">Middel</span></span>
+      <span class="maybe">Misschien</span>
+    </div>
+    <div class="pipeline-row highlight">
+      <span><strong>Triage</strong></span>
+      <span>Classificeer parser-fout in ~8 labels</span>
+      <span><span class="tag tag-local" style="margin:0">Laag</span></span>
+      <span class="check">Ja</span>
+    </div>
+    <div class="pipeline-row">
+      <span><strong>Golden</strong></span>
+      <span>Stel verwachte JSON voor + valideer</span>
+      <span><span class="tag tag-gold" style="margin:0">Mid-Hoog</span></span>
+      <span class="maybe">Misschien</span>
+    </div>
+  </div>
+
+  <div class="callout callout-local" style="margin-top: 32px;">
+    <strong>Triage-classificatie</strong> is de sweet spot: gestructureerde output, vast schema, lage impact bij fouten, hoogste volume.
+    Een verkeerde classificatie routeert naar "investigate" — geen dataverlies.
+  </div>
+</div>
+
+<!-- ======================== SLIDE 4: ARCHITECTUUR ======================== -->
+<div class="slide">
+  <span class="slide-number">04</span>
+  <h2>Wisselbaar backend-architectuur</h2>
+  <p style="color: var(--muted); margin-bottom: 20px;">
+    De triage-classifier bepaalt zijn backend op het moment van aanroep. Geen code-forks — zelfde prompt, zelfde validatie, ander endpoint.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag tag-cloud">Cloud-pad (standaard)</span>
+      <h3>OpenAI API</h3>
+      <div class="flow-diagram" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+        <div class="flow-node flow-cloud">OPENAI_API_KEY</div>
+        <div style="padding-left: 20px; color: var(--muted);">|</div>
+        <div class="flow-node flow-cloud">responses.create()</div>
+        <div style="padding-left: 20px; color: var(--muted);">|</div>
+        <div class="flow-node flow-neutral">GPT-5.2</div>
+      </div>
+      <p style="font-size: 14px; color: var(--muted); margin-top: 12px;">
+        Proprietary API. ~2s latency. Kosten per token.
+      </p>
+    </div>
+
+    <div class="card" style="border-color: var(--local);">
+      <span class="tag tag-local">Lokaal pad</span>
+      <h3>OpenAI-compatibel</h3>
+      <div class="flow-diagram" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+        <div class="flow-node flow-local">TB_TRIAGE_BASE_URL</div>
+        <div style="padding-left: 20px; color: var(--muted);">|</div>
+        <div class="flow-node flow-local">chat.completions.create()</div>
+        <div style="padding-left: 20px; color: var(--muted);">|</div>
+        <div class="flow-node flow-neutral">Gemma 4 E4B</div>
+      </div>
+      <p style="font-size: 14px; color: var(--muted); margin-top: 12px;">
+        LM Studio / ollama / vLLM. ~21s latency. $0 kosten.
+      </p>
+    </div>
+  </div>
+
+  <div class="code-block" style="margin-top: 32px;">
+    <span class="comment"># Cloud (standaard — geen wijziging nodig)</span><br>
+    <span class="cmd">tb triage</span> inbox/<br>
+    <br>
+    <span class="comment"># Lokaal via flag</span><br>
+    <span class="cmd">tb triage</span> inbox/ <span class="flag">--local</span><br>
+    <br>
+    <span class="comment"># Lokaal via env (werkt met elk OpenAI-compatibel endpoint)</span><br>
+    <span class="flag">TB_TRIAGE_BASE_URL</span>=<span class="string">http://localhost:1234/v1</span> <span class="cmd">tb triage</span> inbox/
+  </div>
+</div>
+
+<!-- ======================== SLIDE 5: LIVE BEWIJS ======================== -->
+<div class="slide">
+  <span class="slide-number">05</span>
+  <h2>Live bewijs: Gemma classificeert correct</h2>
+  <p style="color: var(--muted); margin-bottom: 8px;">
+    Echte e-mail fixture van een productie parser-fout. Tracking ID aanwezig in de e-mailtekst,
+    maar parser meldde TRACKING_ID_MISSING.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag tag-gold">Input</span>
+      <h3>Parser-fout context</h3>
+      <table>
+        <tr><td style="color: var(--muted); width: 140px;">Shop</td><td><code>65e15c7d2306</code></td></tr>
+        <tr><td style="color: var(--muted);">Event type</td><td>shipped</td></tr>
+        <tr><td style="color: var(--muted);">Fouten</td><td><code>TRACKING_ID_MISSING</code></td></tr>
+        <tr><td style="color: var(--muted);">Confidence</td><td>0.4</td></tr>
+        <tr><td style="color: var(--muted);">Triage-redenen</td><td>low_confidence, errors_present</td></tr>
+      </table>
+    </div>
+
+    <div class="card" style="border-color: var(--local);">
+      <span class="tag tag-local">Gemma output</span>
+      <h3>Classificatieresultaat</h3>
+      <table>
+        <tr><td style="color: var(--muted); width: 140px;">Label</td><td><strong style="color: var(--local);">extraction_drift</strong></td></tr>
+        <tr><td style="color: var(--muted);">Actie</td><td>update_parser</td></tr>
+        <tr><td style="color: var(--muted);">Confidence</td><td>0.9</td></tr>
+        <tr><td style="color: var(--muted);">Ontbrekende velden</td><td><code>tracking_id</code></td></tr>
+        <tr><td style="color: var(--muted);">Event type</td><td>shipped</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="json-block" style="margin-top: 28px;">
+{<br>
+&nbsp;&nbsp;<span class="key">"label"</span>: <span class="str">"extraction_drift"</span>,<br>
+&nbsp;&nbsp;<span class="key">"action"</span>: <span class="str">"update_parser"</span>,<br>
+&nbsp;&nbsp;<span class="key">"rationale"</span>: <span class="str">"The parser failed with low confidence and explicitly reported<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a missing tracking ID, even though the email text clearly contains one."</span>,<br>
+&nbsp;&nbsp;<span class="key">"suggested_event_type"</span>: <span class="str">"shipped"</span>,<br>
+&nbsp;&nbsp;<span class="key">"missing_required_fields"</span>: [<span class="str">"tracking_id"</span>],<br>
+&nbsp;&nbsp;<span class="key">"confidence"</span>: <span class="num">0.9</span><br>
+}
+  </div>
+
+  <div class="callout callout-local">
+    <strong>Correct op alle dimensies.</strong> Juist label, juiste actie, exact extractieprobleem ge&iuml;dentificeerd,
+    hoog vertrouwen. Schone JSON bij de eerste poging — geen markdown-wrapping, geen uitleg.
+  </div>
+</div>
+
+<!-- ======================== SLIDE 6: TOKEN-ECONOMIE ======================== -->
+<div class="slide">
+  <span class="slide-number">06</span>
+  <h2>Token-economie &amp; de weg naar productie</h2>
+
+  <div class="metric-row">
+    <div class="metric">
+      <div class="metric-value">1.914</div>
+      <div class="metric-label">Prompt tokens</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">119</div>
+      <div class="metric-label">Completion tokens</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value">2.033</div>
+      <div class="metric-label">Totaal tokens</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" style="color: var(--local);">0</div>
+      <div class="metric-label">Reasoning tokens</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 40px;">
+    <div class="card">
+      <h3>Nu: abonnement dekt het</h3>
+      <p style="font-size: 15px; line-height: 1.7;">
+        Op dit moment draait de pipeline lokaal via Claude Code op een maandelijks abonnement.
+        Cloud LLM-aanroepen vallen binnen het abonnement — nog geen per-token facturering.
+        Dit is de proof-of-concept fase.
+      </p>
+      <p style="font-size: 15px; line-height: 1.7; margin-top: 12px;">
+        <code>reasoning_tokens: 0</code> en <code>finish_reason: "stop"</code> bevestigen
+        dat het model pure JSON produceert zonder chain-of-thought overhead.
+      </p>
+    </div>
+
+    <div class="card" style="border-color: var(--hot);">
+      <h3>Productie: API-facturering is onvermijdelijk</h3>
+      <p style="font-size: 15px; line-height: 1.7;">
+        Een productiepipeline kan niet blijvend draaien op een ontwikkelaarsabonnement.
+        De contractvoorwaarden van Anthropic vereisen API-toegang voor geautomatiseerde productie-workloads.
+        Zodra dit naar de cloud gaat, <strong>wordt elke LLM-aanroep een per-token kost</strong>.
+      </p>
+      <p style="font-size: 15px; line-height: 1.7; margin-top: 12px; color: var(--hot);">
+        <strong>D&aacute;t is het moment dat self-hosted inference zichzelf terugverdient.</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 24px;">
+    <h3>Kostenvergelijking per call — productieprijzen</h3>
+    <table>
+      <tr>
+        <th>Backend</th>
+        <th>Kosten</th>
+        <th>Latency</th>
+        <th>Toelichting</th>
+      </tr>
+      <tr>
+        <td><span class="tag tag-cloud" style="margin:0">Cloud API</span></td>
+        <td>~$0,02/call</td>
+        <td>~2s</td>
+        <td style="font-size: 13px; color: var(--muted);">Per-token facturering, vereist voor evolutie/bootstrap/refine</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-local" style="margin:0">Self-hosted 27B</span></td>
+        <td style="color: var(--local); font-weight: 700;">~$0,32/uur gedeeld</td>
+        <td>~3-5s</td>
+        <td style="font-size: 13px; color: var(--muted);">Spot GPU, verdeeld over alle triage/coach/critic calls</td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-local" style="margin:0">Lokaal E4B</span></td>
+        <td style="color: var(--local); font-weight: 700;">$0,00</td>
+        <td>~21s</td>
+        <td style="font-size: 13px; color: var(--muted);">Alleen dev/test — draait op laptop</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="callout callout-hot" style="margin-top: 20px;">
+    <strong>De overgang is structureel, niet optioneel.</strong> Het abonnementsmodel werkt voor proof-of-concept.
+    Productie vereist API-toegang. Elke call site die we naar self-hosted inference verplaatsen
+    is een call site die niet op de productie API-factuur terechtkomt.
+  </div>
+</div>
+
+<!-- ======================== SLIDE 7: VEILIGHEID ======================== -->
+<div class="slide">
+  <span class="slide-number">07</span>
+  <h2>Veiligheid: validatie-gate</h2>
+  <p style="color: var(--muted); max-width: 640px;">
+    Een kleiner model kan labels hallucineren of ongeldige JSON retourneren.
+    De validatie-gate vangt dit af voordat het de queue bereikt.
+  </p>
+
+  <div class="grid-3" style="margin-top: 32px;">
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 12px;">1</div>
+      <h3>Parse JSON</h3>
+      <p style="font-size: 14px; color: var(--muted);">
+        Extraheer JSON-object uit het antwoord. Handelt markdown-wrapped output correct af.
+      </p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 12px;">2</div>
+      <h3>Valideer enums</h3>
+      <p style="font-size: 14px; color: var(--muted);">
+        Label moet een van 8 bekende waarden zijn. Actie moet een van 4 zijn.
+        Confidence moet een float zijn.
+      </p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 12px;">3</div>
+      <h3>Fallback</h3>
+      <p style="font-size: 14px; color: var(--muted);">
+        Bij validatiefout: <code>other</code> / <code>investigate</code> / <code>0.0</code>.
+        Identiek aan het "geen API-key" pad.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout callout-gold" style="margin-top: 32px;">
+    <strong>Het slechtste scenario is identiek aan de no-LLM fallback.</strong>
+    Een slechte classificatie bereikt de pipeline nooit ongemerkt — het routeert naar menselijke review.
+  </div>
+</div>
+
+<!-- ======================== SLIDE 8: A/B-LOGGING ======================== -->
+<div class="slide">
+  <span class="slide-number">08</span>
+  <h2>A/B-logging voor vergelijking</h2>
+  <p style="color: var(--muted); max-width: 640px;">
+    Elke triage-call logt welk backend is gebruikt. Na verloop van tijd kunnen we classificatie-kwaliteit vergelijken tussen modellen op dezelfde fixtures.
+  </p>
+
+  <div class="grid-2" style="margin-top: 28px;">
+    <div class="card">
+      <span class="tag tag-cloud">Cloud log-entry</span>
+      <div class="json-block" style="margin-top: 12px;">
+{<br>
+&nbsp;&nbsp;<span class="key">"model"</span>: <span class="str">"gpt-5.2"</span>,<br>
+&nbsp;&nbsp;<span class="key">"backend"</span>: <span class="str">"openai"</span>,<br>
+&nbsp;&nbsp;<span class="key">"elapsed_ms"</span>: <span class="num">1840</span>,<br>
+&nbsp;&nbsp;<span class="key">"prompt_type"</span>: <span class="str">"triage"</span><br>
+}
+      </div>
+    </div>
+
+    <div class="card" style="border-color: var(--local);">
+      <span class="tag tag-local">Lokale log-entry</span>
+      <div class="json-block" style="margin-top: 12px;">
+{<br>
+&nbsp;&nbsp;<span class="key">"model"</span>: <span class="str">"gemma-4-e4b-it"</span>,<br>
+&nbsp;&nbsp;<span class="key">"backend"</span>: <span class="str">"local"</span>,<br>
+&nbsp;&nbsp;<span class="key">"elapsed_ms"</span>: <span class="num">21600</span>,<br>
+&nbsp;&nbsp;<span class="key">"prompt_type"</span>: <span class="str">"triage"</span><br>
+}
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size: 15px; color: var(--muted); margin-top: 24px;">
+    Alle logs komen in <code>llm_runs/&lt;shop_id&gt;/</code>. Filter op het <code>backend</code>-veld om te vergelijken.
+  </p>
+</div>
+
+<!-- ======================== SLIDE 9: MODELGROOTTE → CAPACITEIT ======================== -->
+<div class="slide">
+  <span class="slide-number">09</span>
+  <h2>Meer parameters, meer call sites</h2>
+  <p style="color: var(--muted); max-width: 680px;">
+    De E4B op een laptop bewees dat het pad werkt. Een groter Gemma 4 model op AWS GPU
+    opent meer van de pipeline voor self-hosted inference.
+  </p>
+
+  <div style="margin-top: 32px;">
+    <div class="pipeline-map">
+      <div class="pipeline-row header">
+        <span>Call site</span>
+        <span>Taaktype</span>
+        <span>E4B (4B, laptop)</span>
+        <span>27B (AWS GPU)</span>
+      </div>
+      <div class="pipeline-row highlight">
+        <span><strong>Triage</strong></span>
+        <span>Classificatie in ~8 labels</span>
+        <span class="check">Bewezen vandaag</span>
+        <span class="check">Bewezen+</span>
+      </div>
+      <div class="pipeline-row">
+        <span><strong>Coach</strong></span>
+        <span>Diagnostische hints uit pytest-output</span>
+        <span class="cross">Risicovol</span>
+        <span class="check" style="color: var(--local);">Waarschijnlijk ja</span>
+      </div>
+      <div class="pipeline-row">
+        <span><strong>Golden critic</strong></span>
+        <span>Valideer JSON tegen contractmatrix</span>
+        <span class="cross">Risicovol</span>
+        <span class="check" style="color: var(--local);">Waarschijnlijk ja</span>
+      </div>
+      <div class="pipeline-row">
+        <span><strong>Golden proposer</strong></span>
+        <span>Extraheer verwachte JSON uit e-mail</span>
+        <span class="cross">Nee</span>
+        <span class="maybe">Misschien</span>
+      </div>
+      <div class="pipeline-row">
+        <span><strong>Bootstrap + Refine</strong></span>
+        <span>Codegeneratie + chirurgische diffs</span>
+        <span class="cross">Nee</span>
+        <span class="cross">Nee</span>
+      </div>
+      <div class="pipeline-row">
+        <span><strong>Evolutie</strong></span>
+        <span>Meerstaps-agent met MCP-tools</span>
+        <span class="cross">Nee</span>
+        <span class="cross">Nee</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-local" style="margin-top: 28px;">
+    <strong>De scheidslijn is het taaktype, niet de moeilijkheidsgraad.</strong>
+    Self-hosted modellen verwerken single-shot gestructureerde taken (classificeren, valideren, diagnosticeren).
+    Meerstaps agent-loops en codegeneratie blijven op frontier API's.
+  </div>
+</div>
+
+<!-- ======================== SLIDE 10: AWS INFERENCE-PAD ======================== -->
+<div class="slide">
+  <span class="slide-number">10</span>
+  <h2>AWS inference: het opschaalpad</h2>
+  <p style="color: var(--muted); max-width: 680px;">
+    Dezelfde OpenAI-compatibele API, dezelfde code — alleen een andere <code>TB_TRIAGE_BASE_URL</code>.
+    Drie deployment-opties met verschillende afwegingen.
+  </p>
+
+  <div class="grid-3" style="margin-top: 32px;">
+    <div class="card" style="border-color: var(--local);">
+      <span class="tag tag-local">Eenvoudigst</span>
+      <h3>Ollama op EC2</h3>
+      <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 8px;">
+        <code>g5.xlarge</code> (1x A10G, 24GB VRAM).
+        <code>ollama serve</code> is standaard headless.
+        Pull een willekeurige Gemma 4 variant en het draait.
+      </p>
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line);">
+        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+          <span style="color: var(--muted);">Kosten</span>
+          <span>~$0,76/uur on-demand</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+          <span style="color: var(--muted);">Spot</span>
+          <span style="color: var(--local); font-weight: 600;">~$0,32/uur</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+          <span style="color: var(--muted);">Setup</span>
+          <span>Minuten</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag tag-cloud">Sneller</span>
+      <h3>vLLM op EC2</h3>
+      <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 8px;">
+        Speciaal gebouwde inference-server.
+        Continuous batching, PagedAttention.
+        2-3x doorvoer vs ollama op dezelfde hardware.
+      </p>
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line);">
+        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+          <span style="color: var(--muted);">Kosten</span>
+          <span>Zelfde instance</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+          <span style="color: var(--muted);">Doorvoer</span>
+          <span style="color: var(--cloud); font-weight: 600;">2-3x</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+          <span style="color: var(--muted);">Setup</span>
+          <span>~1 uur</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag tag-purple">Beheerd</span>
+      <h3>SageMaker</h3>
+      <p style="font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 8px;">
+        AWS-beheerde GPU-levenscyclus.
+        Schaal naar nul wanneer inactief.
+        Vereist een dunne Lambda-adapter voor OpenAI-compatibele API.
+      </p>
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line);">
+        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+          <span style="color: var(--muted);">Kosten</span>
+          <span>Betaal per inference</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+          <span style="color: var(--muted);">Schaal</span>
+          <span style="color: var(--purple); font-weight: 600;">Nul bij inactiviteit</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px;">
+          <span style="color: var(--muted);">Setup</span>
+          <span>Uren</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block" style="margin-top: 28px;">
+    <span class="comment"># Laptop (bewezen vandaag)</span><br>
+    <span class="flag">TB_TRIAGE_BASE_URL</span>=<span class="string">http://localhost:1234/v1</span><br>
+    <br>
+    <span class="comment"># AWS EC2 met ollama (zelfde code, andere URL)</span><br>
+    <span class="flag">TB_TRIAGE_BASE_URL</span>=<span class="string">http://10.0.1.42:11434/v1</span><br>
+    <span class="flag">TB_TRIAGE_MODEL</span>=<span class="string">gemma4:27b</span><br>
+    <br>
+    <span class="comment"># De code weet niet en maakt het niet uit waar inference draait</span>
+  </div>
+</div>
+
+<!-- ======================== SLIDE 11: WAT 27B ONTSLUIT ======================== -->
+<div class="slide">
+  <span class="slide-number">11</span>
+  <h2>Wat 27B op AWS ontsluit</h2>
+
+  <div class="grid-2">
+    <div>
+      <h3 style="margin-bottom: 20px;">Self-hosted (3 van 6 call sites)</h3>
+
+      <div class="card" style="border-color: var(--local);">
+        <span class="tag tag-local">Bewezen</span>
+        <h3>Triage-classificatie</h3>
+        <p style="font-size: 15px; color: var(--muted); line-height: 1.7;">
+          Gestructureerde classificatie in vaste labels.
+          Werkt op 4B. Op 27B: sneller, betrouwbaarder, nul kosten per call.
+        </p>
+      </div>
+
+      <div class="card" style="margin-top: 16px; border-color: var(--local);">
+        <span class="tag tag-gold">Ontsloten door 27B</span>
+        <h3>Coach-diagnostiek</h3>
+        <p style="font-size: 15px; color: var(--muted); line-height: 1.7;">
+          Lees pytest-output, produceer diagnostische hints.
+          27B heeft genoeg redeneervermogen om een stack trace naar een regex-mismatch te herleiden.
+          Slechte hints verspillen refine-iteraties — kwaliteit telt hier.
+        </p>
+      </div>
+
+      <div class="card" style="margin-top: 16px; border-color: var(--local);">
+        <span class="tag tag-gold">Ontsloten door 27B</span>
+        <h3>Golden critic</h3>
+        <p style="font-size: 15px; color: var(--muted); line-height: 1.7;">
+          Valideer voorgestelde JSON tegen de contractmatrix.
+          Gestructureerde regelcontrole, geen creatieve generatie.
+          Fout = "opnieuw proberen", geen dataverlies.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom: 20px;">Cloud API (3 van 6 call sites)</h3>
+
+      <div class="card" style="border-color: var(--hot);">
+        <span class="tag tag-hot">Blijft in de cloud</span>
+        <h3>Evolutie-runner</h3>
+        <p style="font-size: 15px; color: var(--muted); line-height: 1.7;">
+          Meerstaps graph-redenering met MCP tool-calls.
+          Vereist lange context, tool-gebruik en architecturaal inzicht.
+          De kern-intelligentie van de proof pipeline.
+        </p>
+      </div>
+
+      <div class="card" style="margin-top: 16px; border-color: var(--hot);">
+        <span class="tag tag-hot">Blijft in de cloud</span>
+        <h3>Bootstrap + Refine</h3>
+        <p style="font-size: 15px; color: var(--muted); line-height: 1.7;">
+          Genereert complete parsercode en chirurgische diffs.
+          Correctheid is binair — een verkeerde regel betekent dat de test nog steeds faalt.
+          Geen graceful fallback mogelijk.
+        </p>
+      </div>
+
+      <div class="callout callout-hot" style="margin-top: 16px;">
+        <strong>Het principe:</strong> self-host voor single-shot gestructureerde taken
+        (classificeren, valideren, diagnosticeren — waar fout = "investigate").
+        Cloud API voor meerstaps-generatie
+        (waar fout = verspilde compute of kapotte code).
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

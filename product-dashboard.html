@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>TrackAndBack — Product Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; padding: 32px 24px; }
+    .page { max-width: 900px; margin: 0 auto; }
+
+    .db-header { margin-bottom: 24px; }
+    .db-header h1 { font-size: 22px; font-weight: 700; color: #0f172a; }
+    .db-header .meta { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+
+    .ms-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+    .ms-btn { padding: 6px 14px; font-size: 13px; font-weight: 500; color: #475569; background: white; border: 1px solid #e2e8f0; border-radius: 20px; cursor: pointer; transition: all 0.15s; }
+    .ms-btn:hover { border-color: #1d4ed8; color: #1d4ed8; }
+    .ms-btn.active { background: #1d4ed8; color: white; border-color: #1d4ed8; }
+
+    .ms-summary { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px; }
+    .ms-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; }
+    .ms-card.closed { border-color: #bbf7d0; background: #f0fdf4; }
+    .ms-card.active-ms { border-color: #bfdbfe; }
+    .ms-name { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+    .ms-date { font-size: 11px; margin-bottom: 8px; }
+    .ms-date.red { color: #dc2626; font-weight: 700; }
+    .ms-date.amber { color: #d97706; font-weight: 700; }
+    .ms-date.gray { color: #94a3b8; }
+    .ms-date.green { color: #16a34a; font-weight: 600; }
+    .ms-stats { font-size: 11px; color: #64748b; margin-bottom: 6px; }
+    .ms-bar-bg { background: #e2e8f0; border-radius: 4px; height: 5px; }
+    .ms-bar { background: #1d4ed8; border-radius: 4px; height: 5px; transition: width 0.3s; }
+    .ms-note { font-size: 10px; color: #94a3b8; margin-top: 6px; font-style: italic; }
+    .ms-deliverable { font-size: 11px; color: #16a34a; padding: 1px 0; }
+
+    .section { margin-bottom: 36px; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; }
+    .section-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+    .section-count { font-size: 12px; font-weight: 600; background: #f1f5f9; color: #64748b; padding: 2px 8px; border-radius: 10px; }
+
+    .issue-card { background: white; border: 1px solid #e2e8f0; border-left: 4px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+    .issue-card.prio-1 { border-left-color: #dc2626; }
+    .issue-card.prio-2 { border-left-color: #ea580c; }
+    .issue-card.prio-3 { border-left-color: #ca8a04; }
+    .issue-card.prio-4 { border-left-color: #94a3b8; }
+    .issue-card.prio-5 { border-left-color: #cbd5e1; }
+
+    .issue-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .issue-title-wrap { display: flex; align-items: flex-start; gap: 8px; flex: 1; }
+    .prio-badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+    .prio-badge.p1 { background: #fee2e2; color: #dc2626; }
+    .prio-badge.p2 { background: #ffedd5; color: #ea580c; }
+    .prio-badge.p3 { background: #fef9c3; color: #ca8a04; }
+    .prio-badge.p4 { background: #f1f5f9; color: #64748b; }
+    .prio-badge.p5 { background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; }
+    .issue-title { font-size: 14px; font-weight: 600; color: #0f172a; line-height: 1.4; }
+    .issue-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .ms-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #1d4ed8; white-space: nowrap; }
+    .gh-link { font-size: 11px; color: #1d4ed8; text-decoration: none; white-space: nowrap; padding: 2px 6px; border: 1px solid #bfdbfe; border-radius: 4px; }
+    .gh-link:hover { background: #eff6ff; }
+    .issue-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: #64748b; }
+    .tag.nieuw { background: #dcfce7; color: #16a34a; }
+
+    .fundament-spanning { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; margin-top: 10px; }
+    .fundament-spanning.partial { background: #fefce8; border-color: #fef08a; }
+    .fundament-spanning-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .fundament-spanning-title { font-size: 12px; font-weight: 700; color: #92400e; }
+    .fundament-tv { display: flex; gap: 6px; font-size: 12px; color: #78350f; padding: 2px 0; line-height: 1.5; }
+    .tv-icon { min-width: 20px; flex-shrink: 0; }
+
+    .besloten-card { background: white; border: 1px solid #e2e8f0; border-left: 4px solid #bfdbfe; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; opacity: 0.8; }
+    .besloten-group-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; margin-top: 16px; }
+    .besloten-group-label:first-child { margin-top: 0; }
+
+    .empty { background: white; border: 1px dashed #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; color: #94a3b8; font-size: 13px; }
+    .hidden { display: none; }
+
+    @media (max-width: 600px) {
+      .issue-actions { flex-direction: column; align-items: flex-end; }
+      .ms-summary { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="db-header">
+    <h1>TrackAndBack — Product Dashboard</h1>
+    <div class="meta">Gegenereerd: 16 maart 2026 &middot; Bron: GitHub &middot; GertjanAntonisse/trackandback-product</div>
+  </div>
+
+  <div class="ms-filter">
+    <button class="ms-btn active" data-ms="alle" onclick="filterMilestone('alle', this)">Alle</button>
+    <button class="ms-btn" data-ms="M1" onclick="filterMilestone('M1', this)">M1 — Webshop Fundament</button>
+    <button class="ms-btn" data-ms="M2" onclick="filterMilestone('M2', this)">M2 — Parser Schaal</button>
+    <button class="ms-btn" data-ms="M3" onclick="filterMilestone('M3', this)">M3 — Tweede Pijler</button>
+    <button class="ms-btn" data-ms="M4" onclick="filterMilestone('M4', this)">M4 — Profiel als Actief</button>
+  </div>
+
+  <div class="ms-summary" id="ms-summary"></div>
+
+  <!-- SECTIE 1 -->
+  <div class="section" id="sectie1">
+    <div class="section-header">
+      <span class="section-title">Jouw beslissingen nodig</span>
+      <span class="section-count" id="s1count">24</span>
+    </div>
+    <div id="s1-issues">
+
+      <div class="issue-card prio-1" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#32 Retour met één tik als betaalde add-on — go / no-go</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/32" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:verdienmodel</span><span class="tag">type:keuze</span></div>
+      </div>
+
+      <div class="issue-card prio-1" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#31 WhatsApp notificaties als betaalde add-on — go / no-go</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/31" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:verdienmodel</span><span class="tag">type:keuze</span></div>
+      </div>
+
+      <div class="issue-card prio-1" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#19 [Epic] Onboarding-uitdagingen bij email-alias gebruik bij webshop-registratie</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/19" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:onboarding</span><span class="tag">type:onderzoek</span></div>
+      </div>
+
+      <div class="issue-card prio-1" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#18 Architectuurkeuze: hoe voltooit TB een email-verificatie namens de gebruiker?</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/18" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:onboarding</span><span class="tag">thema:email</span></div>
+      </div>
+
+      <div class="issue-card prio-1" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#17 UX: Verificatie-email flow — gebruiker informeren en begeleiden bij alias-gebruik</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/17" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:onboarding</span><span class="tag">thema:gebruikerservaring</span></div>
+      </div>
+
+      <div class="issue-card prio-1" data-ms="M4">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#3 Wat is het minimum viable profiel voor de eerste aanbieder-pilot?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M4</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/3" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:verdienmodel</span><span class="tag">thema:profiel</span></div>
+      </div>
+
+      <div class="issue-card prio-1" data-ms="M4">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#1 Wat is de eerste handeling die TB's agent autonoom mag uitvoeren namens de gebruiker?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M4</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/1" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span><span class="tag">type:keuze</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#38 Geheugenlaag als betaalde Tier 3 — go / no-go</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/38" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:verdienmodel</span><span class="tag nieuw">nieuw</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#35 Timo-workflow inrichten voor opvolging inactieve alias-houders</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/35" target="_blank">→ GitHub</a></div>
+        </div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="M3">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#34 Domein-prioritering: betaalbaar of strategisch? — framework voor domein-volgorde</span></div>
+          <div class="issue-actions"><span class="ms-badge">M3</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/34" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#33 Communicatiefilter als betaalde Tier 2 — go / no-go</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/33" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:verdienmodel</span><span class="tag">type:keuze</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="M1">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#30 Feedbackformat testfase — vragenlijst + deep listening gespreksformat</span></div>
+          <div class="issue-actions"><span class="ms-badge">M1</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/30" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:onboarding</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="M2">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#10 Hoe meten we dat de groeiloop werkt? (meer users &rarr; betere parsers)</span></div>
+          <div class="issue-actions"><span class="ms-badge">M2</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/10" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:verdienmodel</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="M2">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#9 Wat heeft René nodig om parsers sneller te bouwen naarmate de gebruikersbase groeit?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M2</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/9" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="M2">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#6 Onboarding voor het bredere publiek: hoe legt TB zichzelf uit aan een niet-technische gebruiker?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M2</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/6" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:onboarding</span></div>
+      </div>
+
+      <div class="issue-card prio-2" data-ms="M3">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p2">prio:2</span><span class="issue-title">#4 Voice input vs. voice output voor TB: waar ligt de productgrens?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M3</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/4" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span><span class="tag">type:keuze</span></div>
+      </div>
+
+      <div class="issue-card prio-3" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p3">prio:3</span><span class="issue-title">#22 [P3] Password reset via alias — tijdkritische link, gebruiker notificatie</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/22" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:onboarding</span><span class="tag">thema:email</span></div>
+      </div>
+
+      <div class="issue-card prio-3" data-ms="M3">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p3">prio:3</span><span class="issue-title">#12 Hoe ziet de domein-architectuur eruit vanuit productperspectief?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M3</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/12" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span></div>
+      </div>
+
+      <div class="issue-card prio-3" data-ms="M3">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p3">prio:3</span><span class="issue-title">#11 Welk tweede domein kiezen we na webshop-bestellingen?</span></div>
+          <div class="issue-actions"><span class="ms-badge">M3</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/11" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span></div>
+      </div>
+
+      <div class="issue-card prio-4" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p4">prio:4</span><span class="issue-title">#24 [P4] Retourportaal login-mismatch — alias als account-sleutel werkt niet bij extern portaal</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/24" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span><span class="tag">thema:email</span></div>
+      </div>
+
+      <div class="issue-card prio-4" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p4">prio:4</span><span class="issue-title">#23 [P4] Reply-to mismatch bij klantenservice — afzender alias &ne; account-email</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/23" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:gebruikerservaring</span><span class="tag">thema:email</span></div>
+        <div class="fundament-spanning partial">
+          <div class="fundament-spanning-header"><span>⚠️</span><span class="fundament-spanning-title">Spanning met TB-fundament</span></div>
+          <div class="fundament-tv"><span class="tv-icon">⚠️</span><span>Reply-routing vereist extra complexiteit die de "loslaten" belofte ondermijnt als het misgaat.</span></div>
+          <div class="fundament-tv"><span class="tv-icon">✅</span><span>Gebruiker hoeft niets te doen als TB dit oplost, past bij overdracht van verantwoordelijkheid.</span></div>
+          <div class="fundament-tv"><span class="tv-icon">⚠️</span><span>Bidirectionele alias vergroot afhankelijkheid van TB-infrastructuur voor klantenservice-contact.</span></div>
+        </div>
+      </div>
+
+      <div class="issue-card prio-5" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p5">prio:5</span><span class="issue-title">#27 [P5] Unsubscribe-bescherming — voorkom dat uitschrijving transactionele email blokkeert</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/27" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:email</span></div>
+      </div>
+
+      <div class="issue-card prio-5" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="prio-badge p5">prio:5</span><span class="issue-title">#25 [P5] Alias lock-in &amp; account-portabiliteit — vertrouwensrisico bij uitval of opzegging TB</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/25" target="_blank">→ GitHub</a></div>
+        </div>
+        <div class="issue-tags"><span class="tag">thema:vertrouwen</span></div>
+        <div class="fundament-spanning">
+          <div class="fundament-spanning-header"><span>⚠️</span><span class="fundament-spanning-title">Botst met TB-fundament</span></div>
+          <div class="fundament-tv"><span class="tv-icon">❌</span><span>TB belooft loslaten maar creëert een harde afhankelijkheid. Gebruiker kan niet stoppen zonder grote gevolgen.</span></div>
+          <div class="fundament-tv"><span class="tv-icon">❌</span><span>Overdracht van verantwoordelijkheid werkt alleen als de gebruiker ook terug kan. Dat ontbreekt nu volledig.</span></div>
+          <div class="fundament-tv"><span class="tv-icon">⚠️</span><span>Vertrouwen boven afhankelijkheid is een TB-kernprincipe. Lock-in is het directe tegenovergestelde.</span></div>
+        </div>
+      </div>
+
+      <div class="issue-card" style="border-left-color:#e2e8f0;" data-ms="geen">
+        <div class="issue-top">
+          <div class="issue-title-wrap"><span class="issue-title">#37 🔍 Signal Digest — 16 March 2026</span></div>
+          <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/37" target="_blank">→ GitHub</a></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTIE 2 -->
+  <div class="section" id="sectie2">
+    <div class="section-header">
+      <span class="section-title">René aan het werk</span>
+      <span class="section-count">0</span>
+    </div>
+    <div class="empty">Geen open spikes. René heeft niets openstaand dat het team blokkeert.</div>
+  </div>
+
+  <!-- SECTIE 3 -->
+  <div class="section" id="sectie3">
+    <div class="section-header">
+      <span class="section-title">Gereed voor beslissing</span>
+      <span class="section-count">0</span>
+    </div>
+    <div class="empty">Geen issues gereed. Lead-spikes gebruiken geen product-issue referentie, koppeling niet automatisch te maken.</div>
+  </div>
+
+  <!-- SECTIE 4 -->
+  <div class="section" id="sectie4">
+    <div class="section-header">
+      <span class="section-title">Beslissing genomen</span>
+      <span class="section-count">7</span>
+    </div>
+
+    <div class="besloten-group-label">M1 — Webshop Fundament</div>
+
+    <div class="besloten-card" data-ms="M1">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#16 Wie zijn de eerste app-testgebruikers en hoe bereiken we ze?</span></div>
+        <div class="issue-actions"><span class="ms-badge">M1</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/16" target="_blank">→ GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="besloten-card" data-ms="M1">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#14 BESLISSING: Gratis of betaald — en wat betekent dat voor de onboarding?</span></div>
+        <div class="issue-actions"><span class="ms-badge">M1</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/14" target="_blank">→ GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="besloten-card" data-ms="M1">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#13 BESLISSING: Alias-only, Gmail OAuth, of beide? [M1]</span></div>
+        <div class="issue-actions"><span class="ms-badge">M1</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/13" target="_blank">→ GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="besloten-card" data-ms="M1">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#7 Wat is de grens gratis/betaald in M1?</span></div>
+        <div class="issue-actions"><span class="ms-badge">M1</span><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/7" target="_blank">→ GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="besloten-group-label" style="margin-top:16px;">Geen milestone</div>
+
+    <div class="besloten-card" data-ms="geen">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#21 [P1] 2FA OTP via email alias — ultra-tijdkritisch, code-extractie</span></div>
+        <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/21" target="_blank">→ GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="besloten-card" data-ms="geen">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p1">prio:1</span><span class="issue-title">#20 [P1] Magic links &amp; passwordless login via alias — time-critical forwarding</span></div>
+        <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/20" target="_blank">→ GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="besloten-card" data-ms="geen">
+      <div class="issue-top">
+        <div class="issue-title-wrap"><span class="prio-badge p5">prio:5</span><span class="issue-title">#26 [P5] Marketing vs. transactioneel filtering — zelfde alias, verschillende email-typen</span></div>
+        <div class="issue-actions"><a class="gh-link" href="https://github.com/GertjanAntonisse/trackandback-product/issues/26" target="_blank">→ GitHub</a></div>
+      </div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:4px;">was: status:fundament-spanning</div>
+    </div>
+
+  </div>
+
+  <div style="font-size:12px;color:#94a3b8;text-align:center;padding-top:24px;border-top:1px solid #e2e8f0;margin-top:8px;">
+    TrackAndBack &middot; Product Dashboard &middot; 16 maart 2026
+  </div>
+
+</div>
+<script>
+  const TODAY = new Date('2026-03-16');
+
+  const msConfig = {
+    'M1': { name: 'M1 — Webshop Fundament', due: new Date('2026-03-31'), conditional: true, openBeslissingen: 1, open: 1, besloten: 4 },
+    'M2': { name: 'M2 — Parser Schaal',      due: new Date('2027-03-30'), conditional: false, open: 3, besloten: 0 },
+    'M3': { name: 'M3 — Tweede Pijler',      due: new Date('2027-06-29'), conditional: false, open: 4, besloten: 0 },
+    'M4': { name: 'M4 — Profiel als Actief', due: new Date('2028-03-30'), conditional: false, open: 2, besloten: 0 }
+  };
+
+  function buildMilestoneSummary() {
+    const el = document.getElementById('ms-summary');
+    // M0
+    el.innerHTML = `<div class="ms-card closed">
+      <div class="ms-name">M0 — Pioneer Fase</div>
+      <div class="ms-date green">Gesloten &middot; 7 maart 2026</div>
+      <div style="margin-top:6px;">
+        <div class="ms-deliverable">&#10003; AWS infra (Terraform)</div>
+        <div class="ms-deliverable">&#10003; Email alias + forwarding</div>
+        <div class="ms-deliverable">&#10003; Pioneer website live</div>
+        <div class="ms-deliverable">&#10003; Eerste parsers (M0-scope)</div>
+      </div>
+      <div class="ms-note">Technisch werk in lead niet milestone-gelabeld — zie René.</div>
+    </div>`;
+
+    for (const [key, ms] of Object.entries(msConfig)) {
+      const diff = ms.due ? Math.ceil((ms.due - TODAY) / 86400000) : null;
+      let dateStr, dateClass;
+      if (!ms.due) { dateStr = 'Geen deadline'; dateClass = 'gray'; }
+      else if (ms.conditional) {
+        dateStr = `${ms.due.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})} &mdash; onder voorbehoud (${ms.openBeslissingen} open beslissingen)`;
+        dateClass = 'amber';
+      } else if (diff <= 30) { dateStr = `&#128308; ${ms.due.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})} &mdash; nog ${diff} dagen`; dateClass = 'red'; }
+      else if (diff <= 90) { dateStr = `&#128992; ${ms.due.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}`; dateClass = 'amber'; }
+      else { dateStr = `&#128197; ${ms.due.toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}`; dateClass = 'gray'; }
+
+      const total = ms.open + ms.besloten;
+      const pct = total > 0 ? Math.round(ms.besloten / total * 100) : 0;
+
+      el.innerHTML += `<div class="ms-card active-ms">
+        <div class="ms-name">${ms.name}</div>
+        <div class="ms-date ${dateClass}">${dateStr}</div>
+        <div class="ms-stats">${ms.open} open &middot; ${ms.besloten} besloten</div>
+        <div class="ms-bar-bg"><div class="ms-bar" style="width:${pct}%"></div></div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:3px;">${pct}% besloten</div>
+      </div>`;
+    }
+  }
+
+  function filterMilestone(ms, btn) {
+    document.querySelectorAll('.ms-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[data-ms]').forEach(card => {
+      if (ms === 'alle') { card.classList.remove('hidden'); }
+      else {
+        const v = card.getAttribute('data-ms');
+        (v === ms || v === 'geen') ? card.classList.remove('hidden') : card.classList.add('hidden');
+      }
+    });
+    document.getElementById('s1count').textContent =
+      document.querySelectorAll('#s1-issues [data-ms]:not(.hidden)').length;
+  }
+
+  buildMilestoneSummary();
+</script>
+</body>
+</html>
