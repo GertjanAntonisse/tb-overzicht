@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track & Back — Dashboards en documenten</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #fafaf8;
+    color: #2d2d2d;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+  }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    border-bottom: 1px solid #e8e6e1;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .topnav-brand {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    padding: 0.8rem 1rem 0.8rem 0;
+    border-right: 1px solid #e8e6e1;
+    margin-right: 0.5rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .topnav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.7rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #777;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .topnav a:hover { color: #1a1a1a; }
+  .topnav a.actief { color: #1a1a1a; border-bottom-color: #7c3aed; }
+
+  .main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .page-header {
+    margin-bottom: 2rem;
+  }
+  .page-header h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.3rem;
+  }
+  .page-header p {
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 600px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+  }
+  .dash-card {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: block;
+  }
+  .dash-card:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .dash-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.3rem;
+  }
+  .dash-card h3::after {
+    content: ' \2192';
+    color: #7c3aed;
+    font-weight: 400;
+  }
+  .dash-card p {
+    font-size: 0.85rem;
+    color: #777;
+    margin: 0;
+  }
+  .dash-card .dash-voor {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-top: 0.4rem;
+  }
+  .dash-card .dash-type {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-top: 0.4rem;
+  }
+  .dash-type-extern { background: #f3e8fd; color: #7c3aed; }
+
+  .footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e8e6e1;
+    font-size: 0.8rem;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">Track & Back</span>
+  <a href="index.html">Overzicht</a>
+  <a href="dashboards.html" class="actief">Dashboards</a>
+</nav>
+
+<div class="main-content">
+
+<div class="page-header">
+  <h1>Dashboards en documenten</h1>
+  <p>Elk dashboard geeft een ander stukje van het totaalplaatje. Klik om te openen.</p>
+</div>
+
+<div class="dashboard-grid">
+
+  <a class="dash-card" href="marketing-dashboard.html">
+    <h3>Distributie Dashboard</h3>
+    <p>Hoeveel betalende klanten hebben we? De teller, de funnel van aanmelding tot betaling, en de kernvragen die we moeten beantwoorden.</p>
+    <div class="dash-voor">Voor: Timo &middot; Aangemaakt 12 maart</div>
+  </a>
+
+  <a class="dash-card" href="timo-verdienmodel.html">
+    <h3>Verdienmodel</h3>
+    <p>Hoe gaat Track & Back geld verdienen? Gratis basis, betaalde extra's via in-app aankopen. Welke functies, welke prijzen, welke volgorde.</p>
+    <div class="dash-voor">Voor: Timo &middot; Aangemaakt 17 maart</div>
+  </a>
+
+  <a class="dash-card" href="intelligence-dashboard.html">
+    <h3>Intelligence Dashboard</h3>
+    <p>Wat werkt, wat niet, en wat we daarvan leren. Toont de resultaten van campagnes en posts: bereik, betrokkenheid, conversie en welke boodschap het best aanslaat.</p>
+    <div class="dash-voor">Voor: Timo / Gertjan &middot; Nieuw</div>
+  </a>
+
+  <a class="dash-card" href="https://github.com/users/GertjanAntonisse/projects/15" target="_blank">
+    <h3>Content Pipeline Board</h3>
+    <p>Alle gegenereerde posts op een rij. Beoordeel ze, schuif ze naar "Goedgekeurd" of "Afgekeurd". Per post zie je ook de prestatie-resultaten zodra die binnenkomen.</p>
+    <div class="dash-voor">Voor: Timo &middot; Nieuw</div>
+    <span class="dash-type dash-type-extern">GitHub</span>
+  </a>
+
+  <a class="dash-card" href="proof-ladder-overview.html">
+    <h3>Proof Ladder (Rene)</h3>
+    <p>Hoe ver is Rene met het e-mailsysteem? Dit toont stap voor stap welke onderdelen al bewezen werken en welke nog gebouwd moeten worden. Van "kan het systeem een echte e-mail verwerken?" tot "werkt het voor meerdere webshops tegelijk?"</p>
+    <div class="dash-voor">Voor: Rene / Gertjan &middot; Bijgewerkt 7 april</div>
+  </a>
+
+  <a class="dash-card" href="local-llm-triage-proof-nl.html">
+    <h3>Lokaal AI Triage</h3>
+    <p>Hoe helpt kunstmatige intelligentie bij het verwerken van e-mails? Dit laat zien hoe een lokaal AI-model (op onze eigen computer, niet in de cloud) automatisch herkent wat voor soort e-mail binnenkomt en hoe die verwerkt moet worden.</p>
+    <div class="dash-voor">Voor: Rene / Gertjan &middot; Bijgewerkt 7 april</div>
+  </a>
+
+  <a class="dash-card" href="product-dashboard.html">
+    <h3>Product Dashboard</h3>
+    <p>Alle open productvragen en milestones op een rij. Welke keuzes liggen er, wat is besloten, wat moet nog.</p>
+    <div class="dash-voor">Voor: Gertjan &middot; Aangemaakt 16 maart</div>
+  </a>
+
+  <a class="dash-card" href="visie-dashboard.html">
+    <h3>Visie Dashboard</h3>
+    <p>Waar beweegt de markt naartoe? Signalen over privacy, e-mail, aliassen en hoe grote techbedrijven zich positioneren. Dit helpt ons de koers bepalen.</p>
+    <div class="dash-voor">Voor: Gertjan &middot; Aangemaakt 23 maart</div>
+  </a>
+
+  <a class="dash-card" href="https://drive.google.com/drive/u/0/folders/1D7fcKyN5nK4jpNRTcfEUT8btfL5mM5YA" target="_blank">
+    <h3>Style Guide (Octa)</h3>
+    <p>De visuele identiteit van Track & Back. Octa vult deze map stap voor stap: het logo (met gebruiksregels) en de supergraphic staan er al in. Wordt aangevuld met kleuren, typografie en verdere richtlijnen.</p>
+    <div class="dash-voor">Voor: iedereen</div>
+    <span class="dash-type dash-type-extern">Google Drive</span>
+  </a>
+
+</div>
+
+<div class="footer">
+  <a href="index.html" style="color: #7c3aed; text-decoration: none;">&larr; Terug naar overzicht</a>
+</div>
+
+</div><!-- /main-content -->
+
+</body>
+</html>
