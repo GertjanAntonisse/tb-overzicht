@@ -307,8 +307,8 @@
   <div class="status-grid">
     <div class="status-card" style="background: white;">
       <h3>App</h3>
-      <div class="samenvatting" style="color: #5a7a2e;">13 issues afgerond · 30+ nieuwe punten geopend</div>
-      <div class="detail">Brevo-koppeling helemaal afgemaakt (welkomstmail, unsubscribe, UTM-attributie). E2E-test op de telefoon zelf gedaan, daaruit volgde een lijst bugs en open productvragen die nu gestructureerd in de backlog staan.</div>
+      <div class="samenvatting" style="color: #5a7a2e;">13 issues afgerond · bug-validatie ronde voltooid</div>
+      <div class="detail">Brevo-koppeling helemaal afgemaakt (welkomstmail, unsubscribe, UTM-attributie). E2E-test op de telefoon zelf gedaan; tien bugs uitgesplitst, waarvan zeven na herstel gevalideerd. Eén bug deels gefixt, één terug naar dev, één bleek geen bug.</div>
     </div>
     <div class="status-card" style="background: white;">
       <h3>Marketing</h3>
@@ -317,13 +317,13 @@
     </div>
     <div class="status-card" style="background: white;">
       <h3>Product</h3>
-      <div class="samenvatting" style="color: #b87a1f;">11 nieuwe beslispunten · 1 beslissing genomen</div>
-      <div class="detail">Uit de E2E-test kwam een serie productvragen die uitgeschreven en gelabeld is. Eerste betaalde add-on is gekozen: retour-bewaking. De rest wacht op keuze.</div>
+      <div class="samenvatting" style="color: #5a7a2e;">9 beslissingen genomen · 4 nieuwe sporen geopend</div>
+      <div class="detail">De acht productvragen uit de E2E-test zijn besloten en doorvertaald naar de bouw-backlog. Op vier punten is een vervolgspoor geopend: adaptief filteren, marktplaats-orders, leveringsvoorwaarden opstellen, en onderzoek of TB de retour-handeling zelf kan overnemen als betaalde add-on.</div>
     </div>
     <div class="status-card" style="background: white;">
       <h3>Visie</h3>
-      <div class="samenvatting" style="color: #5a7a2e;">Verdienmodel-richting B2B helder</div>
-      <div class="detail">De koers voor het zakelijke verdienmodel ligt nu op tafel. De data-verkoop-route past niet bij TB en wordt niet gebouwd. De richting die wél past, en die het verdienpotentieel juist groter maakt, is service-overname (providers betalen per afgehandelde interactie) en TB voor zakelijke gebruikers als natuurlijke uitbreiding. Verderop staat de uitwerking.</div>
+      <div class="samenvatting" style="color: #5a7a2e;">Brand-architectuur B2B besloten, verdienmodel in gesprek</div>
+      <div class="detail">Drie sporen liggen op tafel voor het zakelijke verdienmodel: providers die TB betalen per afgehandelde interactie, TB voor zakelijke gebruikers als eigen sublijn, en data-monetarisering. De afweging tussen die sporen loopt nog. Wat wél besloten is: brand-architectuur, twee sublijnen onder één gedeeld merkfundament.</div>
     </div>
   </div>
 </div>
@@ -335,8 +335,8 @@
 
     <div class="status-card">
       <h3>App (bouw)</h3>
-      <div class="samenvatting">E2E-bevindingen verwerken</div>
-      <div class="detail">De handmatige eindtest op de telefoon is gedaan. Bugs zijn vastgelegd in twee epics: één voor bugs die opnieuw getest moeten worden zodra ze zijn opgelost, en één voor productvragen die eerst een keuze nodig hebben. René pakt de bugs op, Gertjan en Timo lopen de productvragen door.</div>
+      <div class="samenvatting">Bugs gevalideerd, productbeslissingen omgezet naar bouwregels</div>
+      <div class="detail">Zeven van de tien bug-fixes uit de eindtest werken zoals bedoeld. Eén fix is deels af, één gaat terug naar René, één bleek geen bug. De acht productbeslissingen zijn doorvertaald naar concrete bouwregels per lead-issue, zodat René direct verder kan.</div>
     </div>
 
     <div class="status-card">
@@ -347,14 +347,14 @@
 
     <div class="status-card">
       <h3>Product</h3>
-      <div class="samenvatting">Beslispunten uit de E2E-test sorteren</div>
-      <div class="detail">Elf nieuwe productvragen kwamen uit de eindtest. Sommige zijn klein (datumformaat, statusnaam), andere raken de kern (externe links versus loslaten). De eerste betaalde add-on is gekozen: retour-bewaking.</div>
+      <div class="samenvatting">E2E-vragen besloten, vier vervolgsporen open</div>
+      <div class="detail">De acht productvragen uit de eindtest zijn besloten. Vier vragen rijpten tijdens de gesprekken door tot eigen sporen: een onderzoek naar adaptief of instelbaar filteren, een nieuw beslispunt over orders die via een marktplaats lopen (denk Bol met een derde verkoper erin), het opstellen van leveringsvoorwaarden, en het onderzoek of TB de retour-handeling later zelf kan overnemen als betaalde add-on.</div>
     </div>
 
     <div class="status-card">
       <h3>Visie</h3>
-      <div class="samenvatting">B2B verdienmodel uitlijnen op TB-principes</div>
-      <div class="detail">Drie sporen liggen open. Spoor 1: data-verkoop aan retailers, dat past niet bij TB en is afgewezen. Spoor 2: providers betalen TB per afgehandelde interactie, dat past wél en wordt verder uitgewerkt. Spoor 3: TB voor zakelijke gebruikers (MKB, ZZP) als uitbreiding van de consument-propositie, het verdienpotentieel oogt daar substantieel groter. Daarnaast ligt vanuit de E2E-test één UX-vraag op visie-niveau: het externe-link-paradigma versus loslaten.</div>
+      <div class="samenvatting">B2B als eigen sublijn, uitwerkingsdocument volgt</div>
+      <div class="detail">Voor TB voor zakelijke gebruikers is gekozen voor een eigen sublijn onder hetzelfde merk: gedeelde look-and-feel en gedeelde mobiele basis, met een eigen desktop-versie en eigen tonaliteit voor de zakelijke gebruiker. Het probleem dat we oplossen is hetzelfde voor consument en zakelijk; het verdienmodel-potentieel ligt zwaarder aan de zakelijke kant. Volgende stap: het uitwerkingsdocument in TB/Akkoord-stijl, dat de drie varianten naast elkaar zet en de gevolgen voor domein, tagline en SB7 expliciet maakt.</div>
     </div>
 
   </div>
@@ -366,9 +366,15 @@
   <div class="beslissingen">
 
     <div class="beslissing-item">
-      <span class="check">&#10003;</span> <strong>B2B verdienmodel: data verkopen aan retailers past niet bij TB</strong>. De gebruiker is de begunstigde van Track & Back, niet de grondstof. Wat wél past: providers (PostNL, DHL, webshops) betalen per afgehandelde interactie als TB klantvragen overneemt. Dat is de richting die structureel klopt en verdienpotentieel heeft
-      <div class="wanneer">vastgelegd in visie</div>
-      <br><a href="https://github.com/GertjanAntonisse/trackandback-visie/issues/56" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: visie #56</a>
+      <span class="check">&#10003;</span> <strong>Acht productvragen uit de eindtest besloten</strong>. De app opent voortaan op orders die onderweg zijn (rust boven taakdrang). Bij meerdere artikelen tonen we het webshop-logo met aantal in plaats van één willekeurige productafbeelding. Bij annuleringen tonen we de reden waar mogelijk, met extra gewicht voor verkoper-annulering ("niet meer leverbaar"). Bij geleverde orders staat een vaste retourdatum. Refund-status verschijnt waar de parser hem kan halen, met een notificatie als de verwachte terugbetalingsdatum verstrijkt. Volgknoppen openen waar mogelijk een directe deeplink, anders een kopieerbaar trackingnummer
+      <div class="wanneer">4 mei</div>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues?q=is%3Aclosed+label%3Abeslissing+is%3Aissue" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #60 tot #67</a>
+    </div>
+
+    <div class="beslissing-item">
+      <span class="check">&#10003;</span> <strong>Brand-architectuur B2B: twee sublijnen onder één merk</strong>. Gedeelde look-and-feel en gedeelde mobiele basis. Het echte verschil zit in een eigen desktop-versie voor de zakelijke gebruiker (factuur-routering, multi-user, koppeling met boekhoudpakketten) en eigen tonaliteit. Het probleem dat we oplossen is hetzelfde voor consument en zakelijk; het verdienmodel-potentieel ligt zwaarder aan de zakelijke kant
+      <div class="wanneer">4 mei</div>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-visie/issues/62" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: visie #62</a>
     </div>
 
     <div class="beslissing-item">
@@ -386,43 +392,43 @@
       <div class="wanneer">4 april</div>
     </div>
 
-    <div class="beslissing-item">
-      <span class="check">&#10003;</span> <strong>E-mailplatform Brevo</strong> gekozen, Standard abonnement actief. Na 1 maand evalueren of het past
-      <div class="wanneer">30 maart</div>
-    </div>
-
-    <div class="beslissing-item">
-      <span class="check">&#10003;</span> <strong>Gratis basis + in-app aankopen</strong> als verdienmodel. Geen Stripe checkout in de app
-      <div class="wanneer">12 maart</div>
-    </div>
-
   </div>
 </div>
 
 <!-- WAT ER OPEN STAAT -->
 <div class="section">
   <h2>Waar nog een keuze nodig is</h2>
-  <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Bovenaan de nieuwe vragen uit de E2E-test van deze week. Daaronder de beslispunten die al langer lopen.</p>
+  <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Bovenaan de vervolgsporen die uit de eindtest-beslissingen voortkwamen. Daaronder de beslispunten die al langer lopen.</p>
   <ul class="item-list">
-    <li>
-      <strong>Externe links versus loslaten</strong> (raakt visie). De app stuurt op meerdere plekken naar externe sites (webshop, retourportaal). Dat botst met het kernprincipe dat Track & Back de gebruiker juist ontlast. Eerst principiële keuze maken, dan UX volgt vanzelf.
-      <span class="label label-open">prio 1</span>
-      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/67" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #67</a>
-    </li>
     <li>
       <strong>Waar in de flow bieden we retour-bewaking aan?</strong> De add-on is gekozen, maar het moment waarop we hem aanbieden in de app is nog open. Te vroeg voelt pusherig, te laat mist de gebruiker hem.
       <span class="label label-open">prio 1</span>
       <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/59" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #59</a>
     </li>
     <li>
-      <strong>Cluster productvragen uit E2E</strong>: leveringsvoorwaarden tonen, retourtermijn bij geleverde orders, refund-status bij annulering, reden van annulering, meerdere artikelen per order, default-filter bij opening. Acht vragen die samen een consistent beeld bepalen van wat een aankoopkaart toont.
+      <strong>Echt afronden als betaalde add-on, kan dat?</strong> De eindtest legde een spanning bloot: TB stuurt nu nog op cruciale momenten naar buiten (retour, refund, communicatie met merchant). Onderzoek of TB die handeling later zelf kan overnemen tegen een betaalprijs, vraagt eerst inzicht in deeplink- en integratiemogelijkheden per webshop.
       <span class="label label-open">prio 2</span>
-      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #60–#68</a>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/72" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #72</a>
     </li>
     <li>
-      <strong>B2B-horizon: TB voor zakelijke gebruikers</strong>. Het MKB-spoor (SaaS-abonnementen die jarenlang doorlopen, facturen naar boekhouding, bulk-acties voor meerdere medewerkers) heeft een hogere ARPU en stickier integratie dan de consumentenkant. Vraag is brand-architectuur: één verhaal ("voor jou en voor je bedrijf") of twee sublijnen met eigen positionering?
+      <strong>Marktplaats-orders: hoe tonen en volgen we ze?</strong> Een Bol-bestelling waarvan één artikel via een derde verkoper komt, leidt tot twee parallelle stromen verzendmails. De order is voor de gebruiker één bestelling, maar de fulfillment is verdeeld. Hoe tonen we dat zonder de helderheid te verliezen?
       <span class="label label-open">prio 2</span>
-      <br><a href="https://github.com/GertjanAntonisse/trackandback-visie/issues/62" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: visie #62</a>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/71" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #71</a>
+    </li>
+    <li>
+      <strong>Leveringsvoorwaarden opstellen en plaatsen op GitHub</strong>. De pilot-publieksversie staat in Drive, de juridische basisdocumenten (privacybeleid, algemene voorwaarden, cookiebeleid) komen er nog. Daarnaast nog open: waar in de app worden ze zichtbaar?
+      <span class="label label-open">prio 2</span>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/70" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #70</a>
+    </li>
+    <li>
+      <strong>Adaptief of instelbaar default-filter?</strong> De vaste keuze voor "Onderweg" als startweergave is besloten en kan gebouwd worden. Vervolgvraag: blijft die keuze vast, of wordt hij later adaptief op basis van gebruik, of door de gebruiker zelf instelbaar?
+      <span class="label label-open">prio 3</span>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/69" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #69</a>
+    </li>
+    <li>
+      <strong>B2B-verdienmodel: drie sporen op tafel</strong>. Provider-fee per afgehandelde interactie, TB voor zakelijke gebruikers (eigen sublijn, brand-keuze gemaakt), en data-monetarisering. De afweging tussen die sporen is open. De data-route vraagt om duidelijkheid over de waarde die het levert, voor wie en wanneer, en het juridisch kader. Visie-discussie loopt.
+      <span class="label label-open">later</span>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-visie/issues/56" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: visie #56</a>
     </li>
     <li>
       <strong>Token-model voor agent-economie</strong>. In een wereld waarin AI-agents namens bedrijven én consumenten onderhandelen heeft TB een unieke positie: de enige agent die uitsluitend voor de gebruiker handelt. Derde partijen betalen per profielraadpleging (alleen wat de gebruiker heeft toegestaan). Lange termijn, maar relevant voor positionering nu.
@@ -448,22 +454,22 @@
   <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Wat er deze week (28 april tot 4 mei) is afgesloten in de werkruimte.</p>
   <ul class="item-list">
     <li>
+      <span class="check">&#10003;</span> <strong>Acht productvragen uit de eindtest besloten</strong>. Default-filter, retourtermijn, annuleringsreden, refund-flow, externe links: het beeld voor de aankoopkaart is consistent geworden en doorvertaald naar concrete bouwregels per lead-issue.
+    </li>
+    <li>
+      <span class="check">&#10003;</span> <strong>Brand-architectuur B2B gekozen</strong>. TB voor consument en TB voor bedrijven worden twee sublijnen onder één gedeeld merkfundament.
+    </li>
+    <li>
+      <span class="check">&#10003;</span> <strong>Eindtest aankopen-flow op de telefoon</strong>, en de bug-validatie ronde erna. Tien bugs uitgesplitst, daarvan zeven na herstel gevalideerd. Eén deels gefixt, één terug naar dev, één bleek geen bug.
+    </li>
+    <li>
       <span class="check">&#10003;</span> <strong>Brevo onboarding compleet</strong>. Nieuwe pioniers worden automatisch gesynchroniseerd, krijgen een welkomstmail met afmeld-link, en zijn meteen toegevoegd aan de juiste lijst. Bij afmelden worden ze ook automatisch geblokkeerd voor verdere mailings.
     </li>
     <li>
       <span class="check">&#10003;</span> <strong>UTM-attributie eind-tot-eind getest</strong>. Vanaf de campagne-pagina tot in het Brevo-contact: we zien nu via welke campagne een pionier binnenkwam.
     </li>
     <li>
-      <span class="check">&#10003;</span> <strong>Eerste campagne live als pilot</strong>. Vercel campagne-app draait, eerste landingspagina staat. Volgende stap: meten of de keten goed loopt op echte signups.
-    </li>
-    <li>
-      <span class="check">&#10003;</span> <strong>Eindtest aankopen-flow op de telefoon</strong>. Volledige doorloop gedaan van inloggen tot notificaties openen. Bevindingen netjes uitgesplitst in bug-issues en product-issues, gekoppeld aan twee epics.
-    </li>
-    <li>
       <span class="check">&#10003;</span> <strong>Tien social posts gepubliceerd</strong> op Facebook en Instagram. Verschillende invalshoeken getest (de mail die je bewaart, de tab die je niet durft te sluiten, een gemiste bezorging).
-    </li>
-    <li>
-      <span class="check">&#10003;</span> <strong>Beslissing eerste betaalde add-on</strong>. Retour-bewaking is gekozen als eerste premium functie.
     </li>
   </ul>
 </div>
