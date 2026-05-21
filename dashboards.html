@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Track & Back — Dashboards en documenten</title>
+<link rel="icon" type="image/svg+xml" href="static/favicon-v2.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="static/favicon-v2-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="static/favicon-v2-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="static/apple-touch-icon-v2.png">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -29,14 +33,17 @@
     -webkit-overflow-scrolling: touch;
   }
   .topnav-brand {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #1a1a1a;
-    padding: 0.8rem 1rem 0.8rem 0;
+    padding: 0.5rem 1rem 0.5rem 0;
     border-right: 1px solid #e8e6e1;
     margin-right: 0.5rem;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
+  }
+  .topnav-brand img {
+    height: 28px;
+    width: auto;
+    display: block;
   }
   .topnav a {
     display: inline-flex;
@@ -166,9 +173,10 @@
 <body>
 
 <nav class="topnav">
-  <span class="topnav-brand">Track & Back</span>
+  <span class="topnav-brand"><img src="static/logo.png" alt="Track & Back"></span>
   <a href="index.html" target="_blank" rel="noopener noreferrer">Overzicht</a>
   <a href="visie-werking.html" target="_blank" rel="noopener noreferrer">Hoe de visie werkt</a>
+  <a href="timo-verdienmodel.html" target="_blank" rel="noopener noreferrer">Verdienmodel</a>
   <a href="dashboards.html" class="actief" target="_blank" rel="noopener noreferrer">Dashboards</a>
 </nav>
 
