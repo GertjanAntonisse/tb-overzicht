@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track & Back — Hoe de visie werkt</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #fafaf8;
+    color: #2d2d2d;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* NAV BAR */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    border-bottom: 1px solid #e8e6e1;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .topnav-brand {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    padding: 0.8rem 1rem 0.8rem 0;
+    border-right: 1px solid #e8e6e1;
+    margin-right: 0.5rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .topnav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.7rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #777;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .topnav a:hover { color: #1a1a1a; }
+  .topnav a.actief { color: #1a1a1a; border-bottom-color: #7c3aed; }
+
+  .main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e8e6e1;
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.3rem;
+  }
+  .header .ondertitel {
+    font-size: 0.95rem;
+    color: #666;
+    margin-top: 0.3rem;
+  }
+  .header .datum {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.3rem;
+  }
+
+  .intro {
+    background: #f5f0ff;
+    border-left: 4px solid #7c3aed;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2.5rem;
+    border-radius: 0 8px 8px 0;
+  }
+  .intro h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #5b21b6;
+    margin-bottom: 0.5rem;
+  }
+  .intro p {
+    font-size: 0.98rem;
+    color: #3a3a3a;
+    margin-bottom: 0.6rem;
+  }
+  .intro p:last-child { margin-bottom: 0; }
+
+  .section {
+    margin-bottom: 2.5rem;
+  }
+  .section h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e8e6e1;
+  }
+  .section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-top: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .section p {
+    font-size: 0.98rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .lagen-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .laag-card {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-left: 4px solid #999;
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+  }
+  .laag-1 { border-left-color: #1D4ED8; }
+  .laag-2 { border-left-color: #047857; }
+  .laag-3 { border-left-color: #6D28D9; }
+  .laag-4 { border-left-color: #B45309; }
+  .laag-card h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.3rem;
+  }
+  .laag-card .laag-vraag {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+  .laag-card .laag-beschrijving {
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .voorbeeld-box {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .voorbeeld-box .label {
+    font-size: 0.75rem;
+    color: #7c3aed;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  .voorbeeld-box .voorspelling {
+    font-size: 1.02rem;
+    color: #1a1a1a;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .voorbeeld-box .uitleg {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.4rem;
+  }
+  .voorbeeld-box .status-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.3rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 600;
+  }
+  .voorbeeld-box .status-tag.bijgesteld {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .stappen {
+    counter-reset: stap;
+    list-style: none;
+    padding: 0;
+  }
+  .stappen li {
+    counter-increment: stap;
+    position: relative;
+    padding: 0.6rem 0 0.6rem 2.5rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid #f0eeea;
+    font-size: 0.95rem;
+  }
+  .stappen li:last-child { border-bottom: none; }
+  .stappen li::before {
+    content: counter(stap);
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    background: #7c3aed;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .pijl-blok {
+    background: #faf7ee;
+    border: 1px solid #e8d8a8;
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+  }
+  .pijl-blok .voor, .pijl-blok .na {
+    font-size: 0.95rem;
+    color: #2d2d2d;
+    padding: 0.4rem 0;
+  }
+  .pijl-blok .pijl {
+    font-size: 1.5rem;
+    color: #c4720a;
+    margin: 0.3rem 0;
+  }
+
+  .meedoen-blok {
+    background: #f0f4e8;
+    border-left: 4px solid #7a9e3e;
+    padding: 1.5rem 1.8rem;
+    margin-top: 2rem;
+    border-radius: 0 8px 8px 0;
+  }
+  .meedoen-blok h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #5a7a2e;
+    margin-bottom: 0.5rem;
+    border: none;
+    padding: 0;
+  }
+  .meedoen-blok p {
+    font-size: 0.95rem;
+    color: #3a3a3a;
+    margin-bottom: 0.6rem;
+  }
+  .meedoen-blok a {
+    color: #5a7a2e;
+    font-weight: 600;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e8e6e1;
+    font-size: 0.8rem;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">Track & Back</span>
+  <a href="index.html">Overzicht</a>
+  <a href="visie-werking.html" class="actief">Hoe de visie werkt</a>
+  <a href="dashboards.html">Dashboards</a>
+</nav>
+
+<div class="main-content">
+
+<div class="header">
+  <h1>Hoe de visie van Track & Back werkt</h1>
+  <div class="ondertitel">En waarom marktsignalen ons helpen sturen op de toekomst</div>
+  <div class="datum">21 mei 2026</div>
+</div>
+
+<div class="intro">
+  <h2>Waarom dit document?</h2>
+  <p>Een bedrijf kan op twee manieren beslissingen nemen. Het kan kijken naar wat gisteren misging, of het kan kijken naar wat morgen op ons af komt. Track & Back probeert dat laatste te doen.</p>
+  <p>Dit document legt uit hoe we dat doen, hoe de visie is opgebouwd en hoe we marktsignalen gebruiken om te checken of we de goede kant op kijken. Het doel: jou als mede-eigenaar helpen sturen op de toekomst, niet op het verleden.</p>
+</div>
+
+<div class="section">
+  <h2>1. Wat is een visie eigenlijk?</h2>
+  <p>Een visie is geen wensenlijstje. Het is geen "wat we zouden willen". Het is een verzameling beweringen over hoe de wereld over een paar jaar werkt, en welke rol Track & Back daarin speelt.</p>
+  <p>Het verschil met hoop: een visie is iets dat fout kan zijn. Als we zeggen "over twee jaar betalen mensen voor rust in hun inbox", dan kan dat kloppen of niet. We moeten het kunnen meten. Daarom doen we het ook op een manier die te toetsen is, met voorspellingen en signalen.</p>
+  <p>Zonder visie reageer je. Je wacht tot iets gebeurt en past je dan aan. Met visie zie je iets aankomen en kun je je voorbereiden. Dat is het verschil tussen reageren en sturen.</p>
+</div>
+
+<div class="section">
+  <h2>2. De visie heeft vier lagen</h2>
+  <p>Stel je een gebouw voor van vier verdiepingen. Elke verdieping beantwoordt een andere vraag. Samen vormen ze het gebouw dat Track & Back is, was en wil worden.</p>
+
+  <div class="lagen-grid">
+
+    <div class="laag-card laag-1">
+      <h4>Laag 1 — Wie wij zijn</h4>
+      <div class="laag-vraag">Wat is Track & Back, en wat is het niet?</div>
+      <div class="laag-beschrijving">Het fundament. Onze kernovertuigingen: loslaten boven controle, afronding boven informatie, rust boven engagement. Deze laag verandert niet snel; ze zijn de stenen waarop alle keuzes rusten.</div>
+    </div>
+
+    <div class="laag-card laag-2">
+      <h4>Laag 2 — Markt &amp; Oplossing</h4>
+      <div class="laag-vraag">Wat gaat de markt doen, en wat hebben mensen nodig?</div>
+      <div class="laag-beschrijving">Hier staan onze voorspellingen over de wereld. Wat gaan consumenten willen, welke wetten komen eraan, wat doen grote bedrijven? Dit zijn de beweringen die we elke week toetsen aan wat er in de wereld gebeurt.</div>
+    </div>
+
+    <div class="laag-card laag-3">
+      <h4>Laag 3 — Horizon &amp; Productvisie</h4>
+      <div class="laag-vraag">Hoe ziet Track & Back er over drie tot vijf jaar uit?</div>
+      <div class="laag-beschrijving">Bredere scenario's voor de toekomst. Wat voor product willen we worden? Hoe ziet ons verdienmodel er uit? Met welke partijen verbinden we? Hier nemen voorspellingen uit Laag 2 vorm aan in concrete keuzes.</div>
+    </div>
+
+    <div class="laag-card laag-4">
+      <h4>Laag 4 — Track & Back als Partner</h4>
+      <div class="laag-vraag">Met wie werken we samen, en hoe?</div>
+      <div class="laag-beschrijving">De buitenste schil. Welke webshops, banken, bezorgers, platforms zien wij als logische partners op de lange termijn? Hoe ziet die samenwerking eruit? Deze laag wordt steeds belangrijker naarmate het product groeit.</div>
+    </div>
+
+  </div>
+
+  <p>Het TB Visie project op GitHub is precies zo opgebouwd. Elke voorspelling, elk cluster en elke beslissing krijgt een label dat aangeeft tot welke laag het hoort. Via verschillende views bekijk je dezelfde issues vanuit telkens een ander zicht.</p>
+</div>
+
+<div class="section">
+  <h2>3. Voorspellingen: wat we denken dat gaat gebeuren</h2>
+  <p>In Laag 2 schrijven we voorspellingen op. Ze zijn kort, scherp en moeten waar of niet waar kunnen blijken. Geen vage zinnen zoals "AI wordt belangrijk". Wel concrete beweringen zoals:</p>
+
+  <div class="voorbeeld-box">
+    <div class="label">Voorspelling L2-04</div>
+    <div class="voorspelling">E-mailaliassen worden mainstream door de privacy-trend</div>
+    <div class="uitleg">Wat we voorspellen: over een paar jaar gebruikt de gemiddelde consument een alias bij online aankopen, net zoals nu bijna iedereen een wachtwoordmanager heeft. Dit is geen specialistisch ding meer.</div>
+    <span class="status-tag">bevestigd door markt</span>
+  </div>
+
+  <div class="voorbeeld-box">
+    <div class="label">Voorspelling L2-05</div>
+    <div class="voorspelling">Betalen voor digitale rust wordt sociaal geaccepteerd</div>
+    <div class="uitleg">Wat we voorspellen: mensen willen niet alleen betalen voor meer (meer features, meer opslag), maar ook voor minder (minder afleiding, minder mail, minder druk). Dat is een mentale omslag die nu nog niet vanzelfsprekend is, maar straks wel.</div>
+    <span class="status-tag">bevestigd door markt</span>
+  </div>
+
+  <div class="voorbeeld-box">
+    <div class="label">Voorspelling L2-08</div>
+    <div class="voorspelling">Bezorgfragmentatie neemt toe, ondanks marktconsolidatie</div>
+    <div class="uitleg">Wat we voorspellen: het lijkt of de bezorgmarkt samenklontert (grote spelers nemen kleine over), maar voor de consument wordt het juist ingewikkelder, niet eenvoudiger. Er komen nieuwe partijen bij (marktplaatsen, lokale bezorgers, drone-experimenten) sneller dan dat oude verdwijnen.</div>
+    <span class="status-tag">bevestigd door markt</span>
+  </div>
+
+  <p>Op dit moment staan er ruim veertig van zulke voorspellingen in onze visie. Sommige zijn bevestigd, sommige zijn bijgesteld, sommige wachten op meer bewijs.</p>
+</div>
+
+<div class="section">
+  <h2>4. Marktsignalen: hoe we checken of we gelijk hebben</h2>
+  <p>Een voorspelling op zich is niet veel waard. Het bewijs zit in wat we in de echte wereld zien gebeuren. Zo'n stukje bewijs noemen we een marktsignaal.</p>
+
+  <p>Een marktsignaal kan van alles zijn:</p>
+  <ul style="margin-left: 1.5rem; margin-bottom: 1rem; font-size: 0.95rem;">
+    <li>Een nieuwsbericht over een wet die eraan komt</li>
+    <li>Een productupdate van Apple, Google of Amazon</li>
+    <li>Een onderzoek van een universiteit of bureau</li>
+    <li>Een aankondiging van een concurrent of partner</li>
+    <li>Een gedragspatroon dat we zien bij onze pioniers</li>
+  </ul>
+
+  <p>Een voorbeeld: als Apple aankondigt dat ze "Hide My Email" standaard aanzetten voor nieuwe gebruikers, dan is dat een signaal voor onze voorspelling "E-mailaliassen worden mainstream". Apple maakt het normaal, op grote schaal. Onze voorspelling klopt.</p>
+
+  <p>Soms doet een signaal het omgekeerde. Het laat zien dat onze voorspelling niet helemaal klopt, en moet worden bijgesteld. Dat is geen verlies maar winst: ons kompas wordt scherper.</p>
+</div>
+
+<div class="section">
+  <h2>5. Het samenspel</h2>
+  <p>Het mooie is hoe voorspelling en signaal samenwerken. Ze versterken elkaar.</p>
+
+  <div class="pijl-blok">
+    <div class="voor"><strong>Voorspelling:</strong> "Mensen gaan betalen voor digitale rust"</div>
+    <div class="pijl">+</div>
+    <div class="voor"><strong>Signaal:</strong> Drie betaalde inbox-diensten halen miljoen gebruikers</div>
+    <div class="pijl">⬇</div>
+    <div class="na"><strong>Resultaat:</strong> Voorspelling krijgt het label <em>verified</em>. We weten dat we op een correcte trend zitten en kunnen erop bouwen.</div>
+  </div>
+
+  <p>En andersom:</p>
+
+  <div class="pijl-blok">
+    <div class="voor"><strong>Voorspelling:</strong> "E-mailaliassen worden mainstream binnen twee jaar"</div>
+    <div class="pijl">+</div>
+    <div class="voor"><strong>Signaal:</strong> Apple maakt het standaard, maar adoptie gaat langzamer dan verwacht</div>
+    <div class="pijl">⬇</div>
+    <div class="na"><strong>Resultaat:</strong> De voorspelling klopt qua richting, maar de tijdlijn moet bijgesteld worden. Status: <em>bijgesteld</em>. We weten nu beter wanneer we moeten klaarstaan.</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>6. Signal Digest: het wekelijkse ritme</h2>
+  <p>Elke week wordt er een Signal Digest gemaakt. Dat is een verzameling van alle signalen die in de afgelopen dagen zijn binnengekomen, gekoppeld aan de voorspellingen die ze raken.</p>
+
+  <ol class="stappen">
+    <li>Signalen worden gevangen uit nieuwsbronnen, onderzoek en eigen waarneming.</li>
+    <li>Per signaal wordt gekeken welke voorspelling het raakt.</li>
+    <li>De voorspelling wordt bevestigd, bijgesteld of een nieuwe vraag wordt geopend.</li>
+    <li>Sterke signalen leiden tot een beslispunt: moeten we onze koers aanpassen?</li>
+  </ol>
+
+  <p>Zo blijft het kompas levend. We doen niet één keer een visie-oefening en hopen dat we het goed hebben. We toetsen wekelijks of we nog kloppen met de werkelijkheid.</p>
+</div>
+
+<div class="section">
+  <h2>7. Wat dit betekent voor sturen op de toekomst</h2>
+  <p>Het verschil zit in de richting waarin je kijkt.</p>
+
+  <p><strong>Zonder visie:</strong> je kijkt naar wat al gebeurd is. Een klant haakte af, een feature werkt niet, een bug staat open. Je reageert. Je verdienmodel is wat je vandaag hebt. Je groei is wat je vorige maand had.</p>
+
+  <p><strong>Met visie:</strong> je kijkt naar wat op je afkomt. De golf bezorgfragmentatie komt op gang, dus we positioneren ons nu als de partij die daar rust in brengt. Het verdienmodel groeit mee met wat we zien aankomen in de agent-economie, niet alleen met wat we vandaag kunnen verkopen.</p>
+
+  <p>Een concreet voorbeeld: het verdienmodel van Track & Back was in het begin redelijk simpel. Een paar betaalde features, klaar. Maar de visie laat zien dat er veel meer mogelijk is. Voorspellingen zoals "het gebruikersprofiel als eigendomsdata wordt commercieel waardevoller dan platformdata" (L2-17) en "agentic commerce fee-modellen worden de standaard" (L2-15) wijzen op een verdienmodel dat veel groter is dan een paar in-app aankopen. Door deze voorspellingen actief te volgen, groeit je beeld van het verdienmodel mee. Als je dat niet doet, blijf je hangen in wat je dacht aan het begin.</p>
+
+  <p>Dit is de kern: visie en signalen samen voorkomen dat je terugvalt in oudere denkbeelden. Ze laten je zien dat de wereld voortdurend beweegt, en dat het product en het verdienmodel meebewegen.</p>
+</div>
+
+<div class="meedoen-blok">
+  <h2>8. Hoe je kunt meedoen</h2>
+  <p>Het TB Visie project op GitHub is geen besloten ruimte. Het is bedoeld om mee te lezen en mee te denken. Elke voorspelling, elk signaal, elk cluster staat open. Je kunt commentaar geven, vragen stellen, eigen signalen aandragen. Begin bij de view <strong>🔍 Signal Digest</strong> (wekelijks ritme) of <strong>Per laag</strong> (overzicht van het gebouw).</p>
+  <p>Specifieke plekken waar jouw blik op de toekomst nuttig is:</p>
+  <ul style="margin-left: 1.5rem; margin-bottom: 0.8rem; font-size: 0.95rem;">
+    <li><strong>De B2B-uitwerking</strong> (variant B met twee sublijnen): hoe wordt Track & Back voor zakelijke gebruikers, en wat doet dat met het verdienmodel?</li>
+    <li><strong>De agent-economie</strong>: derden die straks betalen om met onze gebruikersprofielen te mogen praten (alleen met expliciete toestemming)</li>
+    <li><strong>Verdienmodel-uitbreiding</strong>: van gratis kern, naar betaalde uitbreidingen, naar agent-fees. Een ladder, niet één trede.</li>
+  </ul>
+  <p>Hoe meer je meedraait in de visie-gesprekken, hoe sneller de richtingen ook bij jou rijpen. Niet door overtuigd te worden, maar door het zien gebeuren.</p>
+  <p style="margin-top: 0.8rem;"><a href="https://github.com/users/GertjanAntonisse/projects/16" target="_blank">→ Open het TB Visie project</a></p>
+</div>
+
+<div class="footer">
+  Dit document is gemaakt vanuit de Track & Back werkruimte.<br>
+  Het hoort bij het wekelijkse overzicht en wordt bijgewerkt als de visie evolueert.
+</div>
+
+</div>
+
+</body>
+</html>
