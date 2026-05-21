@@ -289,12 +289,12 @@
 
 <div class="header">
   <h1>Track & Back</h1>
-  <div class="datum">Overzicht per 4 mei 2026 · week 28 april tot 4 mei</div>
+  <div class="datum">Overzicht per 21 mei 2026 · week 11 mei tot 21 mei</div>
 </div>
 
 <div class="weekthema">
-  <h2>Weekthema: Begrijpen</h2>
-  <p>Deze week draaide om begrijpen wat het product werkelijk doet. De eerste handmatige eindtest van de aankopen-flow op een echte telefoon, en de Brevo-onboarding die nu live staat als kanaal naar pioniers. Wat blijkt: het systeem werkt, en we zien tegelijk waar het schuurt met de kernprincipes van Track & Back. Dat is precies de bedoeling van begrijpen voor versnellen.</p>
+  <h2>Weekthema: Nieuwsgierigheid</h2>
+  <p>Twee weken waarin nieuwsgierigheid praktisch werd. De eindtest is voor het eerst volledig op een echte iPhone doorlopen, tien stappen lang. De App Store route is in gang gezet. Brevo en de auto-reply hebben zich bewezen onder live verificatie. En tegelijk is de juridische werkelijkheid binnengekomen: vier nieuwe vragen over wat het betekent dat TB feitelijk mail filtert namens de gebruiker. Geen techniek-vragen, maar grondhoudingsvragen. Begrijpen voor versnellen, in beide richtingen.</p>
 </div>
 
 <!-- DOEL-ANKER + GROEI BAND -->
@@ -303,27 +303,27 @@
     <h2 style="margin: 0;">Doel: 10 betalende klanten</h2>
     <span style="font-size: 0.9rem; color: #777;">Stand: 0 / 10 · Fase 1: pioniers activeren</span>
   </div>
-  <p style="font-size: 0.9rem; color: #555; margin-bottom: 1rem;">Alles wat we deze week deden gaat over één ding: het pad naar tien betalende klanten korter en betrouwbaarder maken. Hieronder per domein wat er bewoog.</p>
+  <p style="font-size: 0.9rem; color: #555; margin-bottom: 1rem;">Twee weken waarin de app voor het eerst van begin tot eind is getest op een echte telefoon, en de route naar de App Store is begonnen. Hieronder per domein wat er bewoog.</p>
   <div class="status-grid">
     <div class="status-card" style="background: white;">
       <h3>App</h3>
-      <div class="samenvatting" style="color: #5a7a2e;">13 issues afgerond · bug-validatie ronde voltooid</div>
-      <div class="detail">Brevo-koppeling helemaal afgemaakt (welkomstmail, unsubscribe, UTM-attributie). E2E-test op de telefoon zelf gedaan; tien bugs uitgesplitst, waarvan zeven na herstel gevalideerd. Eén bug deels gefixt, één terug naar dev, één bleek geen bug.</div>
+      <div class="samenvatting" style="color: #5a7a2e;">26 issues afgerond · E2E voltooid, App Store-route gestart</div>
+      <div class="detail">De handmatige eindtest van de aankopen- en notificatiestroom is voor het eerst volledig op een echte iPhone doorlopen, tien stappen lang. Alle bugs uit dat traject zijn gevalideerd en gesloten. Brevo welkomstmail werkt met STOP-link, UTM-attributie meet correct, favicon en logo renderen netjes in mail-clients. De App Store Connect route is in gang gezet: API key voor TestFlight uploads is klaar.</div>
     </div>
     <div class="status-card" style="background: white;">
       <h3>Marketing</h3>
-      <div class="samenvatting" style="color: #5a7a2e;">17 issues afgerond · eerste campagne live</div>
-      <div class="detail">Brevo onboarding-epic gesloten. Campagne-app op Vercel staat. Tien social posts gepubliceerd. Vijf nieuwe websitepagina's geopend om de site compleet te maken.</div>
+      <div class="samenvatting" style="color: #5a7a2e;">3 issues afgerond · 25+ nieuwe posts in pipeline</div>
+      <div class="detail">Drie nieuwe campagnes geproduceerd: "het schuldgevoel van de te late retour", "de terugbetaling waar je op blijft wachten", "de bezorger die geprobeerd heeft terwijl jij thuis was". Het laatste gat in de marketing meet- en leer-keten is gesloten: de Intelligence Pipeline draait nu op Neon-state. Op AI-agent-niveau is besloten de visual-laag uit ContentAgent te halen als eigen Invariant-pilot.</div>
     </div>
     <div class="status-card" style="background: white;">
       <h3>Product</h3>
-      <div class="samenvatting" style="color: #5a7a2e;">9 beslissingen genomen · 4 nieuwe sporen geopend</div>
-      <div class="detail">De acht productvragen uit de E2E-test zijn besloten en doorvertaald naar de bouw-backlog. Op vier punten is een vervolgspoor geopend: adaptief filteren, marktplaats-orders, leveringsvoorwaarden opstellen, en onderzoek of TB de retour-handeling zelf kan overnemen als betaalde add-on.</div>
+      <div class="samenvatting" style="color: #c4720a;">4 juridische vragen geopend · geen nieuwe beslissingen</div>
+      <div class="detail">De juridische werkelijkheid is binnengekomen. Vier nieuwe vragen op tafel: welke mail-categorieën horen wel of niet bij een TB-alias (zorg, school, financieel), wat is het retentie- en wissingsbeleid op alias-opslag conform AVG art. 17, wat moet er aan de Algemene Voorwaarden veranderen omdat TB feitelijk filtert namens de gebruiker, en wat is de juridische positie van TB als mailbox-filterende partij. Dit zijn grondhoudingsvragen, geen techniek-vragen.</div>
     </div>
     <div class="status-card" style="background: white;">
       <h3>Visie</h3>
-      <div class="samenvatting" style="color: #5a7a2e;">Brand-architectuur B2B besloten, verdienmodel in gesprek</div>
-      <div class="detail">Drie sporen liggen op tafel voor het zakelijke verdienmodel: providers die TB betalen per afgehandelde interactie, TB voor zakelijke gebruikers als eigen sublijn, en data-monetarisering. De afweging tussen die sporen loopt nog. Wat wél besloten is: brand-architectuur, twee sublijnen onder één gedeeld merkfundament.</div>
+      <div class="samenvatting" style="color: #5a7a2e;">Eigen inference verankerd als merkfundering</div>
+      <div class="detail">De keuze om TB's e-mailverwerking zelf te doen op een eigen Gemma-model in AWS Frankfurt, in plaats van via een commerciële AI-dienst (OpenAI, Anthropic), is verankerd als merkfundering. Architectuur: een pre-parser handelt herkenbare webshops zelf af, alleen onbekende e-mails gaan naar Gemma. Lange-termijn richting: parsing direct op de telefoon (Apple Foundation Models, Gemini Nano). Eigendom en privacy zitten in de bouw, niet alleen in de tekst.</div>
     </div>
   </div>
 </div>
@@ -335,26 +335,26 @@
 
     <div class="status-card">
       <h3>App (bouw)</h3>
-      <div class="samenvatting">Bugs gevalideerd, productbeslissingen omgezet naar bouwregels</div>
-      <div class="detail">Zeven van de tien bug-fixes uit de eindtest werken zoals bedoeld. Eén fix is deels af, één gaat terug naar René, één bleek geen bug. De acht productbeslissingen zijn doorvertaald naar concrete bouwregels per lead-issue, zodat René direct verder kan.</div>
+      <div class="samenvatting">App Store-route, Forgot password, TestFlight installeren</div>
+      <div class="detail">De Account Holder checklist voor App Store approval ligt klaar. Een UX-specificatie voor wachtwoord-vergeten is opgesteld; René bouwt nu de optie op het inlogscherm. Voor Timo staat de uitnodiging open om TestFlight te installeren en de app op zijn eigen iPhone te testen. Privacy-pagina krijgt nog PDFs en subverwerker-lijst.</div>
     </div>
 
     <div class="status-card">
       <h3>Marketing</h3>
-      <div class="samenvatting">Eerste campagne live, content draait</div>
-      <div class="detail">De Brevo-onboarding is volledig actief: nieuwe pioniers krijgen automatisch een welkomstmail met afmeld-link. De campagne-pagina draait via Vercel. Op Facebook en Instagram zijn deze week tien posts gepubliceerd. Volgende stap: de website afmaken (vijf pagina's open).</div>
+      <div class="samenvatting">Drie nieuwe campagnes, App Store onboarding, Invariants-pilot</div>
+      <div class="detail">Drie campagnes liggen in de pipeline klaar voor Timo's beoordeling op het project board: schuldgevoel late retour, terugbetaling die uitblijft, bezorger die "geprobeerd" heeft. Daarnaast: marketing-onboarding voor een professionele App Store-presentatie, en de eerste Invariant-pilot waarin VisualPromptAgent zich afsplitst van ContentAgent met eigen bewijslaag.</div>
     </div>
 
     <div class="status-card">
       <h3>Product</h3>
-      <div class="samenvatting">E2E-vragen besloten, vier vervolgsporen open</div>
-      <div class="detail">De acht productvragen uit de eindtest zijn besloten. Vier vragen rijpten tijdens de gesprekken door tot eigen sporen: een onderzoek naar adaptief of instelbaar filteren, een nieuw beslispunt over orders die via een marktplaats lopen (denk Bol met een derde verkoper erin), het opstellen van leveringsvoorwaarden, en het onderzoek of TB de retour-handeling later zelf kan overnemen als betaalde add-on.</div>
+      <div class="samenvatting">Juridische sporen, plus drie scope-vragen van vorige week</div>
+      <div class="detail">Vier nieuwe juridische sporen rijpen: mail-categorieën voor TB-alias, retentie-/wissingsbeleid, AV-aanvulling voor mailbox-filtering, juridische positie als filterende partij. Daarboven lopen door: affiliate-doorzet als tweede verdienmodel, meertaligheid en buitenlandse bestellingen, marktplaats-orders met meerdere fulfillment-partijen. Nog geen beslissingen; eerst begrijpen.</div>
     </div>
 
     <div class="status-card">
       <h3>Visie</h3>
-      <div class="samenvatting">B2B als eigen sublijn, uitwerkingsdocument volgt</div>
-      <div class="detail">Voor TB voor zakelijke gebruikers is gekozen voor een eigen sublijn onder hetzelfde merk: gedeelde look-and-feel en gedeelde mobiele basis, met een eigen desktop-versie en eigen tonaliteit voor de zakelijke gebruiker. Het probleem dat we oplossen is hetzelfde voor consument en zakelijk; het verdienmodel-potentieel ligt zwaarder aan de zakelijke kant. Volgende stap: het uitwerkingsdocument in TB/Akkoord-stijl, dat de drie varianten naast elkaar zet en de gevolgen voor domein, tagline en SB7 expliciet maakt.</div>
+      <div class="samenvatting">Technologie als merkfundering, B2B-document open</div>
+      <div class="detail">Visie #66 (Technologie-architectuur als merkfundering) verankert de eigen-inference keuze in de merkbeloften: privacy, eigendom en rust vragen om een TB die in de bouw is wat het in het verhaal belooft. Het uitwerkingsdocument voor de B2B-sublijn (variant B in TB/Akkoord-stijl) staat nog open. De drie sporen voor het zakelijke verdienmodel rijpen door op de achtergrond.</div>
     </div>
 
   </div>
@@ -364,6 +364,24 @@
 <div class="section">
   <h2>Onlangs besloten</h2>
   <div class="beslissingen">
+
+    <div class="beslissing-item">
+      <span class="check">&#10003;</span> <strong>Eigen inference op Gemma verankerd als merkfundering</strong>. Een wezenlijke richting-keuze in de technische opbouw van TB. Vier routes lagen op tafel om e-mails te verwerken: meelopen met agentic tooling (Claude, Codex, instabiel), een commerciële AI-dienst aanroepen (OpenAI, Gemini Flash, US-cloud), zelf draaien op een open model (Gemma op AWS Frankfurt), of parsing direct op de telefoon van de gebruiker (Apple Foundation Models, Gemini Nano).
+      <br><br>
+      <strong>Gekozen voor korte termijn:</strong> eigen Gemma op AWS Frankfurt, met daarvóór een pre-parser. Werkstroom: e-mail binnen → pre-parser → herken ik deze webshop? → ja: parser handelt af; nee: Gemma extractie. Inference is daarmee een fractie van het totale e-mailvolume, niet de default. Dit maakt de route haalbaar in kosten en houdt de groeiloop intact: elke nieuwe parser maakt het systeem zuiniger.
+      <br><br>
+      <strong>Lange termijn richting:</strong> parsing op het toestel zelf. De zuiverste vertaling van "wat van jou is, blijft bij jou".
+      <br><br>
+      <strong>Waarom dit een merkfundering is:</strong> privacy, eigendom en vertrouwen zijn nu beloften in de tekst, maar ze worden pas geloofwaardig als ze ook in de architectuur zitten. Met een commerciële AI-dienst is TB afhankelijk van een vendor die elk moment van koers kan veranderen, en gaat data buiten de EU. Met eigen inference op een open model is TB in de bouw wat het in het verhaal zegt te zijn. Vanaf nu het anker voor elke technologie-keuze.
+      <div class="wanneer">18 mei</div>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-visie/issues/66" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: visie #66</a>
+    </div>
+
+    <div class="beslissing-item">
+      <span class="check">&#10003;</span> <strong>Eindtest van begin tot eind voltooid op een echte iPhone</strong>. Tien stappen handmatig doorlopen: inloggen, aankopen-overzicht, detailschermen, zoeken met filter, notificaties openen, als gelezen markeren, UX-problemen signaleren. Alle Ready-for-Test bugs uit dat traject zijn gevalideerd en gesloten. Eerste keer dat we de hele stroom op één toestel hebben gezien werken
+      <div class="wanneer">20 mei</div>
+      <br><a href="https://github.com/triadflow/trackandback-lead/issues/464" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: lead #464 (epic)</a>
+    </div>
 
     <div class="beslissing-item">
       <span class="check">&#10003;</span> <strong>Acht productvragen uit de eindtest besloten</strong>. De app opent voortaan op orders die onderweg zijn (rust boven taakdrang). Bij meerdere artikelen tonen we het webshop-logo met aantal in plaats van één willekeurige productafbeelding. Bij annuleringen tonen we de reden waar mogelijk, met extra gewicht voor verkoper-annulering ("niet meer leverbaar"). Bij geleverde orders staat een vaste retourdatum. Refund-status verschijnt waar de parser hem kan halen, met een notificatie als de verwachte terugbetalingsdatum verstrijkt. Volgknoppen openen waar mogelijk een directe deeplink, anders een kopieerbaar trackingnummer
@@ -387,19 +405,37 @@
       <div class="wanneer">2 mei</div>
     </div>
 
-    <div class="beslissing-item">
-      <span class="check">&#10003;</span> <strong>Schrijfwijze is "Track & Back"</strong> met spaties en ampersand, overal hetzelfde
-      <div class="wanneer">4 april</div>
-    </div>
-
   </div>
 </div>
 
 <!-- WAT ER OPEN STAAT -->
 <div class="section">
   <h2>Waar nog een keuze nodig is</h2>
-  <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Bovenaan de vervolgsporen die uit de eindtest-beslissingen voortkwamen. Daaronder de beslispunten die al langer lopen.</p>
+  <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Bovenaan de juridische sporen die deze week zijn geopend. Daaronder de scope-vragen van vorige weken, en de beslispunten die al langer lopen.</p>
   <ul class="item-list">
+    <li>
+      <strong>Juridische positie TB als mailbox-filterende partij</strong>. TB filtert feitelijk inkomende mail namens de gebruiker (promo opzij, transactioneel door). Welke rol heeft TB juridisch: verwerker, gezamenlijk verwerkingsverantwoordelijke, iets daartussenin? Wat moet er aan de Algemene Voorwaarden veranderen om dat helder te dekken? Grondhoudingsvraag, niet techniek.
+      <span class="label label-open">nieuw</span>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/76" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #76 + #77</a>
+    </li>
+    <li>
+      <strong>Retentie- en wissingsbeleid voor alias-opslag</strong>. Hoe lang bewaren we mailinhoud, bijlages en backups? Verschillend voor promo (kort) en transactioneel (langer)? Hoe implementeren we AVG art. 17 (recht op vergetelheid) over S3, bijlages en backups heen, zonder dat het de aankopen-historie van de gebruiker breekt?
+      <span class="label label-open">nieuw</span>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/78" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #78</a>
+    </li>
+    <li>
+      <strong>Welke mail-categorieën zijn geschikt voor een TB-alias?</strong> Aankopen en boekingen passen evident. Maar wat met zorg, school, financieel, communicatie met overheid? In de onboarding moeten we hier een keuze in maken: alles toelaten, beperken tot commerciële stromen, of de gebruiker kiezen laten per categorie?
+      <span class="label label-open">nieuw</span>
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/79" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #79</a>
+    </li>
+    <li>
+      <strong>Slimme doorzet van aanbiedingen naar webshop, met affiliate als tweede verdienmodel?</strong> Niet TB als kortingspool, maar TB die op klant-instructie een aanbieding direct naar het juiste product in de webshop stuurt via deeplink, met de korting toegepast. De affiliate-vergoeding zou TB betalen zonder dat de klant er iets van merkt. Past bij TB-principes, maar opent een tweede verdienmodel naast add-ons.
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/74" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #74</a>
+    </li>
+    <li>
+      <strong>Meertaligheid en buitenlandse bestellingen: nu, later of niet?</strong> Vier deelvragen tegelijk: vertalen we binnenkomende e-mails van buitenlandse webshops, in welke taal communiceert de app, hoe zwaar weegt technische meertalige ondersteuning, en met welke talen beginnen we (NL + EN)? Relevant voor pioniers die regelmatig op buitenlandse sites kopen.
+      <br><a href="https://github.com/GertjanAntonisse/trackandback-product/issues/73" target="_blank" style="font-size: 0.8rem; color: #7c3aed;">Verdieping: product #73</a>
+    </li>
     <li>
       <strong>Waar in de flow bieden we retour-bewaking aan?</strong> De add-on is gekozen, maar het moment waarop we hem aanbieden in de app is nog open. Te vroeg voelt pusherig, te laat mist de gebruiker hem.
       <span class="label label-open">prio 1</span>
@@ -451,25 +487,25 @@
 <!-- WAT ER KLAAR IS -->
 <div class="section">
   <h2>Recent afgerond</h2>
-  <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Wat er deze week (28 april tot 4 mei) is afgesloten in de werkruimte.</p>
+  <p style="font-size: 0.9rem; color: #777; margin-bottom: 0.8rem;">Wat er in deze periode (11 mei tot 21 mei) is afgesloten in de werkruimte.</p>
   <ul class="item-list">
     <li>
-      <span class="check">&#10003;</span> <strong>Acht productvragen uit de eindtest besloten</strong>. Default-filter, retourtermijn, annuleringsreden, refund-flow, externe links: het beeld voor de aankoopkaart is consistent geworden en doorvertaald naar concrete bouwregels per lead-issue.
+      <span class="check">&#10003;</span> <strong>Eindtest van begin tot eind voltooid op een echte iPhone</strong>. Tien stappen handmatig doorlopen, alle Ready-for-Test bugs gevalideerd en gesloten. Eerste keer dat de hele stroom op één toestel werkend is gezien.
     </li>
     <li>
-      <span class="check">&#10003;</span> <strong>Brand-architectuur B2B gekozen</strong>. TB voor consument en TB voor bedrijven worden twee sublijnen onder één gedeeld merkfundament.
+      <span class="check">&#10003;</span> <strong>App Store Connect API key voor TestFlight</strong>. De technische route om builds direct uit GitHub naar TestFlight te uploaden ligt klaar. Daarmee is de eerste stap richting App Store publicatie gezet.
     </li>
     <li>
-      <span class="check">&#10003;</span> <strong>Eindtest aankopen-flow op de telefoon</strong>, en de bug-validatie ronde erna. Tien bugs uitgesplitst, daarvan zeven na herstel gevalideerd. Eén deels gefixt, één terug naar dev, één bleek geen bug.
+      <span class="check">&#10003;</span> <strong>Brevo welkomstmail en attributie bevestigd</strong>. De welkomstmail rendert correct met afmeld-link, UTM-tags worden goed gemeten zodat we per kanaal kunnen zien waar pioniers vandaan komen.
     </li>
     <li>
-      <span class="check">&#10003;</span> <strong>Brevo onboarding compleet</strong>. Nieuwe pioniers worden automatisch gesynchroniseerd, krijgen een welkomstmail met afmeld-link, en zijn meteen toegevoegd aan de juiste lijst. Bij afmelden worden ze ook automatisch geblokkeerd voor verdere mailings.
+      <span class="check">&#10003;</span> <strong>Brand-infrastructuur live</strong>. Favicon verschijnt in browser-tabs, het TB-logo rendert netjes in de auto-reply e-mail die pioniers krijgen op hun alias.
     </li>
     <li>
-      <span class="check">&#10003;</span> <strong>UTM-attributie eind-tot-eind getest</strong>. Vanaf de campagne-pagina tot in het Brevo-contact: we zien nu via welke campagne een pionier binnenkwam.
+      <span class="check">&#10003;</span> <strong>Marketing meet- en leer-keten gesloten</strong>. Het laatste van vijf gaten is gefixt: de Intelligence Pipeline draait nu op Neon-state, zodat data over campagnes consistent doorstroomt naar de besturingslaag.
     </li>
     <li>
-      <span class="check">&#10003;</span> <strong>Tien social posts gepubliceerd</strong> op Facebook en Instagram. Verschillende invalshoeken getest (de mail die je bewaart, de tab die je niet durft te sluiten, een gemiste bezorging).
+      <span class="check">&#10003;</span> <strong>Drie nieuwe campagnes in de pipeline</strong>. Schuldgevoel late retour, terugbetaling die uitblijft, bezorger die "geprobeerd" heeft. Klaar voor Timo's beoordeling op het content board.
     </li>
   </ul>
 </div>
@@ -602,11 +638,15 @@
       <span class="label label-bouw">loopt</span>
     </li>
     <li>
-      <strong>René</strong>: bugs uit de E2E-test oplossen en klaarzetten voor hertest
+      <strong>René</strong>: parser- en tooling-werk; reserved-aliases hard block voorbereiden
       <span class="label label-bouw">loopt</span>
     </li>
     <li>
-      <strong>Gertjan</strong>: productbeslissingen uit de E2E-test doornemen, AI Marketing Team begeleiden
+      <strong>Gertjan</strong>: nieuwe productsporen (affiliate, meertaligheid) wegen, Ready-for-Test bugs valideren, AI Marketing Team begeleiden
+      <span class="label label-bouw">loopt</span>
+    </li>
+    <li>
+      <strong>Timo</strong>: posts beoordelen op het content-board en nieuwe ideeën aanleveren via inbox
       <span class="label label-bouw">loopt</span>
     </li>
   </ul>
