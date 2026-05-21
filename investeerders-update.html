@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track & Back — Update voor investeerders, 21 mei 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #fafaf8;
+    color: #2d2d2d;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+  }
+
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    border-bottom: 1px solid #e8e6e1;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .topnav-brand {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    padding: 0.8rem 1rem 0.8rem 0;
+    border-right: 1px solid #e8e6e1;
+    margin-right: 0.5rem;
+    white-space: nowrap;
+  }
+  .topnav-titel {
+    padding: 0.7rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1a1a1a;
+  }
+
+  .main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e8e6e1;
+  }
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.4rem;
+  }
+  .header .ondertitel {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 0.4rem;
+    font-style: italic;
+  }
+  .header .datum {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.4rem;
+  }
+
+  .doel-anker {
+    background: #f5f0ff;
+    border-left: 4px solid #7c3aed;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2.5rem;
+    border-radius: 0 8px 8px 0;
+  }
+  .doel-anker h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #5b21b6;
+    margin-bottom: 0.5rem;
+  }
+  .doel-anker p {
+    font-size: 0.98rem;
+    color: #3a3a3a;
+    margin-bottom: 0.6rem;
+  }
+  .doel-anker p:last-child { margin-bottom: 0; }
+  .doel-anker .principes {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0.6rem;
+  }
+  .doel-anker .principes em {
+    color: #5b21b6;
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .section {
+    margin-bottom: 2.5rem;
+  }
+  .section h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e8e6e1;
+  }
+  .section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .section p {
+    font-size: 0.98rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .keuze-card {
+    background: white;
+    border: 1px solid #e8e6e1;
+    border-left: 4px solid #047857;
+    border-radius: 6px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .keuze-card h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.4rem;
+  }
+  .keuze-card .uitleg {
+    font-size: 0.93rem;
+    color: #444;
+    margin-bottom: 0.4rem;
+  }
+  .keuze-card .waarom {
+    font-size: 0.9rem;
+    color: #555;
+    background: #f7faf7;
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+    margin-top: 0.4rem;
+  }
+  .keuze-card .waarom strong {
+    color: #047857;
+  }
+
+  .begrepen-list, .bouw-list {
+    list-style: none;
+    padding: 0;
+  }
+  .begrepen-list li {
+    padding: 0.7rem 0 0.7rem 1.6rem;
+    border-bottom: 1px solid #f0eeea;
+    font-size: 0.95rem;
+    position: relative;
+  }
+  .begrepen-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    top: 0.7rem;
+    color: #7c3aed;
+    font-weight: 600;
+  }
+  .begrepen-list li:last-child {
+    border-bottom: none;
+  }
+
+  .bouw-list li {
+    padding: 0.55rem 0 0.55rem 1.8rem;
+    font-size: 0.95rem;
+    position: relative;
+  }
+  .bouw-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    color: #047857;
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .niet-doen {
+    background: #fdfaf3;
+    border: 1px solid #e8d8a8;
+    border-radius: 8px;
+    padding: 1.4rem 1.7rem;
+    margin-top: 1rem;
+  }
+  .niet-doen .punt {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  .niet-doen .punt:last-child { margin-bottom: 0; }
+  .niet-doen .punt strong {
+    color: #92400e;
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 1rem;
+  }
+  .niet-doen .punt p {
+    margin: 0;
+    color: #444;
+  }
+
+  .slot {
+    background: #f0f4e8;
+    border-left: 4px solid #7a9e3e;
+    padding: 1.4rem 1.7rem;
+    margin-top: 2rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    color: #3a3a3a;
+    font-style: italic;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e8e6e1;
+    font-size: 0.8rem;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand">Track & Back</span>
+  <span class="topnav-titel">Update voor investeerders</span>
+</nav>
+
+<div class="main-content">
+
+<div class="header">
+  <h1>Track & Back</h1>
+  <div class="ondertitel">Wat we begrepen, gekozen en gebouwd hebben in de afgelopen vier weken</div>
+  <div class="datum">21 mei 2026</div>
+</div>
+
+<div class="doel-anker">
+  <h2>Het doel</h2>
+  <p>We bouwen een robuuste app die klaar is om te schalen en de toekomst omarmt door afgewogen marktrends, geverifieerde signalen en solide technische keuzes. Niet sneller, beter. Geen kortlevende app die het volgende kwartaal achterhaald is, maar een fundament dat tegen marktverschuivingen kan.</p>
+  <p class="principes">De merkbeloften die alles sturen: <em>loslaten</em> boven controle, <em>afronding</em> boven informatie, <em>rust</em> boven engagement, <em>helderheid</em> boven complexiteit, <em>vertrouwen</em> boven afhankelijkheid.</p>
+</div>
+
+<div class="section">
+  <h2>Wat we deze periode hebben begrepen</h2>
+  <p>Elke maand toetsen we onze voorspellingen over de markt aan wat er werkelijk gebeurt. De voorspellingen die door marktsignalen worden bevestigd, dragen onze keuzes. De voorspellingen die niet kloppen, stellen we bij. Zo blijft het beeld scherp.</p>
+
+  <ul class="begrepen-list">
+    <li><strong>De markt voor e-mailaliassen groeit, maar mainstream gaat langzamer dan we hadden gedacht.</strong> Apple Hide My Email, Proton Pass en SimpleLogin trekken nichegroepen, geen massa. Wel: Gmail en Microsoft straffen aliassen die hun technische zaken niet op orde hebben. Dat is voor ons goed nieuws, want wij hebben de authenticatie van ons alias-domein volledig staan zoals deze partijen vragen. Slordige concurrenten haken af, wij blijven werken.</li>
+    <li><strong>Mensen accepteren steeds vaker dat ze betalen voor digitale rust.</strong> Niet voor meer features, maar voor minder ruis. Drie betaalde inbox-diensten groeien substantieel in 2026. Dit ondersteunt de keuze om Track & Back een freemium-model te geven waarbij rust een betaalde uitbreiding wordt.</li>
+    <li><strong>Webshops zoeken steeds vaker partners voor wat er ná de aankoop gebeurt.</strong> Kleinere webshops worstelen met retour-afhandeling, communicatie en klanttevredenheid. Dat is precies de ruimte waarin Track & Back werkt: post-purchase zorg uit handen nemen.</li>
+    <li><strong>Bezorgproblemen worden complexer, niet eenvoudiger.</strong> Ondanks dat grote spelers consolideren, ontstaan er nieuwe bezorgketens, marktplaatsen en hybride modellen. De consument heeft hier meer last van, niet minder. Track & Back regelt de complexiteit uit zijn hoofd.</li>
+    <li><strong>De agent-economie verschuift verdienmodellen.</strong> De voorspelling dat AI-agenten een vergoeding gaan betalen om met klantprofielen te mogen praten, wordt steeds concreter. Stripe en x402 koersen op deze richting. Het opent voor Track & Back een verdienmodel dat veel groter is dan in-app aankopen alleen.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Welke keuzes we hebben gemaakt, en waarom</h2>
+  <p>Dit zijn de fundamentele richting-keuzes uit de afgelopen vier weken. Iedere keuze is een keuze tegen alternatieven die op tafel lagen. We leggen ze hier kort uit, met de redenering die ze draagt.</p>
+
+  <div class="keuze-card">
+    <h4>Eigen inference op een open AI-model, niet via een commerciële AI-dienst</h4>
+    <p class="uitleg">Track & Back verwerkt zelf de e-mails die op het alias-adres binnenkomen. Niet via OpenAI of Anthropic, niet door alles naar een vendor te sturen, maar op een eigen Gemma-model in AWS Frankfurt. Vóór die verwerking zit een filter dat de meeste e-mails al herkent en zonder AI afhandelt. Alleen wat onbekend is, gaat door de Gemma-stap.</p>
+    <div class="waarom"><strong>Waarom:</strong> privacy, eigendom en vertrouwen zijn beloften die alleen geloofwaardig zijn als ze in de bouw zitten. Met een commerciële AI-dienst zijn we afhankelijk van een vendor die zijn beleid elk moment kan veranderen, en gaat de data buiten de Europese Unie. Met eigen inference op een open model is Track & Back in de bouw wat het in het verhaal zegt te zijn. Op langere termijn willen we parsing zelfs direct op de telefoon van de gebruiker doen, als zuiverste vorm van "wat van jou is, blijft bij jou".</div>
+  </div>
+
+  <div class="keuze-card">
+    <h4>Het alias als juridische positie, niet als kerntechniek-claim</h4>
+    <p class="uitleg">Track & Back is een alias-service, geen mailbox-service. Er is een duidelijke scheiding tussen de technische ontvangst (de mail komt op onze servers binnen) en het juridisch eigendom (de inhoud blijft van en voor de gebruiker). Geen pretenties om identity-broker te zijn zoals Apple Hide My Email, geen claim op de inhoud van de mail. Tegelijk standaardiseren we vanaf nu op de term "alias" in alle uitingen, omdat de markt die term ook gebruikt.</p>
+    <div class="waarom"><strong>Waarom:</strong> juridische helderheid plus consistente taal positioneert Track & Back als de professionele speler in een markt waar hobby-providers steeds zichtbaarder worden. Wij voldoen aan alles wat de wet vraagt en wat de markt eist. Dat is een onderscheid dat zich vertaalt naar klantvertrouwen en naar de positie tegenover webshops.</div>
+  </div>
+
+  <div class="keuze-card">
+    <h4>Twee sublijnen onder één merk: consument en zakelijk</h4>
+    <p class="uitleg">Track & Back bedient consumenten en zakelijke gebruikers in één merk, maar met twee gezichten. Gedeelde mobiele basis voor wie aankopen doet. Een eigen desktop-variant voor zakelijke gebruikers met factuur-routering, multi-user-opties en koppeling met boekhoudpakketten. Hetzelfde probleem (post-purchase zorg) krijgt twee uitvoeringen.</p>
+    <div class="waarom"><strong>Waarom:</strong> het onderliggende probleem is identiek voor consument en zakelijk, maar het verdienmodel-potentieel ligt zwaarder aan de zakelijke kant. Door één merk te houden, profiteert het zakelijke spoor van het pioneer-werk dat aan de consumentenkant gebeurt, zonder dat we twee parallelle bedrijven moeten bouwen.</div>
+  </div>
+
+  <div class="keuze-card">
+    <h4>Acht productvragen uit de eerste handmatige eindtest</h4>
+    <p class="uitleg">In de eerste volledige test van de app namen we acht concrete UX-keuzes. De app opent voortaan op orders die onderweg zijn, niet op een algemeen overzicht. Bij meerdere artikelen in één bestelling tonen we het webshop-logo met aantal, niet een willekeurige productafbeelding. Bij annuleringen geven we de reden weer als die uit de e-mail valt te halen. Bij geleverde orders staat een vaste retourdatum. Refund-status verschijnt met een notificatie als de verwachte terugbetalingsdatum verstrijkt.</p>
+    <div class="waarom"><strong>Waarom:</strong> elke keuze sluit aan op de merkbelofte van rust. De app dringt niets op. Hij toont wat relevant is op het moment dat het ertoe doet. De gebruiker wordt niet bewerkt om langer in de app te blijven, hij wordt bediend om eruit weg te kunnen.</div>
+  </div>
+
+  <div class="keuze-card">
+    <h4>Retour-bewaking als eerste betaalde uitbreiding</h4>
+    <p class="uitleg">De gratis kern van Track & Back regelt de basis. De eerste betaalde uitbreiding bewaakt retour-stromen, met name de terugbetaling die soms uitblijft of waarvan de termijn onduidelijk is. Aanschaf binnen de app, niet via externe betaalpagina's.</p>
+    <div class="waarom"><strong>Waarom:</strong> retour-zorg heeft hoge en concrete waarde. Het is een klein, behapbaar onderwerp om mee te beginnen, en het bewijst het principe dat extra rust een betaalbare uitbreiding waard is. Latere uitbreidingen (communicatie-filter, geheugenlaag) bouwen op dit principe voort.</div>
+  </div>
+
+  <div class="keuze-card">
+    <h4>Inkomsten vanaf de eerste betalende gebruiker, niet pas later</h4>
+    <p class="uitleg">Naast keuzes over architectuur en positionering staat ook een directe inkomsten-route. De gratis kern werkt voor iedereen die een alias neemt. Wie meer wil (retour-bewaking, trial-bewaking, abonnementenbeheer, geheugenlaag) betaalt dat binnen de app.</p>
+    <p class="uitleg">Een interne verdienmodel-matrix bevat per add-on werkhypothese-tarieven, gekalibreerd op vergelijkbare marktdiensten. Op basis daarvan schatten we per consument-gebruiker gemiddeld in de orde van drie euro per maand: ongeveer een derde neemt een pakket of betaalde uitbreiding (in de orde van zes tot negen euro), de overige twee derde blijft bij de gratis kern. Bij zakelijke gebruikers ligt het gemiddelde rond de vijftien tot twintig euro per gebruiker per maand, gedragen door functies als factuur-routering, multi-user en koppeling met boekhoudpakketten. Dat is vergelijkbaar met bestaande marktdiensten als Basecone en Dext, maar met een fundamenteel ander productprincipe (alias-per-leverancier in plaats van OCR-classificatie achteraf).</p>
+    <div class="waarom"><strong>Waarom:</strong> zo wordt de bouw vanaf het begin gedragen door echte inkomsten, niet door een verre lancering die alles moet bewijzen. De langere-termijn verdienmodellen (agent-economie, fees voor data-toegang door derde-partij agents, B2B-uitbreiding) komen er bovenop, als versterking, niet als vervanging.</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Wat dat oplevert in de bouw</h2>
+  <p>Geen tijdlijn, wel concrete tekens dat het werkt. Wat in deze periode is gebouwd, draait, of bewezen.</p>
+
+  <ul class="bouw-list">
+    <li>De eerste handmatige eindtest van de aankopen- en notificatiestroom is van begin tot eind doorlopen op een echte computer met testdata, in tien stappen.</li>
+    <li>De app staat deels in TestFlight en is daarmee installeerbaar op echte iPhones voor early-tests.</li>
+    <li>De technische route om builds rechtstreeks naar TestFlight te kunnen sturen is gereed.</li>
+    <li>De welkomstmail voor nieuwe pioniers werkt met automatische opt-out en correcte herkomstmeting per kanaal.</li>
+    <li>Het Track & Back-logo en favicon renderen netjes in mail-clients en browsers; bewijzen herkenbaarheid waar het ertoe doet.</li>
+    <li>De authenticatie van ons alias-domein is volledig conform de strengste eisen die Gmail en Microsoft sinds eind 2025 stellen.</li>
+    <li>Tooling om ruwe e-mails veilig op te halen voor parser-debugging is operationeel, zodat René parser-fouten snel kan reproduceren en oplossen.</li>
+    <li>De marketing-keten die meet wat werkt en bijstuurt wat niet werkt, is sluitend gemaakt. Data uit campagnes loopt door naar de besturingslaag.</li>
+    <li>Drie nieuwe contentcampagnes liggen klaar in de pipeline (schuldgevoel late retour, terugbetaling die uitblijft, bezorger die "geprobeerd" heeft).</li>
+    <li>Juridische aanvullingen zijn vastgelegd voor mailbox-filtering, retentie- en wissingsbeleid en geschiktheid van mail-categorieën voor een alias.</li>
+    <li>Het ontwerp van de website is gestart, eerst mobiele versie. De eerste wireframes zijn klaar.</li>
+    <li>Een aparte uitleg-pagina is gemaakt die laat zien hoe Track & Back zijn visie levend houdt via voorspellingen en marktsignalen, met maandelijkse toetsing.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Wat we niet doen, en waarom niet</h2>
+  <p>Een robuuste app vraagt scherpe keuzes. Niet alleen over wat we bouwen, maar ook over wat we bewust laten liggen. Hieronder vier keuzes om iets niet te doen, met de redenering die ze draagt.</p>
+
+  <div class="niet-doen">
+    <div class="punt">
+      <strong>We rennen niet naar een launch zonder begrip van wat we bouwen.</strong>
+      <p>Een app uitbrengen is een belofte doen aan de gebruiker. Een belofte die we niet kunnen waarmaken, beschadigt het vertrouwen sneller dan een goedlopende app het opbouwt. Wat begrepen is, draagt de keuzes. Wat niet begrepen is, leidt tot herbouw. Iedere week dat we leren, vermindert het risico voor wat we later bouwen.</p>
+    </div>
+    <div class="punt">
+      <strong>We bouwen geen kortlevende app.</strong>
+      <p>De markt waarin Track & Back staat, beweegt snel. Email-authenticatie wordt strenger, AI-agenten gaan namens consumenten onderhandelen, data-eigenaarschap wordt een consumentenrecht. Een app die alleen vandaag werkt, is volgende zomer achterhaald. Onze technische keuzes (eigen inference, eigen alias-domein, eigen juridische positie) zijn gericht op een app die met deze verschuivingen kan meebewegen, zonder dat we elke keer terug moeten naar de tekentafel.</p>
+    </div>
+    <div class="punt">
+      <strong>We verkopen niet zonder eerst pioniers te begrijpen.</strong>
+      <p>Onze eerste gebruikers zijn geen klanten, ze zijn medebouwers. Hun gedrag, vragen en frictie voeden het systeem. Wie alleen verkoopt zonder te kijken, krijgt omzet zonder richting. Wij maken het mogelijk dat hun gebruik van Track & Back het product slimmer maakt; zonder dat fundament zou groei boven 100 of 1000 gebruikers ons inhalen.</p>
+    </div>
+    <div class="punt">
+      <strong>We bouwen geen verdienmodel op het verkopen van data.</strong>
+      <p>Track & Back gaat over loslaten en vertrouwen. Een verdienmodel dat data van gebruikers verhandelt, ondergraaft die belofte volledig. De markt verschuift bovendien naar agent-economie en KYA-fees, waar derde partijen betalen om met een door de gebruiker gemachtigd profiel te mogen praten. Daar zit de toekomstige waarde, en daar zijn onze keuzes op gericht.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slot">
+  Dit is geen vertraging. Dit is een fundament. Track & Back bestaat niet om de markt sneller te bedienen dan de concurrentie, maar om aan te tonen dat een rustige, eerlijke en technisch verzorgde app duurzaam waarde levert in een markt die het verleerd heeft. Iedere keuze die we vandaag onderbouwd maken, hoeven we morgen niet terug te draaien.
+</div>
+
+<div class="footer">
+  Dit document is gemaakt vanuit de Track & Back werkruimte.<br>
+  Volgende update: zodra er fundamentele richting-keuzes zijn die het delen waard zijn.
+</div>
+
+</div>
+
+</body>
+</html>
