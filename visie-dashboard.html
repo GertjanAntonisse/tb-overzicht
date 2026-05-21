@@ -860,6 +860,30 @@ const CLUSTERS = [
     desc: "Track & Back's belofte is volledige rust — geen overzichten, geen schermen die gemonitord moeten worden. Maar dat is het eindpunt, niet het startpunt. Mensen zijn gewend aan overzichten; ze zijn een vertrouwd anker. Niets meer kunnen zien voelt niet als rust, maar als verlies van controle. De transitie verloopt in vier fasen: (1) Overzicht als vangnet — gebruiker kán kijken maar hoeft niet. (2) Semantisch zoeken via tekst en spraak — 'Had ik vorige week niet iets besteld?' geeft een rustbrengend antwoord, geen scan. (3) Ambient awareness via Buds — het stemmetje informeert proactief, systeem komt naar de gebruiker. (4) Volledige rust — overzichten zijn overbodig, TB werkt onzichtbaar. Vertrouwen is het mechanisme. Het groeit per fase.",
     impact: "De transitiefasen geven richting aan de productroadmap én openen een tijdelijk verdienmodel. Elke fase kent add-ons die bij die fase passen: semantisch zoeken als premium functie, Buds-integratie als betaalde uitbreiding, proactieve voice-notificaties. Die add-ons genereren inkomsten in de brug naar het uiteindelijke model — transactiebetalingen door aanbieders voor toegang tot het gebruikersprofiel. De add-ons zijn bewust tijdelijk: zodra het profielmodel voldoende volume heeft, kunnen ze losgelaten worden zonder schade aan het product of de gebruiker. De brug is zichzelf bewust.",
     principle: "Loslaten boven controle — ook het product zelf maakt een loslaatbeweging: van overzicht naar onzichtbaarheid. Vertrouwen boven afhankelijkheid — elke fase bouwt het vertrouwen dat de volgende fase mogelijk maakt."
+  },
+  {
+    id: 20,
+    title: "TB als Neutrale Bezorgvoorkeur-Standaard",
+    tag: "near",
+    tagLabel: "2027–2032",
+    desc: "Er bestaat geen industriestandaard voor bezorgvoorkeuren — elke vervoerder heeft een eigen silo, eigen app, eigen formaat. Consumenten moeten per vervoerder opnieuw instellen wat ze willen. Tegelijk bouwen PostNL en DHL hun voorkeurssystemen als concurrentievoordeel: lock-in via de app. TB kan de neutrale laag worden: een adresgebaseerde bezorgvoorkeur-registry waarop vervoerders zich abonneren. Consumenten registreren eenmalig bij TB. Vervoerders raadplegen real-time via API, niemand slaat persoonsgegevens op. Vergelijkbaar met hoe iDIN werkt voor identiteit of DNS voor domeinen — neutraal, abonnementsgefinancierd, moeilijk te vervangen zodra de standaard is gezet.",
+    impact: "TB verandert van post-purchase tool naar infrastructuurlaag voor de bezorgsector. Sterke netwerkeffecten: meer gebruikers → aantrekkelijker voor vervoerders, meer vervoerders → aantrekkelijker voor gebruikers. Wederkerende abonnementsomzet per vervoerder is voorspelbaar en schaalbaar. AVG-voordeel: vervoerders slaan geen consumentendata op, TB's privacy-architectuur is hier het verkoopargument. Risico: grote vervoerders bouwen zelf een gezamenlijke standaard zodra TB tractie krijgt. Mitigatie: open API-spec publiceren en positioneren als neutraal, niet als concurrent.",
+    principle: "Loslaten boven controle — eenmaal instellen, vervoerders bedienen zich. Vertrouwen boven afhankelijkheid — geen lock-in via vervoerder-apps.",
+    briefingStatus: "stable",
+    lastBriefing: "2026-05-21"
+  },
+  {
+    id: 21,
+    title: "Technologie-architectuur als merkfundering",
+    tag: "now",
+    tagLabel: "Fundament, nu",
+    desc: "TB doet eigen inference voor e-mailextractie (Gemma op AWS Frankfurt, met een pre-parser ervoor die herkenbare webshops zelf afhandelt) in plaats van via een commerciële AI-dienst zoals OpenAI of Anthropic. Dit is geen losse engineering-keuze, maar de architecturale onderbouwing van TB's merkbeloften privacy, eigendom en vertrouwen. Vier routes lagen op tafel: agentic tooling, commodity inference-API, eigen Gemma op AWS, en on-device parsing op de telefoon. Korte termijn: route 3 (Gemma op AWS). Lange termijn: route 4 (on-device, Apple Foundation Models / Gemini Nano).",
+    impact: "Alle technologie-keuzes worden voortaan tegen dit fundament gehouden. Geen afhankelijkheid van vendor-koerswijzigingen, geen klant-data buiten de Europese Unie. Privacy is niet langer een aparte claim maar een gevolg van hoe TB werkt. Het verdienmodel (agent-economie, KYA-fees, B2B-sublijn) is alleen geloofwaardig op een serieuze, zelfbeheerde inference-laag — een hobby-doorstuurder kan dat niet claimen.",
+    principle: "Vertrouwen boven afhankelijkheid — privacy als gevolg van architectuur, niet als losse claim. Helderheid boven complexiteit — eigen infra maakt expliciet wat TB met klant-data doet.",
+    briefingStatus: "stable",
+    lastBriefing: "2026-05-18",
+    verified: 'bevestigd',
+    lastVerified: "2026-05-18"
   }
 ];
 
