@@ -2,11 +2,23 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>TrackAndBack: Verdienmodel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track & Back: Verdienmodel</title>
+  <link rel="icon" type="image/svg+xml" href="static/favicon-v2.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-v2-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-v2-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="static/apple-touch-icon-v2.png">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; padding: 40px 24px; }
-    .page { max-width: 820px; margin: 0 auto; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; padding: 0; margin: 0; }
+    .page { max-width: 820px; margin: 0 auto; padding: 40px 24px; }
+
+    .topnav { position: sticky; top: 0; z-index: 100; background: white; border-bottom: 1px solid #e2e8f0; padding: 0 1.5rem; display: flex; align-items: center; overflow-x: auto; }
+    .topnav-brand { padding: 0.5rem 1rem 0.5rem 0; border-right: 1px solid #e2e8f0; margin-right: 0.5rem; display: flex; align-items: center; }
+    .topnav-brand img { height: 28px; width: auto; display: block; }
+    .topnav a { display: inline-flex; align-items: center; padding: 0.7rem 0.7rem; font-size: 0.78rem; font-weight: 500; color: #64748b; text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+    .topnav a:hover { color: #0f172a; }
+    .topnav a.actief { color: #0f172a; border-bottom-color: #1d4ed8; }
 
     .header { margin-bottom: 40px; }
     .header h1 { font-size: 26px; font-weight: 700; color: #0f172a; }
@@ -82,12 +94,21 @@
   </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <span class="topnav-brand"><img src="static/logo.png" alt="Track & Back"></span>
+  <a href="index.html" target="_blank" rel="noopener noreferrer">Overzicht</a>
+  <a href="visie-werking.html" target="_blank" rel="noopener noreferrer">Hoe de visie werkt</a>
+  <a href="timo-verdienmodel.html" class="actief" target="_blank" rel="noopener noreferrer">Verdienmodel</a>
+  <a href="dashboards.html" target="_blank" rel="noopener noreferrer">Dashboards</a>
+</nav>
+
 <div class="page">
 
   <div class="header">
-    <h1>TrackAndBack: Verdienmodel</h1>
-    <div class="sub">Aanvulling op GTM v3.0: Domeinen × Add-ons als primaire omzetmotor</div>
-    <div class="date">Maart 2026 · Intern</div>
+    <h1>Track & Back: Verdienmodel</h1>
+    <div class="sub">Twee sublijnen onder één merk: consument-app als acquisitiemotor, zakelijke sublijn als omzetmotor met hogere ARPU. Geen B2B-dataverhuur.</div>
+    <div class="date">Bijgewerkt mei 2026 · Intern</div>
   </div>
 
   <div class="tabs">
@@ -104,14 +125,14 @@
   </div>
 
   <div class="lead">
-    <strong>Vertrekpunt:</strong> GTM v3.0 heeft de acquisitielogica goed uitgedacht: gratis app, snelle adoptie, NL-focus. Die basis staat. Dit document voegt één element toe: een verdienmodel dat dezelfde gebruikersaantallen omzet naar structureel hogere omzet, zonder B2B-dataverhuur, zonder sales-team, en in lijn met TB's kernbelofte aan de gebruiker.
+    <strong>Vertrekpunt:</strong> GTM v3.0 heeft de acquisitielogica goed uitgedacht: gratis app, snelle adoptie, NL-focus. Die basis staat. Dit document voegt twee elementen toe: een consument-add-ons-model dat de gebruikersaantallen omzet naar structureel hogere omzet, plus een aparte zakelijke sublijn (ZZP/MKB) als ARPU-versterker. Geen dataverhuur aan retailers, in lijn met Track & Back's kernbelofte aan de gebruiker.
   </div>
 
   <!-- SECTIE 1 -->
   <h2>1. De structuur: domeinen als gratis basis, add-ons als omzet</h2>
 
   <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:20px;">
-    TrackAndBack biedt elk domein gratis aan in de basis-app. Elk domein trekt zijn eigen gebruikerssegment aan en genereert zijn eigen add-on ecosysteem. Gebruikers betalen vrijwillig voor add-ons die relevant zijn voor <em>hun</em> domeinen.
+    Track & Back biedt elk domein gratis aan in de basis-app. Elk domein trekt zijn eigen gebruikerssegment aan en genereert zijn eigen add-on ecosysteem. Gebruikers betalen vrijwillig voor add-ons die relevant zijn voor <em>hun</em> domeinen.
   </p>
 
   <div class="domain-grid">
@@ -183,6 +204,113 @@
     </table>
     <div style="padding:14px 20px;font-size:13px;color:#475569;line-height:1.6;border-top:1px solid #f1f5f9;background:#fafbfc;">
       De WhatsApp-laag doorsnijdt alle domeinen als communicatiekanaal. Iemand met 4 actieve domeinen die WhatsApp aanzet, betaalt €2/mnd voor die laag alleen. Dat staat los van domein-add-ons. De geheugenlaag is de volgende stap: TB als bevraagbaar geheugen over de volledige geschiedenis van de gebruiker.
+    </div>
+  </div>
+
+  <!-- SECTIE 1B — DE ZAKELIJKE SUBLIJN -->
+  <h2>1b. De zakelijke sublijn: zelfde merk, ander zwaartepunt</h2>
+
+  <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:18px;">
+    Naast het consument-spoor is er een zakelijke sublijn voor ZZP'ers en MKB. Eén merk, twee sublijnen, gedeelde mobiele basis. Het onderliggende probleem is hetzelfde (post-purchase zorg, lopende verplichtingen), het verdienmodel-potentieel per gebruiker is significant hoger. Variant B uit de visie-laag (zie visie #62) is hier de drager.
+  </p>
+
+  <div style="background:#0f172a;border-radius:10px;padding:24px 28px;margin-bottom:24px;">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#93c5fd;margin-bottom:10px;">Twee betekenissen van "B2B" — verschil maken</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#fca5a5;margin-bottom:6px;">B2B als data-verkoop ✗</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.6;">Gebruikersdata verkopen aan retailers. Afgewezen in visie #56 — strijdig met TB's belofte van vertrouwen. Was het zwaartepunt in GTM v3.0, niet meer.</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#86efac;margin-bottom:6px;">B2B als zakelijke gebruikers ✓</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.6;">ZZP'ers en MKB-medewerkers die betalen voor wat ze zelf gebruiken. Geen data verhuren, gewoon: zakelijke functies aanbieden tegen marktconforme prijs.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>De kop-add-on: alias-gedreven invoice automation</h3>
+
+  <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:18px;">
+    De sterkste B2B-add-on uit de verdienmodel-matrix is factuur-routering op alias. ZZP'ers en boekhouders verspillen tijd aan handmatig sorteren, doorsturen en boeken van facturen die op verschillende adressen binnenkomen. TB lost dit op door een alias per leverancier uit te geven: een factuur op <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:13px;">acme@bedrijfX.trackandback.email</code> wordt automatisch herkend, gemapt aan grootboekrekening en doorgezet naar het boekhoudpakket.
+  </p>
+
+  <div style="background:white;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;margin-bottom:20px;">
+    <div style="background:#f8fafc;padding:14px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;">Vier tiers, één architectuur</div>
+    <table style="margin-bottom:0;">
+      <tr>
+        <th>Tier</th>
+        <th>Wat zit erin</th>
+        <th>Tarief</th>
+      </tr>
+      <tr>
+        <td><strong>Tier 1</strong><br><span style="font-size:12px;color:#94a3b8;">Basic capture</span></td>
+        <td style="font-size:13px;color:#475569;">Factuur op alias → PDF naar boekhoudpakket-postbus</td>
+        <td><strong>€5</strong> per user/mnd</td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>Tier 2</strong><br><span style="font-size:12px;font-weight:400;color:#6b7280;">Slim gerouteerd — hoogste score</span></td>
+        <td style="font-size:13px;color:#1e40af;">Tier 1 + alias-per-leverancier + grootboek-mapping + UBL-conversie</td>
+        <td style="color:#1d4ed8;font-weight:700;">€10 per user/mnd</td>
+      </tr>
+      <tr>
+        <td><strong>Tier 3</strong><br><span style="font-size:12px;color:#94a3b8;">Lifecycle-beheer</span></td>
+        <td style="font-size:13px;color:#475569;">Tier 2 + opzeg-route + inactiviteits-detectie + audit-trail per alias</td>
+        <td><strong>€15</strong> per user/mnd</td>
+      </tr>
+      <tr>
+        <td><strong>Tier 4</strong><br><span style="font-size:12px;color:#94a3b8;">Multi-user / accountantsmodus</span></td>
+        <td style="font-size:13px;color:#475569;">Tier 3 + multi-user + autorisatie + bulk-acties</td>
+        <td><strong>€25</strong> per user/mnd</td>
+      </tr>
+    </table>
+  </div>
+
+  <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:18px 22px;margin-bottom:24px;">
+    <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:8px;">Marktscan-kalibratie</div>
+    <div style="font-size:13px;color:#78350f;line-height:1.7;">
+      Tier 1 zit onder Basecone (€1,45 + €0,35 per document bij 10+ facturen per maand). Tier 2 is marktconform met Dext (€10 tot €30 per maand), maar met fundamenteel beter productprincipe: alias-per-leverancier in plaats van OCR-classificatie achteraf. Tier 3 en 4 zijn een nieuwe categorie (lifecycle-beheer en multi-user), prijspunten te valideren met de eerste pioniers.
+    </div>
+  </div>
+
+  <h3>Overige zakelijke add-ons</h3>
+
+  <table style="margin-bottom:20px;">
+    <tr>
+      <th>Add-on</th>
+      <th>Wat het regelt</th>
+      <th>Tarief</th>
+    </tr>
+    <tr>
+      <td><strong>Verlengings-bewaking</strong></td>
+      <td style="font-size:13px;color:#475569;">Voorkomt automatische verlengingen op SaaS en abonnementen waar je niet meer aan dacht</td>
+      <td>€5/mnd of €49/jr</td>
+    </tr>
+    <tr>
+      <td><strong>Abonnementenbeheer</strong></td>
+      <td style="font-size:13px;color:#475569;">Compleet overzicht en bulk-acties op alle bedrijfsabonnementen</td>
+      <td>€15/mnd of €149/jr</td>
+    </tr>
+    <tr>
+      <td><strong>Bulk-opzegging SaaS-tools</strong></td>
+      <td style="font-size:13px;color:#475569;">Eén klik om meerdere ongebruikte SaaS-tools op te zeggen, opzegtermijnen automatisch in de gaten</td>
+      <td>€5 per user/mnd</td>
+    </tr>
+    <tr>
+      <td><strong>Domeinregistratie-bewaking</strong></td>
+      <td style="font-size:13px;color:#475569;">Voorkomt verlies van domeinen door vergeten verlenging — kritieke deadlines twee dagen tevoren</td>
+      <td>€3 per user/mnd</td>
+    </tr>
+    <tr>
+      <td><strong>Trial-bewaking</strong></td>
+      <td style="font-size:13px;color:#475569;">Signaleert betaalde proefperiodes voordat ze omslaan in een vol abonnement</td>
+      <td>€5/mnd of €49/jr</td>
+    </tr>
+  </table>
+
+  <div style="background:#eff6ff;border-left:4px solid #1d4ed8;border-radius:0 8px 8px 0;padding:18px 22px;margin-bottom:32px;">
+    <div style="font-size:13px;font-weight:700;color:#1d4ed8;margin-bottom:8px;">ARPU per zakelijke gebruiker</div>
+    <div style="font-size:14px;color:#1e3a8a;line-height:1.7;">
+      Gemiddeld ligt de zakelijke ARPU in de orde van <strong>€15–€20 per user per maand</strong>, gedragen door invoice automation (€5–€25 afhankelijk van tier) plus één of twee aanvullende abonnementen-add-ons. Voor de werkende rekenkracht: bij honderd zakelijke gebruikers op tier 2 met één extra add-on draait de zakelijke sublijn op €1.000–€1.500 per maand. Dat is een vermenigvuldiging op het consument-ARPU van ongeveer drie euro per maand, met als prijs een langere sales-leadtijd per zakelijke klant.
     </div>
   </div>
 
@@ -326,14 +454,18 @@
   <p style="font-size:13px;color:#64748b;margin-bottom:28px;">* Jaar 1 cumulatief (conservatief-midden → realistisch): ~€400k–€585k. Deze tabel volgt het realistisch traject: Maand 12 sluit aan op het scenario "Realistisch (jaar 1 einde)" — ARPU €4,20, MRR €105k. €6 ARPU is het streefdoel voor jaar 2.</p>
 
   <!-- VERGELIJKING -->
-  <h2>4. Vergelijking met GTM v3.0 (B2B model)</h2>
+  <h2>4. Vergelijking met GTM v3.0 (data-verkoop pad)</h2>
+
+  <p style="font-size:14px;color:#475569;line-height:1.7;margin-bottom:18px;">
+    Het oorspronkelijke GTM v3.0 plan ging uit van data-verkoop aan retailers als primaire motor. Dat pad is in visie #56 afgewezen omdat het strijdig is met TB's belofte van vertrouwen. Hieronder de vergelijking met het huidige model (consument-add-ons plus zakelijke sublijn). Let op: het huidige model heeft ook een zakelijke component, maar dat zijn ZZP'ers en MKB die betalen voor wat ze zelf gebruiken, geen retailers die data afnemen.
+  </p>
 
   <div class="comparison">
     <table>
       <tr>
         <th></th>
-        <th>GTM v3.0: B2B model</th>
-        <th>Domeinen × Add-ons</th>
+        <th>GTM v3.0: data-verkoop pad</th>
+        <th>Consument-add-ons + zakelijke sublijn</th>
       </tr>
       <tr>
         <td><strong>Jaar 1 omzet totaal</strong><br><span style="font-weight:400;font-size:12px;color:#94a3b8;">alles bij elkaar opgeteld over 12 maanden</span></td>
@@ -342,13 +474,13 @@
       </tr>
       <tr>
         <td><strong>Primaire motor</strong></td>
-        <td>B2B data (60–65%)</td>
-        <td>Gebruiker kiest add-ons</td>
+        <td>Data verhuren aan retailers (60–65%)</td>
+        <td>Gebruiker (consument + zakelijk) kiest add-ons</td>
       </tr>
       <tr>
         <td><strong>Sales cycle</strong></td>
-        <td>3–6 maanden per klant</td>
-        <td class="green">Nul, geautomatiseerd</td>
+        <td>3–6 maanden per retail-klant</td>
+        <td class="green">Consument: nul, geautomatiseerd<br><span style="font-size:12px;font-weight:400;color:#64748b;">Zakelijk: korte demo-cyclus, geen data-contracten</span></td>
       </tr>
       <tr>
         <td><strong>Schaaleffect</strong></td>
@@ -487,7 +619,7 @@
   <div class="verdict">
     <h3>Kernzin</h3>
     <p>
-      De acquisitielogica in GTM v3.0 is sterk: gratis app, snelle adoptie, NL-focus brengt de gebruikers. Het verdienmodel hoeft alleen anders: <strong>niet B2B-data als primaire motor, maar domeinen als acquisitiekanaal en add-ons als omzet.</strong> Realistisch levert dat jaar 1 al €400k–€585k op, met een maandomzet van €105k aan het einde van het jaar. Ter vergelijking: het B2B-model projecteert €170k–€233k voor het hele jaar 1, en dat vereist een sales-team en een pipeline van 6 maanden. En elk domein dat erbij komt, vergroot de TAM én de ARPU tegelijk.
+      De acquisitielogica in GTM v3.0 is sterk: gratis app, snelle adoptie, NL-focus brengt de gebruikers. Het verdienmodel hoeft alleen anders: <strong>niet door gebruikersdata te verkopen, maar door domeinen als acquisitiekanaal voor de consument-sublijn en een aparte zakelijke sublijn als ARPU-versterker.</strong> Realistisch levert het consument-spoor jaar 1 al €400k–€585k op, met een maandomzet van €105k aan het einde van het jaar. De zakelijke sublijn werkt daarbovenop: een fractie van het gebruikersaantal, maar een vermenigvuldiging op de ARPU. Het data-verkoop pad projecteerde €170k–€233k voor heel jaar 1 en vereiste een retail-sales-team met pipeline van 6 maanden. De combinatie consument-spoor + zakelijke sublijn omzeilt dat zonder de TAM in te ruilen voor risico op datavertrouwen.
     </p>
   </div>
 
@@ -506,7 +638,7 @@
         Het verschil is niet marketing. Het is begrijpen wat het product werkelijk doet voor een mens. Niet de techniek, niet de feature, het gevoel dat overblijft.
       </p>
       <p style="margin-bottom:28px;">
-        TrackAndBack had ook een andere keuze kunnen maken. We hadden kunnen zeggen: <em>"Alle bestellingen op één plek. Retourdeadlines bijhouden. Meerdere vervoerders."</em> Dat zijn features. Nuttige features.
+        Track & Back had ook een andere keuze kunnen maken. We hadden kunnen zeggen: <em>"Alle bestellingen op één plek. Retourdeadlines bijhouden. Meerdere vervoerders."</em> Dat zijn features. Nuttige features.
       </p>
 
       <div style="background:#0f172a;border-radius:10px;padding:24px 28px;margin-bottom:28px;">
@@ -518,7 +650,7 @@
         De add-ons volgen daar logisch uit. Wie TB vertrouwt voor zijn pakket, vertrouwt het ook voor zijn concertticket, zijn verzekering, zijn restaurantreservering. Niet omdat we hem overhalen, maar omdat de belofte elke keer uitkomt. Elk domein dat TB overneemt is een domein waarover de gebruiker niet meer hoeft na te denken.
       </p>
       <p style="margin-bottom:18px;">
-        Dat is ook het verdienmodel. Geen data verkopen. Geen advertenties. Geen B2B-pipeline. Gewoon: mensen die bereid zijn te betalen voor het gevoel dat iets geregeld is. Dat segment groeit, niet omdat wij het zeggen, maar omdat de wereld drukker wordt en rust schaarser.
+        Dat is ook het verdienmodel. Geen data verkopen. Geen advertenties. Geen retail-pipeline. Gewoon: mensen en zakelijke gebruikers die bereid zijn te betalen voor het gevoel dat iets geregeld is. Dat segment groeit, niet omdat wij het zeggen, maar omdat de wereld drukker wordt en rust schaarser.
       </p>
       <p style="color:#64748b;font-style:italic;">
         We hoeven de aantallen in GTM v3.0 niet te verbeteren. We hoeven alleen de motor te vervangen.
@@ -527,7 +659,7 @@
   </div>
 
   <div class="footer" style="margin-top:40px;">
-    TrackAndBack · Intern document · Maart 2026
+    Track &amp; Back · Intern document · Mei 2026
   </div>
 
   </div><!-- einde tab1 -->
@@ -629,7 +761,7 @@
     </div>
 
   <div class="footer" style="margin-top:40px;">
-    TrackAndBack · Intern document · Maart 2026
+    Track &amp; Back · Intern document · Mei 2026
   </div>
 
   </div><!-- einde tab2 -->
