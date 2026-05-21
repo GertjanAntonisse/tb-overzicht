@@ -127,6 +127,32 @@
   }
   .dash-type-extern { background: #f3e8fd; color: #7c3aed; }
 
+  .dash-card .dash-last-update {
+    font-size: 0.7rem;
+    color: #16a34a;
+    font-weight: 600;
+    margin-top: 0.3rem;
+  }
+
+  .dash-card.inactive {
+    background: #f1f1ef;
+    border-color: #e0dfdb;
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .dash-card.inactive:hover { border-color: #e0dfdb; box-shadow: none; }
+  .dash-card.inactive h3 { color: #999; }
+  .dash-card.inactive h3::after { content: none; }
+  .dash-card.inactive p { color: #aaa; }
+  .dash-card.inactive .dash-voor { color: #bbb; font-style: italic; }
+  .dash-card.inactive .dash-inactive-reason {
+    font-size: 0.7rem;
+    color: #888;
+    font-style: italic;
+    margin-top: 0.3rem;
+  }
+
   .footer {
     text-align: center;
     margin-top: 2.5rem;
@@ -155,23 +181,26 @@
 
 <div class="dashboard-grid">
 
-  <a class="dash-card" href="marketing-dashboard.html">
+  <div class="dash-card inactive">
     <h3>Distributie Dashboard</h3>
     <p>Hoeveel betalende klanten hebben we? De teller, de funnel van aanmelding tot betaling, en de kernvragen die we moeten beantwoorden.</p>
     <div class="dash-voor">Voor: Timo &middot; Aangemaakt 12 maart</div>
-  </a>
+    <div class="dash-inactive-reason">Inactief &middot; wacht op juni-overgang Timo</div>
+  </div>
 
   <a class="dash-card" href="timo-verdienmodel.html">
     <h3>Verdienmodel</h3>
     <p>Hoe gaat Track & Back geld verdienen? Gratis basis, betaalde extra's via in-app aankopen. Welke functies, welke prijzen, welke volgorde.</p>
     <div class="dash-voor">Voor: Timo &middot; Aangemaakt 17 maart</div>
+    <div class="dash-last-update">Laatste update: 21 mei 2026</div>
   </a>
 
-  <a class="dash-card" href="intelligence-dashboard.html">
+  <div class="dash-card inactive">
     <h3>Intelligence Dashboard</h3>
     <p>Wat werkt, wat niet, en wat we daarvan leren. Toont de resultaten van campagnes en posts: bereik, betrokkenheid, conversie en welke boodschap het best aanslaat.</p>
     <div class="dash-voor">Voor: Timo / Gertjan &middot; Nieuw</div>
-  </a>
+    <div class="dash-inactive-reason">Inactief &middot; wacht op data uit Intelligence Pipeline (juni-overgang Timo)</div>
+  </div>
 
   <a class="dash-card" href="https://github.com/users/GertjanAntonisse/projects/15" target="_blank">
     <h3>Content Pipeline Board</h3>
@@ -180,28 +209,32 @@
     <span class="dash-type dash-type-extern">GitHub</span>
   </a>
 
-  <a class="dash-card" href="proof-ladder-overview.html">
+  <div class="dash-card inactive">
     <h3>Proof Ladder (Rene)</h3>
     <p>Hoe ver is Rene met het e-mailsysteem? Dit toont stap voor stap welke onderdelen al bewezen werken en welke nog gebouwd moeten worden. Van "kan het systeem een echte e-mail verwerken?" tot "werkt het voor meerdere webshops tegelijk?"</p>
     <div class="dash-voor">Voor: Rene / Gertjan &middot; Bijgewerkt 7 april</div>
-  </a>
+    <div class="dash-inactive-reason">Inactief &middot; René's domein, handmatige update door eigenaar</div>
+  </div>
 
-  <a class="dash-card" href="local-llm-triage-proof-nl.html">
+  <div class="dash-card inactive">
     <h3>Lokaal AI Triage</h3>
     <p>Hoe helpt kunstmatige intelligentie bij het verwerken van e-mails? Dit laat zien hoe een lokaal AI-model (op onze eigen computer, niet in de cloud) automatisch herkent wat voor soort e-mail binnenkomt en hoe die verwerkt moet worden.</p>
     <div class="dash-voor">Voor: Rene / Gertjan &middot; Bijgewerkt 7 april</div>
-  </a>
+    <div class="dash-inactive-reason">Inactief &middot; statisch proof-document</div>
+  </div>
 
   <a class="dash-card" href="product-dashboard.html">
     <h3>Product Dashboard</h3>
     <p>Alle open productvragen en milestones op een rij. Welke keuzes liggen er, wat is besloten, wat moet nog.</p>
     <div class="dash-voor">Voor: Gertjan &middot; Aangemaakt 16 maart</div>
+    <div class="dash-last-update">Laatste update: 21 mei 2026</div>
   </a>
 
   <a class="dash-card" href="visie-dashboard.html">
     <h3>Visie Dashboard</h3>
     <p>Waar beweegt de markt naartoe? Signalen over privacy, e-mail, aliassen en hoe grote techbedrijven zich positioneren. Dit helpt ons de koers bepalen.</p>
     <div class="dash-voor">Voor: Gertjan &middot; Aangemaakt 23 maart</div>
+    <div class="dash-last-update">Laatste update: 21 mei 2026</div>
   </a>
 
   <a class="dash-card" href="https://drive.google.com/drive/u/0/folders/1D7fcKyN5nK4jpNRTcfEUT8btfL5mM5YA" target="_blank">
