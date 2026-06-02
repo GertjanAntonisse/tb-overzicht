@@ -285,6 +285,29 @@
   </div>
 
   <div class="section">
+    <h2>5. De hulp zelf: naam, installeren, gebruiken</h2>
+
+    <h3 style="font-size:1rem;margin:0.2rem 0 0.4rem;color:#1a1a1a;">Hoe heet hij</h3>
+    <p>In Claude Code roep je de hulp aan door <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> te typen, gevolgd door je idee in gewone taal.</p>
+
+    <h3 style="font-size:1rem;margin:1.2rem 0 0.4rem;color:#1a1a1a;">Heb je hem nog niet? Eén keer installeren</h3>
+    <p>De hulp hoort in je Claude Code-omgeving. Hij zit in de gedeelde configuratie op GitHub (de map <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;">claude-config</code>), samen met de andere hulpjes. Je haalt die één keer binnen en zet hem aan, daarna kun je <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> typen.</p>
+    <pre style="background:#2d2b27;color:#f3f1ec;padding:1rem 1.2rem;border-radius:8px;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:0.82rem;line-height:1.6;margin:0.6rem 0;"># de gedeelde config binnenhalen (of bijwerken als je hem al hebt)
+git clone https://github.com/GertjanAntonisse/claude-config.git
+cd claude-config
+
+# alles op zijn plek zetten
+bash setup.sh</pre>
+    <p style="font-size:0.85rem;color:#888;">Het setup-script zet de hulpjes klaar in <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;">~/.claude/skills/</code>. Start Claude Code daarna opnieuw, dan staat <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> klaar. Je hebt wel toegang tot de config-map nodig, vraag Gertjan als het niet lukt.</p>
+
+    <h3 style="font-size:1rem;margin:1.2rem 0 0.4rem;color:#1a1a1a;">Hoe gebruik je hem</h3>
+    <p>Typ <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> plus een korte beschrijving van de add-on die je wilt zien. Bijvoorbeeld:</p>
+    <pre style="background:#2d2b27;color:#f3f1ec;padding:1rem 1.2rem;border-radius:8px;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:0.82rem;line-height:1.6;margin:0.6rem 0;">/tb-addon-mvp een add-on die waarschuwt voor een
+abonnement dat bijna automatisch verlengt</pre>
+    <p>De hulp loopt dan de stappen met je af: hij kijkt eerst wat er al ligt, stelt een korte omschrijving voor, toont een lijstje nep-mails om goed te keuren, en maakt daarna de maquette met de twee tabs, het voorbeeldscherm en de verdieping. Je hoeft niets technisch te doen, je leest mee en zegt ja of past iets aan.</p>
+  </div>
+
+  <div class="section">
     <h2>Woordenlijst</h2>
     <div class="woordenlijst">
       <dl>
