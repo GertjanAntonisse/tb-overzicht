@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track & Back — De add-on-maquette, uitleg voor Timo</title>
+<link rel="icon" type="image/svg+xml" href="static/favicon-v2.svg">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #fafaf8;
+    color: #2d2d2d;
+    line-height: 1.6;
+  }
+
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: white; border-bottom: 1px solid #e8e6e1;
+    padding: 0 1.5rem; display: flex; align-items: center;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .topnav-brand {
+    padding: 0.5rem 1rem 0.5rem 0; border-right: 1px solid #e8e6e1;
+    margin-right: 0.5rem; display: flex; align-items: center; flex-shrink: 0;
+  }
+  .topnav-brand img { height: 28px; width: auto; display: block; }
+  .topnav-brand .tekst { font-weight: 700; color: #1a1a1a; font-size: 0.95rem; }
+  .topnav a {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.7rem 0.7rem; font-size: 0.78rem; font-weight: 500;
+    color: #777; text-decoration: none; white-space: nowrap;
+    border-bottom: 2px solid transparent; flex-shrink: 0;
+  }
+  .topnav a:hover { color: #1a1a1a; }
+  .topnav a.actief { color: #1a1a1a; border-bottom-color: #7c3aed; }
+
+  .main-content { max-width: 800px; margin: 0 auto; padding: 2rem; }
+
+  .header {
+    text-align: center; margin-bottom: 2rem;
+    padding-bottom: 1.5rem; border-bottom: 1px solid #e8e6e1;
+  }
+  .header h1 { font-size: 1.6rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
+  .header .ondertitel { font-size: 0.95rem; color: #888; }
+
+  .highlight-box {
+    background: #f5f0ff; border-left: 4px solid #7c3aed;
+    padding: 1.2rem 1.5rem; margin-bottom: 2rem; border-radius: 0 8px 8px 0;
+  }
+  .highlight-box h2 {
+    font-size: 1rem; font-weight: 600; color: #5b21b6;
+    margin-bottom: 0.4rem; border: none; padding: 0;
+  }
+  .highlight-box p { font-size: 0.95rem; color: #4a4a4a; }
+
+  .section { margin-bottom: 2.2rem; }
+  .section h2 {
+    font-size: 1.1rem; font-weight: 600; color: #1a1a1a;
+    margin-bottom: 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid #e8e6e1;
+  }
+  .section p { margin-bottom: 0.8rem; }
+
+  .twee-kolom { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.5rem 0 0.5rem; }
+  @media (max-width: 600px) { .twee-kolom { grid-template-columns: 1fr; } }
+  .kaart {
+    background: white; border: 1px solid #e8e6e1; border-radius: 10px; padding: 1.1rem 1.2rem;
+  }
+  .kaart h3 { font-size: 0.9rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.4rem; }
+  .kaart.vroeger { border-left: 4px solid #d9b15a; }
+  .kaart.nu { border-left: 4px solid #7a9e3e; }
+  .kaart p { font-size: 0.9rem; color: #555; margin: 0; }
+
+  /* maquette: twee dingen */
+  .maquette-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+  @media (max-width: 600px) { .maquette-grid { grid-template-columns: 1fr; } }
+  .maquette-kaart {
+    background: white; border: 1px solid #e8e6e1; border-radius: 10px; padding: 1.1rem 1.2rem;
+  }
+  .maquette-kaart .icoon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .maquette-kaart h3 { font-size: 0.95rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.3rem; }
+  .maquette-kaart p { font-size: 0.88rem; color: #666; margin: 0; }
+
+  /* estafette */
+  .stap {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: white; border: 1px solid #e8e6e1; border-radius: 10px;
+    padding: 1.1rem 1.2rem; margin-bottom: 0.8rem; position: relative;
+  }
+  .stap .nummer {
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+    background: #f5f0ff; color: #7c3aed; font-weight: 700; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stap .inhoud { flex: 1; }
+  .stap h3 { font-size: 0.98rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.2rem; }
+  .stap .wie { font-size: 0.78rem; color: #7c3aed; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .stap p { font-size: 0.9rem; color: #555; margin: 0.3rem 0 0; }
+  .stap .stokje {
+    font-size: 0.8rem; color: #888; margin-top: 0.5rem;
+    background: #faf8f4; border-radius: 6px; padding: 0.4rem 0.6rem;
+  }
+  .stap .stokje b { color: #5a5a5a; }
+
+  .let-op {
+    background: #fff7ed; border-left: 4px solid #e08a3c;
+    padding: 1.1rem 1.4rem; border-radius: 0 8px 8px 0; margin-top: 0.5rem;
+  }
+  .let-op h3 { font-size: 0.95rem; font-weight: 600; color: #b45c1a; margin-bottom: 0.3rem; }
+  .let-op p { font-size: 0.92rem; color: #6b4a2a; margin: 0; }
+
+  .woordenlijst { background: white; border: 1px solid #e8e6e1; border-radius: 10px; padding: 0.4rem 1.2rem; }
+  .woordenlijst dl { margin: 0; }
+  .woordenlijst dt { font-weight: 600; color: #1a1a1a; font-size: 0.9rem; padding-top: 0.8rem; }
+  .woordenlijst dd { margin: 0.15rem 0 0.8rem; font-size: 0.9rem; color: #666; border-bottom: 1px solid #f0eeea; padding-bottom: 0.8rem; }
+  .woordenlijst dd:last-child { border-bottom: none; }
+
+  .footer {
+    text-align: center; margin-top: 2.5rem; padding-top: 1.5rem;
+    border-top: 1px solid #e8e6e1; font-size: 0.8rem; color: #bbb;
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="topnav-brand"><img src="static/logo.png" alt="Track & Back"></span>
+  <a href="index.html" target="_blank" rel="noopener noreferrer">Overzicht</a>
+  <a href="visie-werking.html" target="_blank" rel="noopener noreferrer">Hoe de visie werkt</a>
+  <a href="timo-verdienmodel.html" target="_blank" rel="noopener noreferrer">Verdienmodel</a>
+  <a href="dashboards.html" class="actief" target="_blank" rel="noopener noreferrer">Dashboards</a>
+</nav>
+
+<div class="main-content">
+
+  <div class="header">
+    <h1>De add-on-maquette</h1>
+    <div class="ondertitel">Hoe we van een idee snel iets echts maken. Voor Timo.</div>
+  </div>
+
+  <div class="highlight-box">
+    <h2>In het kort</h2>
+    <p>Een idee voor een add-on is makkelijk te vertellen, maar moeilijk te zien. Met onze nieuwe hulp maken we van een idee in een middag een maquette: nep-mails die er precies uitzien als echte, plus een voorbeeldscherm van hoe de app eruit zou zien. Zo ziet iedereen hetzelfde, nog voordat er iets gebouwd is. En er komt een verdieping bij: de achtergrond die helpt kiezen of we het nu doen, als nice-to-have zien, of voor later bewaren. Dat scheelt later veel tijd en misverstanden.</p>
+  </div>
+
+  <div class="section">
+    <h2>1. Wat maakt deze hulp?</h2>
+    <p>Denk aan een bouwer die een huis gaat maken. Eerst zet hij een klein model van karton op tafel. Iedereen kan eromheen lopen en zeggen wat er klopt en wat niet. Pas daarna begint het echte bouwen. Onze hulp doet hetzelfde voor een add-on. Hij maakt twee dingen.</p>
+    <div class="maquette-grid">
+      <div class="maquette-kaart">
+        <div class="icoon">✉️</div>
+        <h3>Oefenbrieven</h3>
+        <p>Nep-mails die er precies uitzien als echte: een vliegticket, een hotelboeking, een abonnement dat bijna verlengt. Echte namen, echte bedragen, echte data. Alleen verzonnen.</p>
+      </div>
+      <div class="maquette-kaart">
+        <div class="icoon">📱</div>
+        <h3>Een voorbeeldscherm</h3>
+        <p>Een plaatje van hoe de app eruitziet als die mails binnenkomen. Je ziet meteen wat de gebruiker te zien krijgt en wat de add-on voor hem doet.</p>
+      </div>
+    </div>
+    <p style="margin-top:1rem;">Er komt ook een kort lijstje vragen bij, de dingen waar we nog over moeten beslissen. Belangrijk: dit is nog niet de echte app. Het is een model om naar te kijken en een knoop over door te hakken. Anderen noemen zo'n model soms een MVP, dat is hetzelfde.</p>
+
+    <div class="highlight-box" style="margin-top:1.4rem;">
+      <h2>En een tweede tab: de verdieping</h2>
+      <p>Naast het voorbeeldscherm komt een tweede tabblad, de verdieping. Dat is de achtergrond die je helpt kiezen: doen we dit nu, is het een nice-to-have, of iets voor later? De hulp haalt dit grotendeels uit wat we al hebben verzameld, en zet het op een rij.</p>
+    </div>
+    <div class="twee-kolom" style="margin-top:0;">
+      <div class="kaart">
+        <h3>Past het bij TB?</h3>
+        <p>Een eerlijke toets aan waar TB voor staat: rust, afronding en loslaten, geen dashboard of gedoe. Ook als het antwoord is "dit past niet", staat dat erin. Zo bewaken we de visie.</p>
+      </div>
+      <div class="kaart">
+        <h3>Wat speelt er?</h3>
+        <p>Trends, nieuwe wetgeving en signalen die dit idee raken, uit onze visie-verzameling.</p>
+      </div>
+      <div class="kaart">
+        <h3>De markt</h3>
+        <p>Wie doet dit al, en wat kunnen wij beter of anders doen.</p>
+      </div>
+      <div class="kaart">
+        <h3>Het geld</h3>
+        <p>Zit hier een betaald onderdeel in, en hoeveel zou het ongeveer waard zijn.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>2. Waarom is dit waardevol?</h2>
+    <p>Het verschil zit in wanneer je merkt of een idee klopt.</p>
+    <div class="twee-kolom">
+      <div class="kaart vroeger">
+        <h3>Zonder maquette</h3>
+        <p>Je vertelt een idee in woorden. Iedereen stelt zich er iets anders bij voor. Je bouwt het. Pas als het af is, zie je dat het net niet was wat je bedoelde. Dat terugdraaien kost veel tijd en geld.</p>
+      </div>
+      <div class="kaart nu">
+        <h3>Met maquette</h3>
+        <p>Je ziet het idee eerst, in een middag, voor bijna niks. Klopt het niet, dan merk je dat voordat iemand een dag heeft gebouwd. Klopt het wel, dan weet iedereen precies waar we heen gaan.</p>
+      </div>
+    </div>
+    <p style="margin-top:1rem;">En de oefenbrieven zijn geen weggegooid werk. René gebruikt ze later om te testen of de machine de gegevens ook echt uit mail kan halen. Zo werkt de maquette twee keer voor ons.</p>
+  </div>
+
+  <div class="section">
+    <h2>3. De estafette: wie doet wat</h2>
+    <p>Het mooie is dat de maquette als een stokje in een estafette werkt. Iedereen krijgt iets in handen dat hij meteen begrijpt, en geeft het een stap verder. Niemand hoeft te raden wat de vorige bedoelde.</p>
+
+    <div class="stap">
+      <div class="nummer">1</div>
+      <div class="inhoud">
+        <div class="wie">Gertjan of Timo, met Claude</div>
+        <h3>De maquette en de verdieping maken</h3>
+        <p>Iedereen kan hier beginnen, ook jij. Een idee, of feedback van iemand met wie je sprak of spart, zet je samen met Claude in een middag om in oefenbrieven, een voorbeeldscherm, het lijstje open vragen en de verdieping (past het bij TB, trends en wet, markt en geld).</p>
+        <div class="stokje">Geeft door: <b>een maquette om naar te kijken, plus een verdieping om mee te beslissen</b></div>
+      </div>
+    </div>
+
+    <div class="stap">
+      <div class="nummer">2</div>
+      <div class="inhoud">
+        <div class="wie">Timo</div>
+        <h3>Beslissen: nu, nice-to-have of later</h3>
+        <p>Met de verdieping ernaast beslis je niet op gevoel alleen, maar onderbouwd: past het bij TB, wat speelt er in de markt en de wet, en zit er geld in. Daarmee kies je of een add-on nu gemaakt wordt, een nice-to-have is, of iets voor later. Jouw marktblik en de gesprekken die je voert blijven daarbij de doorslag.</p>
+        <div class="stokje">Geeft door: <b>een onderbouwde keuze: nu, nice-to-have of later</b></div>
+      </div>
+    </div>
+
+    <div class="stap">
+      <div class="nummer">3</div>
+      <div class="inhoud">
+        <div class="wie">Octa</div>
+        <h3>Het echte ontwerp maken</h3>
+        <p>Octa maakt van de ruwe maquette een mooi en kloppend ontwerp dat past bij de rest van de app. Van een kartonnen model naar een echte bouwtekening.</p>
+        <div class="stokje">Geeft door: <b>een af ontwerp om te bouwen</b></div>
+      </div>
+    </div>
+
+    <div class="stap">
+      <div class="nummer">4</div>
+      <div class="inhoud">
+        <div class="wie">René</div>
+        <h3>Het bouwen</h3>
+        <p>René bouwt de add-on, en bouwt de slimme lezer die de juiste gegevens uit echte mail haalt. De oefenbrieven van stap 1 zijn precies zijn testmateriaal.</p>
+        <div class="stokje">Geeft door: <b>een werkende add-on in de test-app</b></div>
+      </div>
+    </div>
+
+    <div class="stap">
+      <div class="nummer">5</div>
+      <div class="inhoud">
+        <div class="wie">Test-app</div>
+        <h3>Uitproberen in het veilig</h3>
+        <p>De add-on draait eerst in een oefenversie van de app, los van de echte gebruikers. Daar kunnen we alles proberen zonder dat er iets kan misgaan.</p>
+        <div class="stokje">Geeft door: <b>iets om echt te proberen</b></div>
+      </div>
+    </div>
+
+    <div class="stap">
+      <div class="nummer">6</div>
+      <div class="inhoud">
+        <div class="wie">Testers</div>
+        <h3>Feedback geven</h3>
+        <p>Echte mensen proberen de add-on en zeggen wat klopt en wat niet. Soms gaat het terug naar Octa of René voor een verbetering. Dat is normaal en juist goed.</p>
+        <div class="stokje">Geeft door: <b>wat goed werkt en wat beter moet</b></div>
+      </div>
+    </div>
+
+    <div class="stap">
+      <div class="nummer">7</div>
+      <div class="inhoud">
+        <div class="wie">Samen</div>
+        <h3>Gratis of betaald in productie</h3>
+        <p>Werkt het en heeft het waarde, dan zetten we het in de echte app. Soms als gratis onderdeel dat de app fijner maakt, soms als betaalde add-on die mensen erbij kunnen nemen. Die keuze maken we als we het echt hebben zien werken.</p>
+        <div class="stokje">Resultaat: <b>de add-on staat live voor gebruikers</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>4. Waarom dit ons sneller maakt</h2>
+    <p>Omdat iedereen vanaf de eerste stap hetzelfde voor zich ziet, is elke overdracht kort en duidelijk. Geen lange uitleg, geen misverstand, minder terugdraaien. En een maquette aanpassen kost een uurtje, een gebouwde app aanpassen kost dagen. We doen het moeilijke nadenken dus op het goedkoopste moment.</p>
+    <div class="let-op">
+      <h3>Eén ding goed uit elkaar houden</h3>
+      <p>De maquette laat zien wat we <b>willen</b> tonen. Of de machine die gegevens ook echt uit rommelige mail kan halen, is een aparte vraag die we samen met René apart testen. Twee dingen, niet door elkaar halen: eerst kijken of het beeld klopt, dan kijken of de techniek het waarmaakt.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Woordenlijst</h2>
+    <div class="woordenlijst">
+      <dl>
+        <dt>Add-on</dt>
+        <dd>Een extra stukje dat je aan de app kunt toevoegen, zoals een extra app op je telefoon. Bijvoorbeeld: TB waarschuwt je voor een abonnement dat bijna verlengt.</dd>
+        <dt>Maquette</dt>
+        <dd>Een nagemaakt voorbeeld om naar te kijken voordat het echte ding bestaat. Hier: nep-mails plus een voorbeeldscherm. Anderen zeggen soms MVP.</dd>
+        <dt>Verdieping</dt>
+        <dd>Een tweede tabblad naast het voorbeeldscherm, met de achtergrond om te beslissen: past het bij TB, wat speelt er in markt en wet, en zit er geld in.</dd>
+        <dt>Visie-toets</dt>
+        <dd>Een eerlijke check of een idee past bij waar TB voor staat: rust, afronding en loslaten, geen dashboard of gedoe.</dd>
+        <dt>Oefenbrieven</dt>
+        <dd>Verzonnen mails die er precies uitzien als echte. Om mee te oefenen en te testen, zonder op echte klanten te wachten.</dd>
+        <dt>Test-app</dt>
+        <dd>Een oefenversie van de app, los van de echte gebruikers, waar we veilig alles kunnen uitproberen.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="footer">
+    Track &amp; Back · uitleg voor Timo · gemaakt 2 juni 2026
+  </div>
+
+</div>
+</body>
+</html>
