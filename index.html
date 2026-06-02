@@ -176,6 +176,39 @@
   .label-besloten { background: #e8f5e9; color: #2e7d32; }
   .label-open { background: #fff3e0; color: #e65100; }
   .label-bouw { background: #e3f2fd; color: #1565c0; }
+  .label-taak { background: #ede7f6; color: #5b21b6; }
+  .label-bug { background: #ffebee; color: #c62828; }
+  .label-signaal { background: #fff8e1; color: #8d6e00; }
+  .label-vraag { background: #eceff1; color: #455a64; }
+
+  .inbox-groep {
+    margin-bottom: 1.2rem;
+  }
+  .inbox-groep:last-child { margin-bottom: 0; }
+  .inbox-groep h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #999;
+    margin-bottom: 0.4rem;
+  }
+  .inbox-groep ul {
+    list-style: none;
+  }
+  .inbox-groep li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0eeea;
+    font-size: 0.9rem;
+    color: #2d2d2d;
+  }
+  .inbox-groep li:last-child { border-bottom: none; }
+  .inbox-groep a { color: #7c3aed; text-decoration: none; }
+  .inbox-groep a:hover { text-decoration: underline; }
+  .inbox-route {
+    font-size: 0.78rem;
+    color: #aaa;
+    margin-left: 0.3rem;
+  }
 
   .beslissingen {
     background: white;
@@ -673,6 +706,55 @@
       <span class="label label-bouw">loopt</span>
     </li>
   </ul>
+</div>
+
+<!-- INBOX -->
+<div class="section">
+  <h2>Inbox: wat er binnenkomt en bij wie het ligt</h2>
+  <p style="font-size: 0.9rem; color: #777; margin-bottom: 1rem;">De inbox is de plek waar alles binnenkomt: taken, bugs, signalen en ideeën. Iedereen kan iets melden, bugs en observaties komen er ook automatisch in vanuit de werkruimte. Gertjan sorteert en stuurt elk item door naar de juiste plek (bouw, product, visie of marketing) en bespreekt de volgende stap. Hieronder een momentopname van wat er nu open ligt en bij wie.
+    <br><a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: #7c3aed;">Open de inbox</a></p>
+
+  <div class="beslissingen">
+
+    <div class="inbox-groep">
+      <h3>Bij Timo</h3>
+      <ul>
+        <li><strong>App Store-goedkeuring afronden</strong> (epic): approval voorbereiden en indienen, externe TestFlight-groep en beta review klaarzetten, Alie klaarzetten voor mobiele ordercontrole <span class="label label-taak">taak</span> <span class="inbox-route">→ bouw</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/37" target="_blank" rel="noopener noreferrer">#37</a></li>
+        <li><strong>Add-on MVP's maken</strong> samen met Gertjan, overzicht en startprompt <span class="label label-taak">taak</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/33" target="_blank" rel="noopener noreferrer">#33</a></li>
+        <li><strong>Affiliate-gesprekken plannen</strong>: Awin NL en Bol, als input voor het verdienmodel <span class="label label-taak">taak</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/27" target="_blank" rel="noopener noreferrer">#27</a></li>
+        <li><strong>TB als neutrale bezorgvoorkeur-standaard</strong> voor vervoerders <span class="label label-signaal">signaal</span> <span class="inbox-route">→ visie</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/18" target="_blank" rel="noopener noreferrer">#18</a></li>
+      </ul>
+    </div>
+
+    <div class="inbox-groep">
+      <h3>Bij Gertjan</h3>
+      <ul>
+        <li><strong>Privacy Policy pagina en App Privacy questionnaire</strong>, vereist voor App Store submission <span class="label label-bug">blocker</span> <span class="inbox-route">→ bouw</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/22" target="_blank" rel="noopener noreferrer">#22</a></li>
+        <li><strong>Apple ID aanmaken</strong> voor aliewies@gmail.com (TestFlight voor Mac) <span class="label label-taak">taak</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/38" target="_blank" rel="noopener noreferrer">#38</a></li>
+        <li><strong>Meertaligheid en buitenlandse bestellingen</strong>: hoe gaan we ermee om? <span class="label label-vraag">vraag</span> <span class="inbox-route">→ product</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/21" target="_blank" rel="noopener noreferrer">#21</a></li>
+        <li><strong>Productvisie Delivery Profile</strong>: review, bespreking en toevoegen aan visie <span class="inbox-route">→ visie</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/6" target="_blank" rel="noopener noreferrer">#6</a></li>
+      </ul>
+    </div>
+
+    <div class="inbox-groep">
+      <h3>Bij René en team</h3>
+      <ul>
+        <li><strong>Na inloggen kom je in het scherm om een TrackAndBack-adres te kiezen</strong>, terwijl dat al gekozen is <span class="label label-bug">bug</span> <span class="inbox-route">→ bouw</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/30" target="_blank" rel="noopener noreferrer">#30</a></li>
+        <li><strong>Wachtwoord reset nodig voor inlog</strong>, geen toegang tot de app <span class="label label-bug">bug</span> <span class="inbox-route">→ bouw</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/29" target="_blank" rel="noopener noreferrer">#29</a></li>
+      </ul>
+    </div>
+
+    <div class="inbox-groep">
+      <h3>Nog te routeren</h3>
+      <ul>
+        <li><strong>Content-pipeline mist grammatica- en briefcheck</strong> in de kwaliteitspoort <span class="label label-signaal">observatie</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/39" target="_blank" rel="noopener noreferrer">#39</a></li>
+        <li><strong>Kortingscodes delen als betaalde add-on</strong> <span class="label label-signaal">idee</span> <span class="inbox-route">→ product</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/15" target="_blank" rel="noopener noreferrer">#15</a></li>
+        <li><strong>Beeldmerk zichtbaar bij URL-preview</strong> in WhatsApp en andere apps <span class="inbox-route">→ bouw</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/14" target="_blank" rel="noopener noreferrer">#14</a></li>
+        <li><strong>Briefpapier toevoegen aan brand style guide</strong> <span class="inbox-route">→ bouw</span> <a href="https://github.com/GertjanAntonisse/trackandback-inbox/issues/10" target="_blank" rel="noopener noreferrer">#10</a></li>
+      </ul>
+    </div>
+
+  </div>
 </div>
 
 <div class="footer">
