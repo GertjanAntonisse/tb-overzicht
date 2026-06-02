@@ -291,14 +291,13 @@
     <p>In Claude Code roep je de hulp aan door <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> te typen, gevolgd door je idee in gewone taal.</p>
 
     <h3 style="font-size:1rem;margin:1.2rem 0 0.4rem;color:#1a1a1a;">Heb je hem nog niet? Eén keer installeren</h3>
-    <p>De hulp hoort in je Claude Code-omgeving. Hij zit in de gedeelde configuratie op GitHub (de map <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;">claude-config</code>), samen met de andere hulpjes. Je haalt die één keer binnen en zet hem aan, daarna kun je <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> typen.</p>
-    <pre style="background:#2d2b27;color:#f3f1ec;padding:1rem 1.2rem;border-radius:8px;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:0.82rem;line-height:1.6;margin:0.6rem 0;"># de gedeelde config binnenhalen (of bijwerken als je hem al hebt)
-git clone https://github.com/GertjanAntonisse/claude-config.git
-cd claude-config
-
-# alles op zijn plek zetten
-bash setup.sh</pre>
-    <p style="font-size:0.85rem;color:#888;">Het setup-script zet de hulpjes klaar in <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;">~/.claude/skills/</code>. Start Claude Code daarna opnieuw, dan staat <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> klaar. Je hebt wel toegang tot de config-map nodig, vraag Gertjan als het niet lukt.</p>
+    <p>Een hulp is niets anders dan een mapje. Je hoeft niets ingewikkelds te doen, en je verandert verder <b>niets</b> aan je eigen omgeving. Je zet alleen dat ene mapje op de goede plek:</p>
+    <ol style="font-size:0.92rem;color:#444;line-height:1.7;padding-left:1.2rem;margin:0.5rem 0 0.7rem;">
+      <li>Vraag Gertjan om het mapje <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;">tb-addon-mvp</code>, of kopieer het van de gedeelde plek die hij aanwijst.</li>
+      <li>Zet dat mapje in de skills-map van Claude Code op jouw computer: <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;">~/.claude/skills/tb-addon-mvp/</code></li>
+      <li>Start Claude Code opnieuw.</li>
+    </ol>
+    <p style="font-size:0.85rem;color:#888;">Daarna kun je <code style="background:#efece4;padding:0.05rem 0.35rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> typen. Meer is het niet. Je eigen instellingen en andere hulpjes blijven precies zoals ze waren, want je voegt alleen dit ene mapje toe. Niet de hele configuratie van iemand anders overnemen, alleen deze map.</p>
 
     <h3 style="font-size:1rem;margin:1.2rem 0 0.4rem;color:#1a1a1a;">Hoe gebruik je hem</h3>
     <p>Typ <code style="background:#efece4;padding:0.1rem 0.4rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.9em;color:#5b21b6;">/tb-addon-mvp</code> plus een korte beschrijving van de add-on die je wilt zien. Bijvoorbeeld:</p>
